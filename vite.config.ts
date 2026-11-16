@@ -35,15 +35,19 @@ const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // ゲーム本体はAPIキーを一切参照しない。GEMINI_* はスクリプト専用で、
 // Vite の envPrefix（VITE_）に含めないことでブラウザ側へ露出させない。
-export default defineConfig({
+// 偏差値の表示（2026-11-16）：ふつうのビルドでは出さない。`vite build --mode hensachi` と開発用サーバーでは出す
+export default defineConfig(({ mode }) => ({
   plugins: [react(), inlineIntoHtml()],
   base: './',
   envPrefix: 'VITE_',
-  define: { __PORTRAIT_MANIFEST__: fs.readFileSync('public/portraits/manifest.json', 'utf8') },
+  define: {
+    __PORTRAIT_MANIFEST__: fs.readFileSync('public/portraits/manifest.json', 'utf8'),
+    __SHOW_HENSACHI__: JSON.stringify(mode === 'hensachi' || mode === 'development'),
+  },
   build: { rollupOptions: { output: { inlineDynamicImports: true } } },
   server: { port: 5173, strictPort: true },
   test: {
     include: ['src/**/*.test.ts'],
     environment: 'node',
   },
-} as never);
+}) as never);

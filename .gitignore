@@ -10,3 +10,5 @@ production/screens
 tsconfig.tsbuildinfo
 .vite
 .claude/
+dist-hensachi
+_site

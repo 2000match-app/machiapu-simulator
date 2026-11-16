@@ -3,10 +3,11 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "マチアプシミュレーター（仕様v0.3準拠・ローカル専用）",
+  "description": "マチアプシミュレーター",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:hensachi": "vite build --mode hensachi --outDir dist-hensachi",
     "preview": "vite preview",
     "typecheck": "tsc -b --pretty",
     "test": "vitest run",
