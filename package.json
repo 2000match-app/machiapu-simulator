@@ -1,0 +1,40 @@
+{
+  "name": "machiapu-simulator",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "マチアプシミュレーター（仕様v0.3準拠・ローカル専用）",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --pretty",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "sim:stats": "tsx scripts/sim/stats.ts",
+    "sim:balance": "tsx scripts/sim/balance.ts",
+    "sim:routes": "tsx scripts/sim/routes.ts",
+    "sim:playlog": "tsx scripts/sim/playlog.ts",
+    "gemini:models": "tsx scripts/gemini/list-models.ts",
+    "gemini:generate": "tsx scripts/gemini/generate-portraits.ts",
+    "gemini:review-images": "tsx scripts/gemini/review-portraits.ts",
+    "gemini:review-screens": "tsx scripts/gemini/review-screens.ts",
+    "gemini:review-playlog": "tsx scripts/gemini/review-playlog.ts",
+    "capture:screens": "tsx scripts/capture-screens.ts"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "playwright-core": "^1.64.1",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.5"
+  }
+}

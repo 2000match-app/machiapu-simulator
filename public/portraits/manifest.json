@@ -1,0 +1,74 @@
+{
+  "M01": {
+    "file": "M01.jpg",
+    "version": 3,
+    "approval": "approved",
+    "source": "user_provided"
+  },
+  "F06": {
+    "file": "F06.jpg",
+    "version": 2,
+    "approval": "approved",
+    "source": "user_provided"
+  },
+  "F03": {
+    "file": "F03.jpg",
+    "version": 3,
+    "approval": "approved",
+    "source": "user_provided"
+  },
+  "F01": {
+    "file": "F01.jpg",
+    "version": 3,
+    "approval": "approved",
+    "source": "user_provided"
+  },
+  "M04": {
+    "file": "M04.jpg",
+    "version": 2,
+    "approval": "approved",
+    "source": "user_provided"
+  },
+  "M05": {
+    "file": "M05.jpg",
+    "version": 2,
+    "approval": "approved",
+    "source": "user_provided"
+  },
+  "M07": {
+    "file": "M07.jpg",
+    "version": 2,
+    "approval": "approved",
+    "source": "user_provided"
+  },
+  "M09": {
+    "file": "M09.jpg",
+    "version": 2,
+    "approval": "approved",
+    "source": "user_provided"
+  },
+  "F08": {
+    "file": "F08.jpg",
+    "version": 2,
+    "approval": "approved",
+    "source": "user_provided"
+  },
+  "F10": {
+    "file": "F10.jpg",
+    "version": 2,
+    "approval": "approved",
+    "source": "user_provided"
+  },
+  "M11": {
+    "file": "M11.jpg",
+    "version": 2,
+    "approval": "approved",
+    "source": "user_provided"
+  },
+  "F05": {
+    "file": "F05.jpg",
+    "version": 3,
+    "approval": "approved",
+    "source": "user_provided"
+  }
+}

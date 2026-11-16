@@ -1,0 +1,412 @@
+{
+  "schema": 1,
+  "note": "プレイ可能20人の基準ポートレートの台帳。相手NPCの画像は未制作（後続作業）。",
+  "portraits": {
+    "M07": {
+      "id": "M07",
+      "kind": "playable_portrait",
+      "versions": [
+        {
+          "version": 1,
+          "file": "portraits/M07/M07_v1.jpg",
+          "createdAt": "2026-10-18T09:26:10.889Z",
+          "model": "gemini-3-pro-image",
+          "settings": {
+            "aspectRatio": "4:5",
+            "imageSize": "1K"
+          },
+          "prompt": "架空の日本人成人1人の、マッチングアプリに使う自然な人物写真。目線の高さから撮影した正面に近い胸上の構図。柔らかい昼の自然光、落ち着いた無地の背景（明るいグレーベージュ）、普通に清潔な私服。口を閉じた穏やかな表情。肌の質感や軽い左右差を残し、商業広告のモデル写真のように顔を整えない。美肌加工、美容補正、輪郭の細身化、目の拡大はしない。年齢は指定どおり。縦4:5で、正方形に切り出しても頭と顎が切れないよう上下に余白を残す。文字、数値、ロゴ、透かし、職業を示す小道具（白衣・スーツ・制服・名札など）は描かない。写っているのは1人だけ。\n\n人物：27歳の男性。身長168cm、小柄で標準的な体格。\n顔立ち：顔の横幅に対して目元は控えめで、頬に量感がある。鼻先はやや大きく丸く、顎は小さめで輪郭がくっきり整いすぎていない。顔の各部の比率に自然なばらつきがあり、左右も完全には揃っていない。\n印象：見た目の第一印象ではかなり不利になりやすい、整った美形ではないごく普通の人。顔の各部の比率や輪郭のまとまりに、自然な範囲で複数の個性がある。\n髪型：普通の黒い短髪。\n服装：くすんだ緑の無地スウェット。\n避けること：整った美男子を地味な服装に変えた人物にはしない。老化、汚れ、傷、誇張した表情、暗い照明、ぼかし、低画質で印象を変えない。カリカチュアのように誇張しない。",
+          "attempts": [
+            {
+              "at": "2026-10-18T09:25:48.203Z",
+              "model": "gemini-3-pro-image",
+              "outcome": "ok",
+              "httpStatus": 200,
+              "billable": true,
+              "usage": {
+                "total_tokens": 2014,
+                "total_input_tokens": 383,
+                "input_tokens_by_modality": [
+                  {
+                    "modality": "text",
+                    "tokens": 383
+                  }
+                ],
+                "total_cached_tokens": 0,
+                "total_output_tokens": 1299,
+                "output_tokens_by_modality": [
+                  {
+                    "modality": "image",
+                    "tokens": 1120
+                  }
+                ],
+                "total_tool_use_tokens": 0,
+                "total_thought_tokens": 332
+              },
+              "interactionId": "v1_ChduSkRVYXNtM000TEtyZmNQLVBhR29BVRIXbkpEVWFzbTNNNExLcmZjUC1QYUdvQVU"
+            }
+          ],
+          "sha256": "a701e7ab9344d567be010c1fe842fe36edd4e004122e33ed01fbb8360d0c40a3",
+          "bytes": 701178,
+          "mimeType": "image/jpeg",
+          "approval": "awaiting_user_review",
+          "reviewFile": "reviews/portrait-review-2026-10-18T09-29-21-670Z.json"
+        }
+      ],
+      "failedAttempts": [],
+      "adoptedVersion": 1
+    },
+    "M05": {
+      "id": "M05",
+      "kind": "playable_portrait",
+      "versions": [
+        {
+          "version": 1,
+          "file": "portraits/M05/M05_v1.jpg",
+          "createdAt": "2026-10-18T09:26:34.158Z",
+          "model": "gemini-3-pro-image",
+          "settings": {
+            "aspectRatio": "4:5",
+            "imageSize": "1K"
+          },
+          "prompt": "架空の日本人成人1人の、マッチングアプリに使う自然な人物写真。目線の高さから撮影した正面に近い胸上の構図。柔らかい昼の自然光、落ち着いた無地の背景（明るいグレーベージュ）、普通に清潔な私服。口を閉じた穏やかな表情。肌の質感や軽い左右差を残し、商業広告のモデル写真のように顔を整えない。美肌加工、美容補正、輪郭の細身化、目の拡大はしない。年齢は指定どおり。縦4:5で、正方形に切り出しても頭と顎が切れないよう上下に余白を残す。文字、数値、ロゴ、透かし、職業を示す小道具（白衣・スーツ・制服・名札など）は描かない。写っているのは1人だけ。\n\n人物：31歳の男性。身長170cm、中肉中背。\n顔立ち：やや四角い輪郭、奥二重、標準的な鼻と口、自然な軽い左右差。\n印象：日常でよく見かける平均的な人物。良くも悪くも極端に目立たない。\n髪型：短めの黒髪、特にセットしていない。\n服装：ライトブルーの無地シャツ。\n避けること：老化、汚れ、傷、誇張した表情、暗い照明、ぼかし、低画質で印象を変えない。カリカチュアのように誇張しない。",
+          "attempts": [
+            {
+              "at": "2026-10-18T09:26:10.954Z",
+              "model": "gemini-3-pro-image",
+              "outcome": "ok",
+              "httpStatus": 200,
+              "billable": true,
+              "usage": {
+                "total_tokens": 1872,
+                "total_input_tokens": 307,
+                "input_tokens_by_modality": [
+                  {
+                    "modality": "text",
+                    "tokens": 307
+                  }
+                ],
+                "total_cached_tokens": 0,
+                "total_output_tokens": 1278,
+                "output_tokens_by_modality": [
+                  {
+                    "modality": "image",
+                    "tokens": 1120
+                  }
+                ],
+                "total_tool_use_tokens": 0,
+                "total_thought_tokens": 287
+              },
+              "interactionId": "v1_ChdzNURVYXVmMEVwR24ycm9QM2Q2VG9BSRIXczVEVWF1ZjBFcEduMnJvUDNkNlRvQUk"
+            }
+          ],
+          "sha256": "8a59df6afaf8197036ade756dd76dad4fea943f5c493b69dc311356b5ee65dd0",
+          "bytes": 638269,
+          "mimeType": "image/jpeg",
+          "approval": "awaiting_user_review",
+          "reviewFile": "reviews/portrait-review-2026-10-18T09-29-21-670Z.json"
+        }
+      ],
+      "failedAttempts": [],
+      "adoptedVersion": 1
+    },
+    "M01": {
+      "id": "M01",
+      "kind": "playable_portrait",
+      "versions": [
+        {
+          "version": 1,
+          "file": "portraits/M01/M01_v1.jpg",
+          "createdAt": "2026-10-18T09:26:56.868Z",
+          "model": "gemini-3-pro-image",
+          "settings": {
+            "aspectRatio": "4:5",
+            "imageSize": "1K"
+          },
+          "prompt": "架空の日本人成人1人の、マッチングアプリに使う自然な人物写真。目線の高さから撮影した正面に近い胸上の構図。柔らかい昼の自然光、落ち着いた無地の背景（明るいグレーベージュ）、普通に清潔な私服。口を閉じた穏やかな表情。肌の質感や軽い左右差を残し、商業広告のモデル写真のように顔を整えない。美肌加工、美容補正、輪郭の細身化、目の拡大はしない。年齢は指定どおり。縦4:5で、正方形に切り出しても頭と顎が切れないよう上下に余白を残す。文字、数値、ロゴ、透かし、職業を示す小道具（白衣・スーツ・制服・名札など）は描かない。写っているのは1人だけ。\n\n人物：32歳の男性。身長183cm、長身で均整のとれた体格。\n顔立ち：整った卵型の輪郭、すっきり通った鼻筋、澄んだ切れ長の二重、バランスの良い眉と口元。\n印象：同じ撮影条件でも目を引く、際立って整った顔立ちの人物。画風や加工を変えずに自然な写真のまま。\n髪型：清潔感のある短めの黒髪、自然なセンターパート。\n服装：ネイビーの無地クルーネックニット。\n避けること：白衣や聴診器など職業を示す物は描かない。",
+          "attempts": [
+            {
+              "at": "2026-10-18T09:26:34.189Z",
+              "model": "gemini-3-pro-image",
+              "outcome": "ok",
+              "httpStatus": 200,
+              "billable": true,
+              "usage": {
+                "total_tokens": 1915,
+                "total_input_tokens": 313,
+                "input_tokens_by_modality": [
+                  {
+                    "modality": "text",
+                    "tokens": 313
+                  }
+                ],
+                "total_cached_tokens": 0,
+                "total_output_tokens": 1315,
+                "output_tokens_by_modality": [
+                  {
+                    "modality": "image",
+                    "tokens": 1120
+                  }
+                ],
+                "total_tool_use_tokens": 0,
+                "total_thought_tokens": 287
+              },
+              "interactionId": "v1_Chd5cERVYXNHbUlQYnQycm9QNWNpWHlBURIXeXBEVWFzR21JUGJ0MnJvUDVjaVh5QVE"
+            }
+          ],
+          "sha256": "71c8e7a6cbff61814584638fe34ecb0c3e9a52fc65ef17466db77620ffbdc392",
+          "bytes": 632247,
+          "mimeType": "image/jpeg",
+          "approval": "awaiting_user_review",
+          "reviewFile": "reviews/portrait-review-2026-10-18T09-29-21-670Z.json"
+        }
+      ],
+      "failedAttempts": [],
+      "adoptedVersion": 1
+    },
+    "F06": {
+      "id": "F06",
+      "kind": "playable_portrait",
+      "versions": [
+        {
+          "version": 1,
+          "file": "portraits/F06/F06_v1.jpg",
+          "createdAt": "2026-10-18T09:27:19.314Z",
+          "model": "gemini-3-pro-image",
+          "settings": {
+            "aspectRatio": "4:5",
+            "imageSize": "1K"
+          },
+          "prompt": "架空の日本人成人1人の、マッチングアプリに使う自然な人物写真。目線の高さから撮影した正面に近い胸上の構図。柔らかい昼の自然光、落ち着いた無地の背景（明るいグレーベージュ）、普通に清潔な私服。口を閉じた穏やかな表情。肌の質感や軽い左右差を残し、商業広告のモデル写真のように顔を整えない。美肌加工、美容補正、輪郭の細身化、目の拡大はしない。年齢は指定どおり。縦4:5で、正方形に切り出しても頭と顎が切れないよう上下に余白を残す。文字、数値、ロゴ、透かし、職業を示す小道具（白衣・スーツ・制服・名札など）は描かない。写っているのは1人だけ。\n\n人物：24歳の女性。身長155cm、小柄。\n顔立ち：やや面長で、顔全体に対して目元は小さめ。鼻と口元の存在感があり、口元から顎にかけての比率に自然な不均衡がある。モデルのような小顔や細いV字の輪郭には整えない。ほぼ素顔に近い自然なメイク。\n印象：見た目の第一印象ではかなり不利になりやすい、整った美形ではないごく普通の人。顔の各部の比率や輪郭のまとまりに、自然な範囲で複数の個性がある。\n髪型：肩にかかる普通の黒髪。\n服装：薄いベージュの無地ニット。\n避けること：美人モデルを眼鏡や髪型で地味にした人物にはしない。眼鏡はかけない。年齢以上に老けさせず、普通の清潔さと穏やかな表情を保つ。老化、汚れ、傷、誇張した表情、暗い照明、ぼかし、低画質で印象を変えない。カリカチュアのように誇張しない。",
+          "attempts": [
+            {
+              "at": "2026-10-18T09:26:56.875Z",
+              "model": "gemini-3-pro-image",
+              "outcome": "ok",
+              "httpStatus": 200,
+              "billable": true,
+              "usage": {
+                "total_tokens": 1964,
+                "total_input_tokens": 400,
+                "input_tokens_by_modality": [
+                  {
+                    "modality": "text",
+                    "tokens": 400
+                  }
+                ],
+                "total_cached_tokens": 0,
+                "total_output_tokens": 1315,
+                "output_tokens_by_modality": [
+                  {
+                    "modality": "image",
+                    "tokens": 1120
+                  }
+                ],
+                "total_tool_use_tokens": 0,
+                "total_thought_tokens": 249
+              },
+              "interactionId": "v1_Chc0WkRVYXNtbEQtX3ByZmNQXzUzR2tRaxIXNFpEVWFzbWxELV9wcmZjUF81M0drUWs"
+            }
+          ],
+          "sha256": "1b9a6e2da7e26d6c7203d74b7af21561b7eac41a0319b998c45798fb04532c29",
+          "bytes": 731388,
+          "mimeType": "image/jpeg",
+          "approval": "awaiting_user_review",
+          "reviewFile": "reviews/portrait-review-2026-10-18T09-29-21-670Z.json"
+        }
+      ],
+      "failedAttempts": [],
+      "adoptedVersion": 1
+    },
+    "F03": {
+      "id": "F03",
+      "kind": "playable_portrait",
+      "versions": [
+        {
+          "version": 1,
+          "file": "portraits/F03/F03_v1.jpg",
+          "createdAt": "2026-10-18T09:27:40.187Z",
+          "model": "gemini-3-pro-image",
+          "settings": {
+            "aspectRatio": "4:5",
+            "imageSize": "1K"
+          },
+          "prompt": "架空の日本人成人1人の、マッチングアプリに使う自然な人物写真。目線の高さから撮影した正面に近い胸上の構図。柔らかい昼の自然光、落ち着いた無地の背景（明るいグレーベージュ）、普通に清潔な私服。口を閉じた穏やかな表情。肌の質感や軽い左右差を残し、商業広告のモデル写真のように顔を整えない。美肌加工、美容補正、輪郭の細身化、目の拡大はしない。年齢は指定どおり。縦4:5で、正方形に切り出しても頭と顎が切れないよう上下に余白を残す。文字、数値、ロゴ、透かし、職業を示す小道具（白衣・スーツ・制服・名札など）は描かない。写っているのは1人だけ。\n\n人物：30歳の女性。身長158cm、小柄で標準的な体格。\n顔立ち：やや丸顔、奥二重、標準的な鼻と口、自然な軽い左右差。ナチュラルメイク。\n印象：日常でよく見かける平均的な人物。良くも悪くも極端に目立たない。\n髪型：肩につく長さの黒髪ストレート。\n服装：ネイビーの無地カットソー。\n避けること：老化、汚れ、傷、誇張した表情、暗い照明、ぼかし、低画質で印象を変えない。カリカチュアのように誇張しない。",
+          "attempts": [
+            {
+              "at": "2026-10-18T09:27:19.321Z",
+              "model": "gemini-3-pro-image",
+              "outcome": "ok",
+              "httpStatus": 200,
+              "billable": true,
+              "usage": {
+                "total_tokens": 1843,
+                "total_input_tokens": 312,
+                "input_tokens_by_modality": [
+                  {
+                    "modality": "text",
+                    "tokens": 312
+                  }
+                ],
+                "total_cached_tokens": 0,
+                "total_output_tokens": 1286,
+                "output_tokens_by_modality": [
+                  {
+                    "modality": "image",
+                    "tokens": 1120
+                  }
+                ],
+                "total_tool_use_tokens": 0,
+                "total_thought_tokens": 245
+              },
+              "interactionId": "v1_Chc5NURVYXJfREpON3JyZmNQNXBucDhBaxIXOTVEVWFyX0RKTjdycmZjUDVwbnA4QWs"
+            }
+          ],
+          "sha256": "1865f6140e9871fe504f4dcc9e99ce14c6f5e61b89ee10bb493f68272adcf6bc",
+          "bytes": 652298,
+          "mimeType": "image/jpeg",
+          "approval": "awaiting_user_review",
+          "reviewFile": "reviews/portrait-review-2026-10-18T09-29-21-670Z.json"
+        }
+      ],
+      "failedAttempts": [],
+      "adoptedVersion": 1
+    },
+    "F01": {
+      "id": "F01",
+      "kind": "playable_portrait",
+      "versions": [
+        {
+          "version": 1,
+          "file": "portraits/F01/F01_v1.jpg",
+          "createdAt": "2026-10-18T09:27:59.384Z",
+          "model": "gemini-3-pro-image",
+          "settings": {
+            "aspectRatio": "4:5",
+            "imageSize": "1K"
+          },
+          "prompt": "架空の日本人成人1人の、マッチングアプリに使う自然な人物写真。目線の高さから撮影した正面に近い胸上の構図。柔らかい昼の自然光、落ち着いた無地の背景（明るいグレーベージュ）、普通に清潔な私服。口を閉じた穏やかな表情。肌の質感や軽い左右差を残し、商業広告のモデル写真のように顔を整えない。美肌加工、美容補正、輪郭の細身化、目の拡大はしない。年齢は指定どおり。縦4:5で、正方形に切り出しても頭と顎が切れないよう上下に余白を残す。文字、数値、ロゴ、透かし、職業を示す小道具（白衣・スーツ・制服・名札など）は描かない。写っているのは1人だけ。\n\n人物：27歳の女性。身長164cm、やや長身で細身。\n顔立ち：小さめに整った卵型の輪郭、大きすぎない澄んだアーモンド形の二重、通った鼻筋、バランスの良い唇。ナチュラルメイク。\n印象：同じ撮影条件でも目を引く、際立って整った顔立ちの人物。画風や加工を変えずに自然な写真のまま。\n髪型：肩下までのダークブラウンの髪を自然に下ろす。\n服装：アイボリーの無地ブラウス。\n避けること：広告モデルのような過剰な加工や画風の変化はしない。",
+          "attempts": [
+            {
+              "at": "2026-10-18T09:27:40.193Z",
+              "model": "gemini-3-pro-image",
+              "outcome": "ok",
+              "httpStatus": 200,
+              "billable": true,
+              "usage": {
+                "total_tokens": 1775,
+                "total_input_tokens": 314,
+                "input_tokens_by_modality": [
+                  {
+                    "modality": "text",
+                    "tokens": 314
+                  }
+                ],
+                "total_cached_tokens": 0,
+                "total_output_tokens": 1292,
+                "output_tokens_by_modality": [
+                  {
+                    "modality": "image",
+                    "tokens": 1120
+                  }
+                ],
+                "total_tool_use_tokens": 0,
+                "total_thought_tokens": 169
+              },
+              "interactionId": "v1_ChdESkhVYXJLaUh2UHVyZmNQOEtlLTJROBIXREpIVWFyS2lIdlB1cmZjUDhLZS0yUTg"
+            }
+          ],
+          "sha256": "5352cae182e4c2703f3c6116f4dbd94752e11219db5ef022f7668e0f79e54e76",
+          "bytes": 666132,
+          "mimeType": "image/jpeg",
+          "approval": "awaiting_user_review",
+          "reviewFile": "reviews/portrait-review-2026-10-18T09-29-21-670Z.json"
+        }
+      ],
+      "failedAttempts": [],
+      "adoptedVersion": 1
+    }
+  },
+  "reviews": [
+    {
+      "file": "reviews/portrait-review-2026-10-18T09-29-21-670Z.json",
+      "createdAt": "2026-10-18T09:31:40.764Z",
+      "kind": "portrait",
+      "model": "gemini-3.8-flash",
+      "targets": [
+        "M07",
+        "M05",
+        "M01",
+        "F06",
+        "F03",
+        "F01"
+      ]
+    },
+    {
+      "file": "reviews/screen-review-2026-10-18T09-56-14-434Z.json",
+      "createdAt": "2026-10-18T09:56:14.444Z",
+      "kind": "screen",
+      "model": "gemini-3.8-flash",
+      "targets": [
+        "M05-390/01-select.png",
+        "M05-390/07-home-week2.png",
+        "M05-390/04-search.png",
+        "M05-390/06-chat-w9.png",
+        "M05-390/event-02.png",
+        "M05-390/08-mypage.png",
+        "M05-390/10-result-gameover.png",
+        "F04-1280/01-select.png",
+        "F04-1280/07-home-week2.png",
+        "F04-1280/10-result-cleared.png"
+      ]
+    },
+    {
+      "file": "reviews/playlog-review-2026-10-18T09-56-53-243Z.json",
+      "createdAt": "2026-10-18T09:56:53.269Z",
+      "kind": "playlog",
+      "model": "gemini-3.8-flash",
+      "targets": [
+        "F02-pl-3.md",
+        "F08-pl-4.md",
+        "M01-pl-2.md",
+        "M05-pl-1.md",
+        "M09-pl-5.md"
+      ]
+    },
+    {
+      "file": "reviews/playlog-review-2026-10-18T10-07-47-583Z.json",
+      "createdAt": "2026-10-18T10:07:47.590Z",
+      "kind": "playlog",
+      "model": "gemini-3.8-flash",
+      "targets": [
+        "F02-pl-3.md",
+        "F08-pl-4.md",
+        "M01-pl-2.md",
+        "M05-pl-1.md",
+        "M09-pl-5.md"
+      ]
+    },
+    {
+      "file": "reviews/screen-review-2026-10-18T10-10-39-067Z.json",
+      "createdAt": "2026-10-18T10:10:39.073Z",
+      "kind": "screen",
+      "model": "gemini-3.8-flash",
+      "targets": [
+        "M05-390/01-select.png",
+        "M05-390/07-home-week2.png",
+        "M05-390/04-search.png",
+        "M05-390/06-chat-w9.png",
+        "M05-390/event-02.png",
+        "M05-390/08-mypage.png",
+        "M05-390/10-result-gameover.png",
+        "F04-1280/01-select.png",
+        "F04-1280/07-home-week2.png",
+        "F04-1280/10-result-cleared.png"
+      ]
+    }
+  ],
+  "npcImages": {
+    "status": "not_started",
+    "note": "NPC画像の全量生成・自動生成・挿絵・表情差分は今回の範囲外。NPCは共通アイコンを表示する。"
+  }
+}

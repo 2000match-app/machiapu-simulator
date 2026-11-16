@@ -1,0 +1,573 @@
+{
+  "createdAt": "2026-10-18T09:56:14.435Z",
+  "model": "gemini-3.8-flash",
+  "note": "画面の見え方のレビュー。操作可能性と減点の正しさはブラウザ操作・状態検証で確認する。",
+  "results": {
+    "M05-390/01-select.png": {
+      "label": "スマホ幅：趣旨説明とキャラ選択",
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "screen_summary": "マッチングアプリ体験ゲームの導入・キャラクター選択画面です。上部にゲームの趣旨およびクリア・失敗条件の説明があり、その下に性別絞り込みタブとキャラクター一覧（2列グリッドのカード形式）が配置されています。",
+        "issues": [
+          {
+            "item": "tone",
+            "area": "キャラクターカードの名前表示（「M01 蒼」「M02 圭」）",
+            "problem": "キャラクター名の先頭に「M01」「M02」といった内部識別用コードと思われるIDが付記されており、管理画面のような印象を与えています。",
+            "severity": "medium",
+            "suggestion": "内部管理用コードを非表示にし、「蒼 ・ 32」「圭 ・ 34」のようにプレイヤー向けの名前と年齢のみを表示してください。"
+          },
+          {
+            "item": "tone",
+            "area": "2枚目以降のキャラクターアイコン画像",
+            "problem": "プレースホルダー画像上に「画像未制作（仮表示）」という開発・実装用のステータス文言がそのまま表示されています。",
+            "severity": "medium",
+            "suggestion": "本番用のイラスト・写真を差し替えるか、仮置きの場合でも「NO IMAGE」や「準備中」などユーザー向けの世界観を壊さない表現に調整してください。"
+          }
+        ],
+        "good_points": [
+          "冒頭にゲームのクリア条件（連続90日、ライフ1以上）や失敗条件（ライフ0）が箇条書きで明瞭に説明されています。",
+          "スマートフォン幅に適した2列グリッドでキャラクター情報（写真、名前、年齢、職業、星評価）が整然と配置されており視認性が高いです。",
+          "上部に「すべて」「男性10人」「女性10人」の切り替えタブがあり、対象キャラクターの絞り込み機能がシンプルで直感的に配置されています。"
+        ]
+      }
+    },
+    "M05-390/07-home-week2.png": {
+      "label": "スマホ幅：活動ホーム",
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "screen_summary": "マッチングアプリ体験ゲームの活動ホーム画面。プレイヤー情報・ステータス（ライフ、経過日数、予算）を上部に表示し、「今週やること」、メイン進行ボタン（1週間すすめる／7日間アプリを休む）、「最近のできごと」のログ、下部グローバルナビゲーションが配置されています。",
+        "issues": [
+          {
+            "item": "choice_clarity",
+            "area": "「今週やること」カード内",
+            "problem": "「未確認の受信いいね」や「さがす」といった行動の導線と、「反応待ちのいいね 0」「累計マッチ 1」などの状況ステータス表示が同じ「今週やること」枠内に混在しており、タップ可能なタスクなのか単なる状況数値なのかが分かりにくくなっています。",
+            "severity": "medium",
+            "suggestion": "「今週のアクション（やること）」と「活動状況（ステータス数値）」のエリアをカード内で見出し等で分けるか、別々のカードとして分離すると直感的に識別しやすくなります。"
+          },
+          {
+            "item": "readability",
+            "area": "「最近のできごと」カード下の補足テキスト",
+            "problem": "「悠斗の月の活動予算は2.5万円。予算は30日ごとに更新されます。」のテキストが薄いグレー色で表示されており、背景のライトグレーに対してコントラストが低く読みにくくなっています。",
+            "severity": "low",
+            "suggestion": "文字色を一段濃いグレーや黒色寄りに調整して背景とのコントラストを確保するか、上部の予算表示エリア周辺のツールチップやサブテキストとして統合することを検討してください。"
+          }
+        ],
+        "good_points": [
+          "ライフゲージ、経過日数、年齢、当月支出と予算が画面上部にコンパクトかつ一目で把握できるように整理されています。",
+          "ゲームの主進行となる「1週間すすめる」ボタンが鮮やかなアクセントカラーかつ大きな押しボタンで強調されており、迷わず次に進められます。",
+          "「最近のできごと」に日ごとのアクションログが時系列でまとまっており、直前の経緯（マッチングや返信状況）が即座に確認できます。",
+          "一般的なマッチングアプリを踏襲した下部タブバー構成（通知バッジ付き）になっており、世界観の再現度が高いです。"
+        ]
+      }
+    },
+    "M05-390/04-search.png": {
+      "label": "スマホ幅：候補と検索",
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "screen_summary": "マッチングアプリ体験ゲームの「さがす」画面。上部にユーザー情報・ライフ・経過時間・支出状況があり、中央に年齢や距離などを設定する「希望条件」カード、下部に「候補」カードとボトムナビゲーションが配置されている。",
+        "issues": [
+          {
+            "item": "mobile_layout",
+            "area": "画面下部「候補」カード",
+            "problem": "「希望条件」カードが縦に長く画面の大部分を占めているため、下部の「候補」セクションの本体（候補者の詳細や一覧）が画面外に押し出され、枠線のみが見切れてしまっている。",
+            "severity": "medium",
+            "suggestion": "希望条件カードをアコーディオン形式などで折りたためるようにするか、コンパクトにまとめることで、ファーストビュー内で候補者の一覧が目に入るようにレイアウトを調整すると良いです。"
+          },
+          {
+            "item": "life_time_money_clarity",
+            "area": "画面上部ステータス表示部",
+            "problem": "「0日経過 31歳 今月 0.4万円／予算 2.5万円」の文字が小さく薄いグレーで表示されており、ゲーム進行に関わる重要パラメータ（日数・予算）が目立たず見落としやすい。",
+            "severity": "low",
+            "suggestion": "文字サイズを少し上げるか、テキストのコントラストを高め、アイコンやラベルを添えて区切りを明瞭にすることで視認性を向上させると良いです。"
+          }
+        ],
+        "good_points": [
+          "「条件に合う活動中の相手：約3,200人」や、条件緩和時の増減人数（+1,100人、+647人）が色分けされて直感的に把握しやすい。",
+          "下部のタブバーが実際の一般的なマッチングアプリを踏襲した構成になっており、現在の画面（さがす）も色付きで分かりやすい。",
+          "希望条件の入力項目（年齢、距離、外見、年収など）がすっきりと整理されており、選択項目が明瞭である。"
+        ]
+      }
+    },
+    "M05-390/06-chat-w9.png": {
+      "label": "スマホ幅：トーク",
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "screen_summary": "マッチング相手「ユミ」とのトーク画面。画面上部に主人公ステータス（ライフ・期間・予算）、中央にチャットログ、下部に返信の選択肢が表示されている。",
+        "issues": [
+          {
+            "item": "tone",
+            "area": "トーク相手プロフィール表示（ヘッダー「ユミ (26)」の下部）",
+            "problem": "「写真あり・外見2/5」と表記されており、ゲーム内部のパラメータと思われる「外見2/5」が直接露出しているため、マッチングアプリの世界観を損ね管理画面のように見える。",
+            "severity": "medium",
+            "suggestion": "内部パラメータ数値をそのまま表示せず、アプリのプロフィールらしい自然な言葉（雰囲気や特徴のテキスト）に置き換えるか、非表示にすることを推奨します。"
+          }
+        ],
+        "good_points": [
+          "画面上部にライフゲージ・経過時間・予算と支出がコンパクトに整理されており、状況が一目で把握しやすい。",
+          "一般的なメッセージアプリに準じたチャットバブルと選択肢ボタンのレイアウトになっており、視線誘導がスムーズ。",
+          "返信の選択肢が押しやすいボタンとして明確に提示されており、次のアクションが分かりやすい。"
+        ]
+      }
+    },
+    "M05-390/event-02.png": {
+      "label": "スマホ幅：デートの場面",
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "screen_summary": "マイページ（ダッシュボード）を背景に、下部からデートイベント「あやのとのデート」の選択肢モーダルが表示されている場面です。状況を説明するテキストと3つの行動選択肢が提示されています。",
+        "issues": [
+          {
+            "item": "life_time_money_clarity",
+            "area": "モーダル上部の日付表記および背景のステータスバー",
+            "problem": "背景のステータス情報では「2か月1日経過」と月日単位で表記されているのに対し、モーダル内では「61日目（土）」と総日数表記になっており、時間経過の表現に揺らぎがあります。",
+            "severity": "low",
+            "suggestion": "「61日目（2か月目）」のように併記するか、ゲーム全体で経過日数の表現単位を統一すると把握しやすくなります。"
+          },
+          {
+            "item": "life_time_money_clarity",
+            "area": "モーダル右下の「ライフ 73」",
+            "problem": "モーダル右下のライフ表示が薄いグレーのテキストのみで配置されており、背景色とのコントラストが低く見落としやすい上、最大値に対する割合が直感的に掴みにくいです。",
+            "severity": "low",
+            "suggestion": "文字のコントラストを上げる、ハートなどのアイコンを添える、または簡易ゲージを付けることで残量が直感的に伝わるように改善が期待できます。"
+          }
+        ],
+        "good_points": [
+          "デート中のシチュエーションと3つの選択肢が簡潔かつ明確で、プレイヤーが次の行動を直感的に選択しやすいです（choice_clarity）。",
+          "モーダル表示によって背面の情報と現在の対話イベントが明確に分離されており、モバイル幅に綺麗に収まっています（mobile_layout）。",
+          "文字サイズや行間が適切に保たれており、イベントテキストの可読性が良好です（readability）。"
+        ]
+      }
+    },
+    "M05-390/08-mypage.png": {
+      "label": "スマホ幅：マイページ（写真公開・休息・履歴）",
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "screen_summary": "マッチングアプリ体験ゲームのマイページ画面です。上部にプレイヤーのステータス情報（ライフ、経過時間、予算）、中央にプロフィール情報（写真と属性情報）、下部に「休む・見直す」の行動説明カードと固定ボトムナビゲーションが表示されています。",
+        "issues": [
+          {
+            "item": "clipping",
+            "area": "画面下部「休む・見直す」カード内",
+            "problem": "「休む・見直す」カード内の操作ボタンと思われる要素が、固定フッター（ボトムナビゲーションバー）に被って上部しか見えず、テキストや全体が完全に隠れて見切れています。",
+            "severity": "high",
+            "suggestion": "フッターバーの高さ分の下部パディング（padding-bottom）をコンテンツエリアに確保し、最下部までスクロールした際にボタン全体が露出するようにしてください。"
+          },
+          {
+            "item": "readability",
+            "area": "プロフィールカード内の項目名「交際開始の希望」",
+            "problem": "項目名ラベルの幅が足りず、「交際開始の希」と「望」で不自然に改行されています。",
+            "severity": "low",
+            "suggestion": "項目名列の幅を広げるか、フォントサイズを微調整して1行で収まるようにするか、「交際希望時期」などの簡潔な表現に調整してください。"
+          },
+          {
+            "item": "choice_clarity",
+            "area": "プロフィール画像部分",
+            "problem": "画像上に「確認待ちの画像」というバッジが表示されている一方で、画像下には「相手にも見えている写真」と記載されており、現在この写真が相手に公開されているのか審査中なのかが分かりにくい状態になっています。",
+            "severity": "medium",
+            "suggestion": "審査中（確認待ち）であれば「相手にはまだ非公開」等にするか、相手に見えている状態ならバッジの文言を「公開中」とするなど、写真の公開ステータスの整合性を取ってください。"
+          }
+        ],
+        "good_points": [
+          "画面上部にライフの残量ゲージ、経過期間、年齢、今月の支出と予算がコンパクトに整理されており、ゲームの進行状況が一目で把握しやすいです。",
+          "白を基調としたカード型UIで情報が区切られており、フォントのメリハリも効いていて全体的にすっきりとしたレイアウトになっています。"
+        ]
+      }
+    },
+    "M05-390/10-result-gameover.png": {
+      "label": "スマホ幅：結果（失敗）",
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "screen_summary": "ゲームオーバー時の結果画面（モバイル幅）。主人公のプロフィール、ゲームオーバー理由、これまでの経過ステータス（期間・支出・いいね・段階・ライフ）、および失敗タイプに応じた事実の振り返りリストが表示されています。",
+        "issues": [
+          {
+            "item": "tone",
+            "area": "最上部カードのプロフィール欄",
+            "problem": "名前の前に「M08 直人」と開発用・管理用のキャラクター識別子（ID）がそのまま露出しています。",
+            "severity": "medium",
+            "suggestion": "プレイヤー向けには「直人（男性・派遣ITサポート）」のようにID部分を削除して表示してください。"
+          },
+          {
+            "item": "tone",
+            "area": "最上部カードのアイコン画像内",
+            "problem": "アバター領域に「画像未制作（仮表示）」という開発・制作過程のプレースホルダーテキストが表示されています。",
+            "severity": "medium",
+            "suggestion": "正式なイラストや汎用のシルエットアイコンに差し替えてください。"
+          },
+          {
+            "item": "crowding",
+            "area": "中段の「経過」カードおよび下段の「事実として起きたこと」リスト",
+            "problem": "「経過」で表示されている数値（期間、累計支出、いいね数、マッチ〜交際の段階）と、下段の箇条書きの内容がほぼ重複しており、同じ情報が縦に並んで画面を圧迫しています。また箇条書き末尾の「3か月の活動」も先頭の「活動98日（3か月8日）」と重複しています。",
+            "severity": "medium",
+            "suggestion": "基本データは「経過」に集約し、「事実として起きたこと」では今回の失敗要因に直結する分析や特筆すべきトピックのみに絞り込むなど、情報の重複を整理してください。"
+          },
+          {
+            "item": "readability",
+            "area": "最上部カードのタイトル・説明文",
+            "problem": "赤字の「GAME OVER」見出しの直下に、再び「GAME OVER : 不運・相互の好みの不一致…」と表記が重複して記載されています。",
+            "severity": "low",
+            "suggestion": "説明文側の先頭にある「GAME OVER : 」を省き、「不運・相互の好みの不一致でライフが尽きました（直人）」とすることで重複を解消してください。"
+          }
+        ],
+        "good_points": [
+          "カード型レイアウトで区分けされており、スマートフォン幅に対して要素のはみ出しや文字の途切れがなくすっきりと収まっています。",
+          "「経過」セクションにおいて、期間・累計支出・いいね・ライフなどの主要な数値がラベルごとに整列してまとめられており、ゲーム結果が把握しやすいです。",
+          "赤色で目立つ「GAME OVER」の文字と理由が上部に配置されており、終了事由が明確です。"
+        ]
+      }
+    },
+    "F04-1280/01-select.png": {
+      "label": "PC幅：キャラ選択",
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "screen_summary": "PC幅におけるキャラクター選択画面。上部にゲームのルール説明とフィルター、左側にキャラクター一覧カード、右側に選択中キャラクター（M05 悠斗）の詳細プロフィールや攻略ヒントが表示されている。",
+        "issues": [
+          {
+            "item": "tone",
+            "area": "左側キャラクターカードおよび右側詳細パネルの見出し",
+            "problem": "「画像未制作（仮表示）」という制作途中の文言がカード上に露出しているほか、「M01」「M05」といった内部管理用の識別IDがキャラクター名にそのまま表示されており、開発中画面・管理画面のような印象を与えている。",
+            "severity": "medium",
+            "suggestion": "「画像未制作（仮表示）」の注記を削除してシンプルな未設定用アイコン・シルエットに変更し、キャラクター名から「M05」などのコード番号を除去して自然な表記に統一する。"
+          },
+          {
+            "item": "clipping",
+            "area": "右側詳細パネルの下部",
+            "problem": "「クリアにつながる道」の見出し下で情報が途切れており、説明の続きやキャラクターを決定してゲームを開始するためのアクションボタンが見当たらない。",
+            "severity": "medium",
+            "suggestion": "詳細パネル内の余白やフォントサイズを調整して決定ボタンを画面内に収めるか、スクロール可能な領域であることが視覚的に分かるようにインジケータや固定フッターを配置する。"
+          }
+        ],
+        "good_points": [
+          "画面上部に「クリア」「失敗」の条件やゲームの前提が箇条書きで明瞭に整理されており、ルールが把握しやすい。",
+          "左側に一覧リスト、右側に詳細情報を配置した2カラム構成で、キャラクターの切り替えと比較がスムーズに行えるレイアウトになっている。",
+          "各項目のフォントサイズ・行間・コントラストが適切に保たれており、基本情報のテキスト（学歴、年収、活動予算など）の視認性が高い。"
+        ]
+      }
+    },
+    "F04-1280/07-home-week2.png": {
+      "label": "PC幅：活動ホーム＋履歴",
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "screen_summary": "PC幅レイアウトで表示されたマッチングアプリ体験ゲームの活動ホーム画面です。左側にスマホ型UIのメイン画面（ステータス、今週やること、期間進行ボタン、最近のできごと、下部ナビゲーション）、右側にライフ・支出の履歴パネルが配置されています。",
+        "issues": [
+          {
+            "item": "clipping",
+            "area": "画面下部「最近のできごと」カード",
+            "problem": "「最近のできごと」リストの最下部（6日目の項目周辺）およびカードの外枠が、固定表示されている下部ナビゲーションバーの背面に潜り込んで見切れています。",
+            "severity": "medium",
+            "suggestion": "リスト下部にナビゲーションバーの高さ分のパディング（余白）を設け、スクロール時や末尾表示時にも内容がナビゲーションと重ならず完全に視認できるように調整してください。"
+          },
+          {
+            "item": "tone",
+            "area": "「今週やること」カード下部のステータスタグ群",
+            "problem": "「反応待ちのいいね 0」「返信待ち 0」「累計マッチ 6」「会話 4」「対面 0」といったカプセルタグが並んでおり、ゲーム・アプリの世界観よりも管理ダッシュボードのような無機質な印象を与えています。",
+            "severity": "low",
+            "suggestion": "タグを羅列するのではなく、活動サマリーとしてアイコンを用いるか、マイページ等の詳細確認画面へ整理・集約することで、ホーム画面のすっきりとしたトーンを保つことができます。"
+          }
+        ],
+        "good_points": [
+          "画面最上部にライフゲージ、経過日数、年齢、今月の支出と予算がコンパクトに整理されており、プレイヤーの現状リソースが一目で把握しやすいです。",
+          "「1週間すすめる」「7日間アプリを休む」の主要アクションボタンが目立つ配色と大きなサイズで配置されており、次の行動選択が明快です。",
+          "PC幅を活かして右側に履歴カード（ライフの増減・支出）を独立配置しており、画面遷移なしで直近の変動要因が確認できます。"
+        ]
+      }
+    },
+    "F04-1280/10-result-cleared.png": {
+      "label": "PC幅：結果（クリア）",
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "screen_summary": "PC幅で表示されたマッチングアプリ体験ゲームのクリア結果画面です。達成状況、期間や累計支出・ライフ推移などの経過統計、ライフ損失の内訳グラフ、相手側の事情（結果解説）などがカード形式で表示されています。",
+        "issues": [
+          {
+            "item": "tone",
+            "area": "上部プロフィールカードのプレイヤー名表示",
+            "problem": "「F03 美咲（女性・会社員）」のように、キャラクター識別用の内部コード（F03）がプレイヤー向けの表示に残っており、管理画面のような印象を与えています。",
+            "severity": "medium",
+            "suggestion": "「美咲（女性・会社員）」のように内部コード「F03」を削除して表示してください。"
+          },
+          {
+            "item": "tone",
+            "area": "ライフ損失の内訳「できごと別」リスト",
+            "problem": "「E03 デート後の既読無視」「E17 普通に相性が合わず断られる」など、イベント管理用のIDコード（E03, E17など）がプレフィックスとしてそのまま露出しています。",
+            "severity": "medium",
+            "suggestion": "リスト表示から「E03」「E17」などのイベントIDを取り除き、イベント内容のテキストのみを表示するようにしてください。"
+          }
+        ],
+        "good_points": [
+          "経過カードにおいて、期間・累計支出・いいね・ライフの推移が整理されて並んでおり、ゲームプレイの成果が一目で把握しやすいです。",
+          "ライフ損失の内訳がバーグラフと具体的な数値で可視化されており、どの要因でライフが減ったのかが直感的に理解できます。",
+          "カード単位で情報が整然と区分けされており、文字サイズや余白のバランスが良く高い可読性が保たれています。"
+        ]
+      }
+    }
+  },
+  "attempts": [
+    {
+      "at": "2026-10-18T09:53:16.506Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2730,
+        "total_input_tokens": 1277,
+        "input_tokens_by_modality": [
+          {
+            "modality": "image",
+            "tokens": 1078
+          },
+          {
+            "modality": "text",
+            "tokens": 199
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 435,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 1018
+      },
+      "interactionId": "v1_ChdEWmZVYXMzcENOelY5dE1QcmMySGdRWRIXRFpmVWFzM3BDTnpWOXRNUHJjMkhnUVk"
+    },
+    {
+      "at": "2026-10-18T09:53:35.096Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2927,
+        "total_input_tokens": 1273,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 195
+          },
+          {
+            "modality": "image",
+            "tokens": 1078
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 549,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 1105
+      },
+      "interactionId": "v1_ChdINWZVYXVDTkdmSFoxZThQdHVUYm9BOBIXSDVmVWF1Q05HZkhaMWU4UHR1VGJvQTg"
+    },
+    {
+      "at": "2026-10-18T09:53:52.513Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2806,
+        "total_input_tokens": 1274,
+        "input_tokens_by_modality": [
+          {
+            "modality": "image",
+            "tokens": 1078
+          },
+          {
+            "modality": "text",
+            "tokens": 196
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 497,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 1035
+      },
+      "interactionId": "v1_ChdNSmZVYXAyek5LRzN2cjBQMVpxQm1RWRIXTUpmVWFwMnpOS0czdnIwUDFacUJtUVk"
+    },
+    {
+      "at": "2026-10-18T09:54:09.972Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2508,
+        "total_input_tokens": 1272,
+        "input_tokens_by_modality": [
+          {
+            "modality": "image",
+            "tokens": 1078
+          },
+          {
+            "modality": "text",
+            "tokens": 194
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 291,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 945
+      },
+      "interactionId": "v1_ChdRcGZVYXRUN0ZJdlAxZThQdDdUVmlBNBIXUXBmVWF0VDdGSXZQMWU4UHQ3VFZpQTQ"
+    },
+    {
+      "at": "2026-10-18T09:54:25.769Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2928,
+        "total_input_tokens": 1274,
+        "input_tokens_by_modality": [
+          {
+            "modality": "image",
+            "tokens": 1078
+          },
+          {
+            "modality": "text",
+            "tokens": 196
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 463,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 1191
+      },
+      "interactionId": "v1_ChdVcGZVYXAtYkItdlIxZThQbWJhdG9BNBIXVXBmVWFwLWJCLXZSMWU4UG1iYXRvQTQ"
+    },
+    {
+      "at": "2026-10-18T09:54:44.110Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2549,
+        "total_input_tokens": 1280,
+        "input_tokens_by_modality": [
+          {
+            "modality": "image",
+            "tokens": 1078
+          },
+          {
+            "modality": "text",
+            "tokens": 202
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 568,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 701
+      },
+      "interactionId": "v1_ChdaSmZVYXFhSEhLMnl2cjBQMkpEc29RWRIXWkpmVWFxYUhISzJ5dnIwUDJKRHNvUVk"
+    },
+    {
+      "at": "2026-10-18T09:55:00.613Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2909,
+        "total_input_tokens": 1274,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 196
+          },
+          {
+            "modality": "image",
+            "tokens": 1078
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 680,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 955
+      },
+      "interactionId": "v1_ChdkSmZVYXFEd04tX2h2cjBQMm9Hb3VBOBIXZEpmVWFxRHdOLV9odnIwUDJvR291QTg"
+    },
+    {
+      "at": "2026-10-18T09:55:17.970Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2636,
+        "total_input_tokens": 1275,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 195
+          },
+          {
+            "modality": "image",
+            "tokens": 1080
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 459,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 902
+      },
+      "interactionId": "v1_ChdocGZVYXNHYUhPR012cjBQM29xY3NBOBIXaHBmVWFzR2FIT0dNdnIwUDNvcWNzQTg"
+    },
+    {
+      "at": "2026-10-18T09:55:38.267Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2702,
+        "total_input_tokens": 1277,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 197
+          },
+          {
+            "modality": "image",
+            "tokens": 1080
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 502,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 923
+      },
+      "interactionId": "v1_ChZtcGZVYXViZ0k1LXQ5dE1QemNLcEVREhZtcGZVYXViZ0k1LXQ5dE1QemNLcEVR"
+    },
+    {
+      "at": "2026-10-18T09:55:55.600Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2778,
+        "total_input_tokens": 1276,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 196
+          },
+          {
+            "modality": "image",
+            "tokens": 1080
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 424,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 1078
+      },
+      "interactionId": "v1_ChdxNWZVYXBhVVBMV0IxZThQdjhTN2tBWRIXcTVmVWFwYVVQTFdCMWU4UHY4UzdrQVk"
+    }
+  ]
+}

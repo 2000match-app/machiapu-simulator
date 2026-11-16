@@ -1,0 +1,869 @@
+{
+  "createdAt": "2026-10-18T09:31:40.764Z",
+  "model": "gemini-3.8-flash",
+  "note": "AIの比較結果は補助。容姿の5段階には主観があり、AIの数値だけで合否や現実の美醜を確定させない。人による確認を展開基準にする。",
+  "targets": [
+    "M07",
+    "M05",
+    "M01",
+    "F06",
+    "F03",
+    "F01"
+  ],
+  "individual": {
+    "M07": {
+      "kind": "individual",
+      "imageVersion": 1,
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "person_count": 1,
+        "apparent_age_min": 25,
+        "apparent_age_max": 30,
+        "checks": [
+          {
+            "item": "single_person",
+            "observation": "人物が1名のみ写っています。",
+            "location": "中央",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "age_match",
+            "observation": "20代半ばから後半に見え、指定の27歳相当です。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "face_integrity",
+            "observation": "目、鼻、口などのパーツに解剖学的な破綻はありません。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "hands_integrity",
+            "observation": "手はフレーム外のため写っていません。",
+            "location": "全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "background_integrity",
+            "observation": "均一な明るいグレー無地の背景で破綻はありません。",
+            "location": "背景全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "shooting_conditions",
+            "observation": "目線の高さ、正面胸上構図、自然光、口を閉じた表情など条件を満たしています。",
+            "location": "全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "text_watermark_props",
+            "observation": "文字、透かし、小道具の映り込みはありません。",
+            "location": "全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "over_beautification",
+            "observation": "肌の質感や非対称性が保持されており、広告風の過度な平滑化や拡大加工は見られません。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "design_match",
+            "observation": "【表れている特徴】控えめな目元、頬の量感、丸みのある鼻先、自然な左右差、黒短髪、くすんだ緑の無地スウェット。【表れていない特徴】特になし。",
+            "location": "顔および服装",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          }
+        ],
+        "summary": "指定された人物造作・衣装・撮影環境の各要件を満たしており、不自然な加工や破綻も確認されません。"
+      }
+    },
+    "M05": {
+      "kind": "individual",
+      "imageVersion": 1,
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "person_count": 1,
+        "apparent_age_min": 28,
+        "apparent_age_max": 34,
+        "checks": [
+          {
+            "item": "single_person",
+            "observation": "男性1名のみが写っています。",
+            "location": "画像全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "age_match",
+            "observation": "およそ30歳前後に見え、指定の31歳に概ね合致しています。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "face_integrity",
+            "observation": "目、鼻、口、輪郭など各パーツにAI生成特有の破綻は見られません。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "hands_integrity",
+            "observation": "胸上構図のため手は写っていません。",
+            "location": "画面外",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "background_integrity",
+            "observation": "無地の明るい背景で、歪みや乱れはありません。",
+            "location": "背景全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "shooting_conditions",
+            "observation": "目線高さの胸上構図、柔らかい自然光、口を閉じた表情など条件を満たしています。",
+            "location": "画像全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "text_watermark_props",
+            "observation": "文字、透かし、不自然な小道具は見当たりません。",
+            "location": "画像全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "over_beautification",
+            "observation": "肌の質感や凹凸、左右差が保たれており、モデル風の過度な平滑化や補正は見られません。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "design_match",
+            "observation": "【表れている特徴】四角めの輪郭、奥二重、無セットの短い黒髪、ライトブルーの無地シャツ、自然な左右差。【表れていない特徴】特になし。",
+            "location": "人物全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          }
+        ],
+        "summary": "指定条件および撮影要件に忠実であり、破綻や過度な美化加工も見られず要件を満たしています。"
+      }
+    },
+    "M01": {
+      "kind": "individual",
+      "imageVersion": 1,
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "person_count": 1,
+        "apparent_age_min": 29,
+        "apparent_age_max": 35,
+        "checks": [
+          {
+            "item": "single_person",
+            "observation": "男性1名のみが写っています。",
+            "location": "中央",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": ""
+          },
+          {
+            "item": "age_match",
+            "observation": "30代前半に見え、指定の32歳とおおむね合致しています。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "medium",
+            "fix": ""
+          },
+          {
+            "item": "face_integrity",
+            "observation": "目、鼻、口などの造形に破綻や不自然な歪みはありません。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": ""
+          },
+          {
+            "item": "hands_integrity",
+            "observation": "構図内に手が写っていません。",
+            "location": "画面全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": ""
+          },
+          {
+            "item": "background_integrity",
+            "observation": "無地の明るい背景で、ノイズや歪みは見られません。",
+            "location": "背景全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": ""
+          },
+          {
+            "item": "shooting_conditions",
+            "observation": "胸上の構図、目線の高さ、柔らかい自然光、口を閉じた表情など条件を満たしています。",
+            "location": "画面全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": ""
+          },
+          {
+            "item": "text_watermark_props",
+            "observation": "文字、透かし、小道具の映り込みはありません。",
+            "location": "画面全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": ""
+          },
+          {
+            "item": "over_beautification",
+            "observation": "肌の質感や髭の剃り跡が適度に残っており、過度な加工感はありません。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "medium",
+            "fix": ""
+          },
+          {
+            "item": "design_match",
+            "observation": "【表れている点】卵型の輪郭、通った鼻筋、整った眉と口元、センターパートの短髪、ネイビーのクルーネックニット。【表れていない点】目元は指定ほど切れ長の二重が強調されておらず、やや丸みがあります。",
+            "location": "目元、髪、服装",
+            "severity": "low",
+            "uncertainty": "medium",
+            "fix": "目元をやや切れ長の二重に微調整する。"
+          }
+        ],
+        "summary": "指定条件をほぼ忠実に満たした高品質なポートレートです。目元の形状に軽微な差異がある程度で、自然な仕上がりとなっています。"
+      }
+    },
+    "F06": {
+      "kind": "individual",
+      "imageVersion": 1,
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "person_count": 1,
+        "apparent_age_min": 22,
+        "apparent_age_max": 26,
+        "checks": [
+          {
+            "item": "single_person",
+            "observation": "単独の人物のみ写っています。",
+            "location": "全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "age_match",
+            "observation": "指定の24歳相応の外見です。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "face_integrity",
+            "observation": "顔の構造やパーツに不整合は見られません。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "hands_integrity",
+            "observation": "構図上、手はフレーム外です。",
+            "location": "なし",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "background_integrity",
+            "observation": "破綻のない均一な無地背景です。",
+            "location": "背景全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "shooting_conditions",
+            "observation": "胸上構図、自然光、穏やかな表情など条件を満たしています。",
+            "location": "全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "text_watermark_props",
+            "observation": "文字、透かし、不必要な小道具はありません。",
+            "location": "全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "over_beautification",
+            "observation": "過剰な美肌加工や目の拡大、細すぎる輪郭加工はなく自然です。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          },
+          {
+            "item": "design_match",
+            "observation": "表れている特徴：やや面長な輪郭、自然な目元と口元の比率、黒髪、ベージュのニット。表れていない特徴：特になし。",
+            "location": "顔および服装",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "なし"
+          }
+        ],
+        "summary": "指定された人物造形・撮影条件を的確に満たしており、不自然な加工も見られません。"
+      }
+    },
+    "F03": {
+      "kind": "individual",
+      "imageVersion": 1,
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "person_count": 1,
+        "apparent_age_min": 28,
+        "apparent_age_max": 34,
+        "checks": [
+          {
+            "item": "single_person",
+            "observation": "単独の人物のみが写っています。",
+            "location": "画像全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "age_match",
+            "observation": "30歳前後の外見と合致しています。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "medium",
+            "fix": "修正不要"
+          },
+          {
+            "item": "face_integrity",
+            "observation": "目立つ歪みや破綻はなく自然です。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "hands_integrity",
+            "observation": "フレーム内に手首から先は含まれていません。",
+            "location": "該当なし",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "background_integrity",
+            "observation": "均一な無地の背景で不自然な要素はありません。",
+            "location": "背景全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "shooting_conditions",
+            "observation": "正面目線、胸上構図、自然光、穏やかな表情など指定通りです。",
+            "location": "画像全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "text_watermark_props",
+            "observation": "文字や小道具は見当たりません。",
+            "location": "画像全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要"
+          },
+          {
+            "item": "over_beautification",
+            "observation": "肌の質感や左右差が保持され、過度な加工やモデル風の美化はありません。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "medium",
+            "fix": "修正不要"
+          },
+          {
+            "item": "design_match",
+            "observation": "【表れている特徴】奥二重、標準的な鼻と口、自然な左右差、ナチュラルメイク、肩丈の黒髪、ネイビーのカットソー。【表れていない特徴】輪郭は丸顔というよりやや面長寄り。",
+            "location": "輪郭および頭部全体",
+            "severity": "low",
+            "uncertainty": "medium",
+            "fix": "必要に応じて輪郭をわずかに丸みのある形状に調整。"
+          }
+        ],
+        "summary": "指定された構図・年齢感・服装などの撮影条件を高い精度で満たしており、加工感のない自然な描写です。輪郭がやや面長に見える点以外は指示通りです。"
+      }
+    },
+    "F01": {
+      "kind": "individual",
+      "imageVersion": 1,
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "person_count": 1,
+        "apparent_age_min": 25,
+        "apparent_age_max": 29,
+        "checks": [
+          {
+            "item": "single_person",
+            "observation": "女性1名のみ写っています。",
+            "location": "全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要です。"
+          },
+          {
+            "item": "age_match",
+            "observation": "指定の27歳に合致する20代半ばから後半の外見です。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要です。"
+          },
+          {
+            "item": "face_integrity",
+            "observation": "目、鼻、口などのパーツに不自然な崩れや欠損は見られません。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要です。"
+          },
+          {
+            "item": "hands_integrity",
+            "observation": "構図上、手はフレーム外にあります。",
+            "location": "該当なし",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要です。"
+          },
+          {
+            "item": "background_integrity",
+            "observation": "シンプルで無地の壁背景であり、破綻はありません。",
+            "location": "背景全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要です。"
+          },
+          {
+            "item": "shooting_conditions",
+            "observation": "正面向きのバストアップ、自然光、落ち着いた表情など条件に合致しています。",
+            "location": "全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要です。"
+          },
+          {
+            "item": "text_watermark_props",
+            "observation": "テキスト、透かし、不自然な小道具は見られません。",
+            "location": "全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要です。"
+          },
+          {
+            "item": "over_beautification",
+            "observation": "過剰な肌の平滑化や極端な目・輪郭の変形はなく、自然な風合いです。",
+            "location": "顔全体",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要です。"
+          },
+          {
+            "item": "design_match",
+            "observation": "【表れている点】卵型の輪郭、アーモンド形の二重、整った鼻筋、肩下ダークブラウン髪、アイボリーのトップス。\n【表れていない点】特になく、指定通りです。",
+            "location": "頭部・上半身",
+            "severity": "none",
+            "uncertainty": "low",
+            "fix": "修正不要です。"
+          }
+        ],
+        "summary": "指定された外見・構図・照明条件を満たしており、不自然な加工や破綻のない自然な仕上がりです。"
+      }
+    }
+  },
+  "blind": {
+    "M": {
+      "kind": "blind_comparison",
+      "labelMap": {
+        "A": {
+          "id": "M07",
+          "targetLooks": 1,
+          "targetAge": 27
+        },
+        "B": {
+          "id": "M05",
+          "targetLooks": 3,
+          "targetAge": 31
+        },
+        "C": {
+          "id": "M01",
+          "targetLooks": 5,
+          "targetAge": 32
+        }
+      },
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "images": [
+          {
+            "label": "A",
+            "observed_features": "丸みのある輪郭、すっきりとした奥二重の目元、丸みのある鼻先、短めの黒髪。緑色のクルーネックスウェットを着用。",
+            "apparent_age": "20代後半〜30代前半",
+            "expression": "口を閉じてわずかに微笑む、穏やかで落ち着いた表情",
+            "shooting_notes": "グレー無地の背景、正面からの均一でフラットな光、全体的に落ち着いたトーン",
+            "impression_1to5": 3,
+            "rank": 3
+          },
+          {
+            "label": "B",
+            "observed_features": "やや面長な輪郭、すっきりとした切れ長の目元、ナチュラルな黒髪ショートヘア。淡いブルーのボタンダウンシャツを着用。",
+            "apparent_age": "20代後半〜30代前半",
+            "expression": "口角を自然に上げた、親しみやすく優しげな微笑み",
+            "shooting_notes": "明るい白背景、自然光が入る明るいライティングで爽やかなトーン",
+            "impression_1to5": 4,
+            "rank": 2
+          },
+          {
+            "label": "C",
+            "observed_features": "整った卵型の輪郭、くっきりとした二重の目元、通った鼻筋、すっきりとセットされた黒髪。ダークネイビーのクルーネックニットを着用。",
+            "apparent_age": "20代後半〜30代前半",
+            "expression": "穏やかで堂々とした、清潔感と安心感を与える微笑み",
+            "shooting_notes": "白背景、顔立ちの立体感が際立つ柔らかく均一なライティング",
+            "impression_1to5": 5,
+            "rank": 1
+          }
+        ],
+        "near_equal": [],
+        "hard_to_compare": [
+          "顔立ちの造形（すっきりした一重・奥二重系の親しみやすさ vs ぱっちりとした二重の端正さ）は閲覧者の好みによって評価が分かれやすい点"
+        ],
+        "confounds": [
+          "服装の清潔感・フォーマル度（Aのスウェットに比べ、BのシャツやCのきれいめニットのほうがマッチングアプリで好印象を与えやすい影響）",
+          "ライティングの明るさ（Aのやや暗め・グレー背景に比べ、BとCの背景や照明が明るく爽やかな印象を底上げしている点）",
+          "ヘアスタイルのセット感（Cの整えられたスタイリングがより洗練された印象を与えている点）"
+        ],
+        "uncertainty": "low"
+      }
+    },
+    "F": {
+      "kind": "blind_comparison",
+      "labelMap": {
+        "A": {
+          "id": "F06",
+          "targetLooks": 1,
+          "targetAge": 24
+        },
+        "B": {
+          "id": "F01",
+          "targetLooks": 5,
+          "targetAge": 27
+        },
+        "C": {
+          "id": "F03",
+          "targetLooks": 3,
+          "targetAge": 30
+        }
+      },
+      "ok": true,
+      "validationErrors": [],
+      "response": {
+        "images": [
+          {
+            "label": "A",
+            "observed_features": "黒髪のセミロングヘアを自然に下ろし、額を出したスタイル。切れ長で自然な二重まぶた、すっきりとした鼻筋、薄めの唇。肌質は自然で、ベージュのクルーネックニットを着用。",
+            "apparent_age": "20代後半〜30代前半",
+            "expression": "口角をわずかに上げた穏やかで自然体な微笑み",
+            "shooting_notes": "薄いグレーベージュの無地背景、サイドからの柔らかい自然光、正面からのバストアップ構図",
+            "impression_1to5": 3,
+            "rank": 2
+          },
+          {
+            "label": "B",
+            "observed_features": "落ち着いたダークブラウンのツヤのあるロングヘア。均整の取れた二重まぶた、目元がぱっちりとしており、通った鼻筋と滑らかなフェイスライン。清潔感のある白のブラウスを着用。",
+            "apparent_age": "20代後半〜30代前半",
+            "expression": "優しさと親しみやすさを感じさせる穏やかな微笑み",
+            "shooting_notes": "薄いベージュ背景、柔らかなライティングで肌トーンが明るく映えており、白トップスによるレフ板効果あり",
+            "impression_1to5": 4,
+            "rank": 1
+          },
+          {
+            "label": "C",
+            "observed_features": "黒髪のストレートミディアム、センター分け。涼しげな一重寄りの目元、落ち着いた輪郭。カジュアルな濃紺のTシャツを着用。",
+            "apparent_age": "30代前半",
+            "expression": "口元を結んだほぼ無表情、やや緊張感や硬さがある",
+            "shooting_notes": "無地背景、正面からのバストアップだが、暗めのネイビートップスと硬い表情により全体的にトーンが沈んで見える",
+            "impression_1to5": 2,
+            "rank": 3
+          }
+        ],
+        "near_equal": [],
+        "hard_to_compare": [
+          "ライティングや背景は揃っているものの、着用している服装の色・素材（ブラウス／ニット／Tシャツ）のフォーマル度が異なり、顔立ちそのもの以外の要素が印象形成に大きく介入している点"
+        ],
+        "confounds": [
+          "表情の差（A・Bは笑みがあるのに対し、Cは無表情で証明写真のような硬さがある）",
+          "服装のトーン（Bの白色は顔まわりを明るく見せる一方、Cの濃紺はカジュアルかつ暗めに見えやすい）",
+          "ヘアスタイリングのまとまり具合と髪色の明るさ"
+        ],
+        "uncertainty": "low"
+      }
+    }
+  },
+  "attempts": [
+    {
+      "at": "2026-10-18T09:29:21.675Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2846,
+        "total_input_tokens": 1488,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 378
+          },
+          {
+            "modality": "image",
+            "tokens": 1110
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 768,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 590
+      },
+      "interactionId": "v1_ChdjcEhVYXRYSElmaW12cjBQb3F6SGlRTRIXY3BIVWF0WEhJZmltdnIwUG9xekhpUU0"
+    },
+    {
+      "at": "2026-10-18T09:29:41.342Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 3061,
+        "total_input_tokens": 1451,
+        "input_tokens_by_modality": [
+          {
+            "modality": "image",
+            "tokens": 1110
+          },
+          {
+            "modality": "text",
+            "tokens": 341
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 792,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 818
+      },
+      "interactionId": "v1_ChdocEhVYXAzcEJiWGYxZThQN3M2MmtRVRIXaHBIVWFwM3BCYlhmMWU4UDdzNjJrUVU"
+    },
+    {
+      "at": "2026-10-18T09:30:00.422Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2958,
+        "total_input_tokens": 1463,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 353
+          },
+          {
+            "modality": "image",
+            "tokens": 1110
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 787,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 708
+      },
+      "interactionId": "v1_ChdtWkhVYXJXMEJldXp2cjBQdl9EY3NBOBIXbVpIVWFyVzBCZXV6dnIwUHZfRGNzQTg"
+    },
+    {
+      "at": "2026-10-18T09:30:19.006Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2511,
+        "total_input_tokens": 1488,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 378
+          },
+          {
+            "modality": "image",
+            "tokens": 1110
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 720,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 303
+      },
+      "interactionId": "v1_ChdxNUhVYXRuUUtwMmExZThQc3RtZ3NROBIXcTVIVWF0blFLcDJhMWU4UHN0bWdzUTg"
+    },
+    {
+      "at": "2026-10-18T09:30:34.936Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2648,
+        "total_input_tokens": 1453,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 343
+          },
+          {
+            "modality": "image",
+            "tokens": 1110
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 788,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 407
+      },
+      "interactionId": "v1_Chd1NUhVYXRINEtwT2h2cjBQclpfR3FROBIXdTVIVWF0SDRLcE9odnIwUHJaX0dxUTg"
+    },
+    {
+      "at": "2026-10-18T09:30:52.987Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 2636,
+        "total_input_tokens": 1466,
+        "input_tokens_by_modality": [
+          {
+            "modality": "text",
+            "tokens": 356
+          },
+          {
+            "modality": "image",
+            "tokens": 1110
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 788,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 382
+      },
+      "interactionId": "v1_Chd6WkhVYXZIYktOR2YxZThQbjhEV2dBWRIXelpIVWF2SGJLTkdmMWU4UG44RFdnQVk"
+    },
+    {
+      "at": "2026-10-18T09:31:10.489Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 4691,
+        "total_input_tokens": 3556,
+        "input_tokens_by_modality": [
+          {
+            "modality": "image",
+            "tokens": 3330
+          },
+          {
+            "modality": "text",
+            "tokens": 226
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 644,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 491
+      },
+      "interactionId": "v1_ChYzNUhVYXJQakVMT1M5dE1QcF9qbENBEhYzNUhVYXJQakVMT1M5dE1QcF9qbENB"
+    },
+    {
+      "at": "2026-10-18T09:31:25.215Z",
+      "model": "gemini-3.8-flash",
+      "outcome": "ok",
+      "httpStatus": 200,
+      "billable": true,
+      "usage": {
+        "total_tokens": 4880,
+        "total_input_tokens": 3556,
+        "input_tokens_by_modality": [
+          {
+            "modality": "image",
+            "tokens": 3330
+          },
+          {
+            "modality": "text",
+            "tokens": 226
+          }
+        ],
+        "total_cached_tokens": 0,
+        "total_output_tokens": 669,
+        "total_tool_use_tokens": 0,
+        "total_thought_tokens": 655
+      },
+      "interactionId": "v1_Chc3cEhVYXZpZENjNmIxZThQaHFMZmdRURIXN3BIVWF2aWRDYzZiMWU4UGhxTGZnUVE"
+    }
+  ]
+}

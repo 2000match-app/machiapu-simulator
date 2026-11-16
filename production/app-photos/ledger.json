@@ -1,0 +1,1054 @@
+[
+  {
+    "id": "a1",
+    "spec": {
+      "id": "a1",
+      "gender": "M",
+      "age": 26,
+      "looks": 3,
+      "who": "an ordinary office worker with short black hair, wearing a plain knit sweater",
+      "scene": "sitting at a cafe table holding a latte, photo taken casually by a friend across the table"
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 26 years old, an ordinary office worker with short black hair, wearing a plain knit sweater.\nScene: sitting at a cafe table holding a latte, photo taken casually by a friend across the table, in Tokyo or the nearby area.\nAppearance level: completely average looks, like an ordinary person you pass on the street. No glamour.\nPhoto quality: ordinary phone camera snapshot, natural light, slight noise.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face clearly visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "a1.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:25:03.891Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2814,
+          "total_input_tokens": 163,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 163
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1482,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 1169,
+          "initial_input_tokens": 279
+        },
+        "interactionId": "v1_ChdMM0RwYXBQNEktMmcwLWtQc2ZXUThRYxIXTDNEcGFwUDRJLTJnMC1rUHNmV1E4UWM"
+      }
+    ],
+    "at": "2026-11-03T05:25:25.328Z"
+  },
+  {
+    "id": "a2",
+    "spec": {
+      "id": "a2",
+      "gender": "M",
+      "age": 33,
+      "looks": 2,
+      "who": "a slightly overweight man with a round face, messy hair and a plain dark hoodie",
+      "scene": "a selfie taken with a front camera from a low angle in a car parking lot on a cloudy day",
+      "weak": "unflattering low-angle selfie, a little blurry"
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 33 years old, a slightly overweight man with a round face, messy hair and a plain dark hoodie.\nScene: a selfie taken with a front camera from a low angle in a car parking lot on a cloudy day, in Tokyo or the nearby area.\nAppearance level: below-average, plain looks: unremarkable face, some skin imperfections, not photogenic. Do NOT beautify.\nPhoto quality: unflattering low-angle selfie, a little blurry.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face clearly visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "a2.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:25:25.331Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2742,
+          "total_input_tokens": 173,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 173
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1789,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 780,
+          "initial_input_tokens": 289
+        },
+        "interactionId": "v1_ChdSSERwYXBmNklfbWwycm9QdDdUbjBBZxIXUkhEcGFwZjZJX21sMnJvUHQ3VG4wQWc"
+      }
+    ],
+    "at": "2026-11-03T05:25:52.735Z"
+  },
+  {
+    "id": "a3",
+    "spec": {
+      "id": "a3",
+      "gender": "M",
+      "age": 29,
+      "looks": 4,
+      "who": "a fit man with neat short hair in an outdoor jacket",
+      "scene": "standing at a mountain viewpoint on a trip, smiling naturally, photo taken by a friend"
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 29 years old, a fit man with neat short hair in an outdoor jacket.\nScene: standing at a mountain viewpoint on a trip, smiling naturally, photo taken by a friend, in Tokyo or the nearby area.\nAppearance level: good-looking but still a real everyday person, not a model.\nPhoto quality: ordinary phone camera snapshot, natural light, slight noise.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face clearly visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "a3.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:25:52.736Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2692,
+          "total_input_tokens": 156,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 156
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1430,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 1106,
+          "initial_input_tokens": 272
+        },
+        "interactionId": "v1_ChdYM0RwYXA3aU9QTHMycm9QN1p1dW1BZxIXWDNEcGFwN2lPUExzMnJvUDdadXVtQWc"
+      }
+    ],
+    "at": "2026-11-03T05:26:16.812Z"
+  },
+  {
+    "id": "a4",
+    "spec": {
+      "id": "a4",
+      "gender": "F",
+      "age": 27,
+      "looks": 3,
+      "who": "an ordinary office worker with shoulder-length hair and light natural makeup",
+      "scene": "smiling at a cafe with a slice of cake on the table, photo taken by a friend"
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese woman, about 27 years old, an ordinary office worker with shoulder-length hair and light natural makeup.\nScene: smiling at a cafe with a slice of cake on the table, photo taken by a friend, in Tokyo or the nearby area.\nAppearance level: completely average looks, like an ordinary person you pass on the street. No glamour.\nPhoto quality: ordinary phone camera snapshot, natural light, slight noise.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face clearly visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "a4.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:26:16.814Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2424,
+          "total_input_tokens": 162,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 162
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1469,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 793,
+          "initial_input_tokens": 278
+        },
+        "interactionId": "v1_ChdlSERwYXVTQUJiVEwycm9Qd2MzRW1BMBIXZUhEcGF1U0FCYlRMMnJvUHdjM0VtQTA"
+      }
+    ],
+    "at": "2026-11-03T05:26:34.509Z"
+  },
+  {
+    "id": "a5",
+    "spec": {
+      "id": "a5",
+      "gender": "F",
+      "age": 31,
+      "looks": 2,
+      "who": "a plain-looking woman with tired eyes, simple ponytail and minimal makeup",
+      "scene": "a selfie at an izakaya table under yellowish indoor lighting",
+      "weak": "harsh indoor light and slight motion blur"
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese woman, about 31 years old, a plain-looking woman with tired eyes, simple ponytail and minimal makeup.\nScene: a selfie at an izakaya table under yellowish indoor lighting, in Tokyo or the nearby area.\nAppearance level: below-average, plain looks: unremarkable face, some skin imperfections, not photogenic. Do NOT beautify.\nPhoto quality: harsh indoor light and slight motion blur.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face clearly visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "a5.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:26:34.510Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2555,
+          "total_input_tokens": 160,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 160
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1515,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 880,
+          "initial_input_tokens": 276
+        },
+        "interactionId": "v1_ChdpWERwYXNUOU1KMkIycm9Qb1BEODBBaxIXaVhEcGFzVDlNSjJCMnJvUG9QRDgwQWs"
+      }
+    ],
+    "at": "2026-11-03T05:26:52.727Z"
+  },
+  {
+    "id": "a6",
+    "spec": {
+      "id": "a6",
+      "gender": "F",
+      "age": 24,
+      "looks": 4,
+      "who": "a young woman with long hair in a casual spring outfit",
+      "scene": "walking in a park with cherry blossoms, candid smile, photo taken by a friend"
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese woman, about 24 years old, a young woman with long hair in a casual spring outfit.\nScene: walking in a park with cherry blossoms, candid smile, photo taken by a friend, in Tokyo or the nearby area.\nAppearance level: good-looking but still a real everyday person, not a model.\nPhoto quality: ordinary phone camera snapshot, natural light, slight noise.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face clearly visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "a6.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:26:52.728Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2615,
+          "total_input_tokens": 155,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 155
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1463,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 997,
+          "initial_input_tokens": 271
+        },
+        "interactionId": "v1_ChdtM0RwYW9iWk9xRzIwLWtQMk4zczhBWRIXbTNEcGFvYlpPcUcyMC1rUDJOM3M4QVk"
+      }
+    ],
+    "at": "2026-11-03T05:27:13.035Z"
+  },
+  {
+    "id": "b01",
+    "spec": {
+      "id": "b01",
+      "gender": "M",
+      "age": 30,
+      "looks": 3,
+      "faceHidden": true,
+      "who": "a man with short hair in a navy coat and beige chinos",
+      "scene": "seen from behind, standing at a riverside railing looking at the city skyline at dusk, photo taken by a friend",
+      "game": {
+        "job": "会社員（事務・企画）",
+        "income": [
+          400,
+          500
+        ],
+        "education": "univ",
+        "hobbies": [
+          "散歩",
+          "写真"
+        ],
+        "note": "後ろ姿・顔出しなし（実際の顔評価3）"
+      }
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 30 years old, a man with short hair in a navy coat and beige chinos.\nScene: seen from behind, standing at a riverside railing looking at the city skyline at dusk, photo taken by a friend, in Tokyo or the nearby area.\nAppearance: an ordinary build and style; the face is not shown.\nPhoto quality: ordinary phone camera snapshot, natural light, slight noise.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus. The face must NOT be visible at all.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "b01.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:29:39.913Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2647,
+          "total_input_tokens": 164,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 164
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1438,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 1045,
+          "initial_input_tokens": 280
+        },
+        "interactionId": "v1_ChdRM0hwYXFDZ0lMYklyZmNQOVBLRXdBaxIXUTNIcGFxQ2dJTGJJcmZjUDlQS0V3QWs"
+      }
+    ],
+    "at": "2026-11-03T05:29:59.066Z"
+  },
+  {
+    "id": "b02",
+    "spec": {
+      "id": "b02",
+      "gender": "M",
+      "age": 27,
+      "looks": 2,
+      "faceHidden": true,
+      "who": "a thin man in an oversized black T-shirt and black pants",
+      "scene": "a mirror selfie in a small apartment entrance; the phone completely covers his face",
+      "weak": "cluttered background with shoes and a laundry bag visible",
+      "game": {
+        "job": "製造・技術職",
+        "income": [
+          300,
+          380
+        ],
+        "education": "highschool",
+        "hobbies": [
+          "ゲーム",
+          "筋トレ"
+        ],
+        "note": "スマホで顔が隠れる玄関の鏡自撮り・生活感が出ていてウケが悪い（実際の顔評価2）"
+      }
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 27 years old, a thin man in an oversized black T-shirt and black pants.\nScene: a mirror selfie in a small apartment entrance; the phone completely covers his face, in Tokyo or the nearby area.\nAppearance: an ordinary build and style; the face is not shown.\nPhoto quality: cluttered background with shoes and a laundry bag visible.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus. The face must NOT be visible at all.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "b02.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:29:59.070Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2597,
+          "total_input_tokens": 157,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 157
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1527,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 913,
+          "initial_input_tokens": 273
+        },
+        "interactionId": "v1_ChdWbkhwYXNXYkZzdXkycm9QdElxb21RZxIXVm5IcGFzV2JGc3V5MnJvUHRJcW9tUWc"
+      }
+    ],
+    "at": "2026-11-03T05:30:17.491Z"
+  },
+  {
+    "id": "b03",
+    "spec": {
+      "id": "b03",
+      "gender": "M",
+      "age": 34,
+      "looks": 3,
+      "who": "a cheerful man with short hair in a grey hoodie",
+      "scene": "at a riverside barbecue with friends, holding tongs over the grill, laughing, photo taken by a friend",
+      "game": {
+        "job": "会社員（営業）",
+        "income": [
+          500,
+          620
+        ],
+        "education": "univ",
+        "hobbies": [
+          "BBQ",
+          "キャンプ"
+        ],
+        "note": "BBQの写真・趣味は陽キャ"
+      }
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 34 years old, a cheerful man with short hair in a grey hoodie.\nScene: at a riverside barbecue with friends, holding tongs over the grill, laughing, photo taken by a friend, in Tokyo or the nearby area.\nAppearance level: completely average looks, like an ordinary person you pass on the street. No glamour.\nPhoto quality: ordinary phone camera snapshot, natural light, slight noise.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "b03.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:30:17.493Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2371,
+          "total_input_tokens": 160,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 160
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1477,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 734,
+          "initial_input_tokens": 276
+        },
+        "interactionId": "v1_ChdhSEhwYXJYLUo5cWUwLWtQcHVYWTBBYxIXYUhIcGFyWC1KOXFlMC1rUHB1WFkwQWM"
+      }
+    ],
+    "at": "2026-11-03T05:30:36.971Z"
+  },
+  {
+    "id": "b04",
+    "spec": {
+      "id": "b04",
+      "gender": "M",
+      "age": 24,
+      "looks": 4,
+      "who": "a slim stylish man in a long dark coat",
+      "scene": "a full-body shot from about 10 meters away, walking across a street in Shibuya on a sunny afternoon, face small but visible",
+      "game": {
+        "job": "IT企業勤務",
+        "income": [
+          380,
+          460
+        ],
+        "education": "univ",
+        "hobbies": [
+          "古着",
+          "カフェ巡り"
+        ],
+        "note": "遠めの全身写真・おしゃれ"
+      }
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 24 years old, a slim stylish man in a long dark coat.\nScene: a full-body shot from about 10 meters away, walking across a street in Shibuya on a sunny afternoon, face small but visible, in Tokyo or the nearby area.\nAppearance level: good-looking but still a real everyday person, not a model.\nPhoto quality: ordinary phone camera snapshot, natural light, slight noise.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "b04.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:30:36.976Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2613,
+          "total_input_tokens": 164,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 164
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1493,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 956,
+          "initial_input_tokens": 280
+        },
+        "interactionId": "v1_ChdmSEhwYXEtZkU5S2sycm9QcmNDVThBMBIXZkhIcGFxLWZFOUtrMnJvUHJjQ1U4QTA"
+      }
+    ],
+    "at": "2026-11-03T05:30:55.999Z"
+  },
+  {
+    "id": "b05",
+    "spec": {
+      "id": "b05",
+      "gender": "M",
+      "age": 38,
+      "looks": 1,
+      "who": "a balding man with a stubble beard and glasses, in a work jacket",
+      "scene": "a selfie taken in the driver seat of a parked car, slightly from below",
+      "weak": "unflattering angle, harsh daylight, phone camera distortion",
+      "game": {
+        "job": "製造・技術職",
+        "income": [
+          380,
+          450
+        ],
+        "education": "highschool",
+        "hobbies": [
+          "ドライブ",
+          "パチンコ"
+        ],
+        "note": "車内自撮り・ウケが悪い（顔評価1）"
+      }
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 38 years old, a balding man with a stubble beard and glasses, in a work jacket.\nScene: a selfie taken in the driver seat of a parked car, slightly from below, in Tokyo or the nearby area.\nAppearance level: clearly below-average looks: unattractive, awkward features, uneven skin, not photogenic at all. Do NOT make the person look good.\nPhoto quality: unflattering angle, harsh daylight, phone camera distortion.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "b05.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:30:56.002Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2508,
+          "total_input_tokens": 172,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 172
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1485,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 851,
+          "initial_input_tokens": 288
+        },
+        "interactionId": "v1_ChdqM0hwYXFIWEUtSElyZmNQMXNLYW9RSRIXajNIcGFxSFhFLUhJcmZjUDFzS2FvUUk"
+      }
+    ],
+    "at": "2026-11-03T05:31:17.107Z"
+  },
+  {
+    "id": "b06",
+    "spec": {
+      "id": "b06",
+      "gender": "M",
+      "age": 22,
+      "looks": 2,
+      "who": "a university student with glasses and a bowl haircut in a college sweatshirt",
+      "scene": "at a crowded izakaya with university friends around him, making a peace sign; he is in the center and in focus",
+      "weak": "friends partly cut off at the edges, flash photo look",
+      "game": {
+        "job": "大学生",
+        "income": [
+          0,
+          100
+        ],
+        "education": "student",
+        "hobbies": [
+          "ゲーム",
+          "カラオケ"
+        ],
+        "note": "サークルの飲み会写真・大学生（顔評価2）"
+      }
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 22 years old, a university student with glasses and a bowl haircut in a college sweatshirt.\nScene: at a crowded izakaya with university friends around him, making a peace sign; he is in the center and in focus, in Tokyo or the nearby area.\nAppearance level: below-average, plain looks: unremarkable face, some skin imperfections, not photogenic. Do NOT beautify.\nPhoto quality: friends partly cut off at the edges, flash photo look.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "b06.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:32:28.458Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 3074,
+          "total_input_tokens": 175,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 175
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1523,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 1376,
+          "initial_input_tokens": 291
+        },
+        "interactionId": "v1_Chc2M0hwYXBYMU81bjMxZThQMnM3TjRRaxIXNjNIcGFwWDFPNW4zMWU4UDJzN040UWs"
+      }
+    ],
+    "at": "2026-11-03T05:32:51.674Z"
+  },
+  {
+    "id": "b07",
+    "spec": {
+      "id": "b07",
+      "gender": "M",
+      "age": 41,
+      "looks": 3,
+      "who": "a calm middle-aged man with short greying hair in a casual shirt",
+      "scene": "crouching at a dog run, petting a shiba inu, photo taken by a friend on a sunny weekend",
+      "game": {
+        "job": "会社員（管理職）",
+        "income": [
+          650,
+          800
+        ],
+        "education": "univ",
+        "hobbies": [
+          "犬",
+          "散歩"
+        ],
+        "note": "犬と一緒の写真・管理職"
+      }
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 41 years old, a calm middle-aged man with short greying hair in a casual shirt.\nScene: crouching at a dog run, petting a shiba inu, photo taken by a friend on a sunny weekend, in Tokyo or the nearby area.\nAppearance level: completely average looks, like an ordinary person you pass on the street. No glamour.\nPhoto quality: ordinary phone camera snapshot, natural light, slight noise.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "b07.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:32:51.680Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2418,
+          "total_input_tokens": 167,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 167
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1541,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 710,
+          "initial_input_tokens": 283
+        },
+        "interactionId": "v1_ChdBbkxwYXRfNU9heVU5dE1QNkotRndBWRIXQW5McGF0XzVPYXlVOXRNUDZKLUZ3QVk"
+      }
+    ],
+    "at": "2026-11-03T05:33:10.701Z"
+  },
+  {
+    "id": "b08",
+    "spec": {
+      "id": "b08",
+      "gender": "M",
+      "age": 29,
+      "looks": 5,
+      "who": "a handsome man with neat hair in a white shirt and light cardigan",
+      "scene": "sitting at a cafe terrace with a book and a coffee, looking up at the camera with a soft smile, photo taken by a friend",
+      "game": {
+        "job": "医師",
+        "income": [
+          1000,
+          1400
+        ],
+        "education": "top",
+        "hobbies": [
+          "読書",
+          "カフェ巡り"
+        ],
+        "note": "ハイスペ・顔評価5"
+      }
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 29 years old, a handsome man with neat hair in a white shirt and light cardigan.\nScene: sitting at a cafe terrace with a book and a coffee, looking up at the camera with a soft smile, photo taken by a friend, in Tokyo or the nearby area.\nAppearance level: very attractive, but natural and believable as a real person, not a professional model shoot.\nPhoto quality: ordinary phone camera snapshot, natural light, slight noise.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "b08.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:33:10.707Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2506,
+          "total_input_tokens": 171,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 171
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1426,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 909,
+          "initial_input_tokens": 287
+        },
+        "interactionId": "v1_ChdGWExwYXBuRE9kT1l2cjBQNGJTSzJRaxIXRlhMcGFwbkRPZE9ZdnIwUDRiU0syUWs"
+      }
+    ],
+    "at": "2026-11-03T05:33:29.741Z"
+  },
+  {
+    "id": "b09",
+    "spec": {
+      "id": "b09",
+      "gender": "M",
+      "age": 31,
+      "looks": 2,
+      "who": "a man with unkempt hair and a checked shirt, carrying a backpack",
+      "scene": "in a game arcade holding a big plush toy he won from a crane game, awkward smile",
+      "weak": "neon lighting makes the skin look uneven",
+      "game": {
+        "job": "エンジニア",
+        "income": [
+          420,
+          520
+        ],
+        "education": "univ",
+        "hobbies": [
+          "ゲーム",
+          "アニメ"
+        ],
+        "note": "ゲーセンの写真・オタク（顔評価2）"
+      }
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 31 years old, a man with unkempt hair and a checked shirt, carrying a backpack.\nScene: in a game arcade holding a big plush toy he won from a crane game, awkward smile, in Tokyo or the nearby area.\nAppearance level: below-average, plain looks: unremarkable face, some skin imperfections, not photogenic. Do NOT beautify.\nPhoto quality: neon lighting makes the skin look uneven.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "b09.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:33:29.746Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2562,
+          "total_input_tokens": 166,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 166
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1492,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 904,
+          "initial_input_tokens": 282
+        },
+        "interactionId": "v1_ChdLSExwYXFxOE9PU2N2cjBQMV96cnNRbxIXS0hMcGFxcThPT1NjdnIwUDFfenJzUW8"
+      }
+    ],
+    "at": "2026-11-03T05:33:48.882Z"
+  },
+  {
+    "id": "b10",
+    "spec": {
+      "id": "b10",
+      "gender": "M",
+      "age": 35,
+      "looks": 3,
+      "faceHidden": true,
+      "who": "a man of average build in a T-shirt and shorts",
+      "scene": "backlit silhouette standing on a beach at sunset, arms raised, only the dark outline of his body visible",
+      "game": {
+        "job": "公務員",
+        "income": [
+          450,
+          560
+        ],
+        "education": "univ",
+        "hobbies": [
+          "海",
+          "旅行"
+        ],
+        "note": "夕日の逆光シルエット・顔出しなし（実際の顔評価3）"
+      }
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 35 years old, a man of average build in a T-shirt and shorts.\nScene: backlit silhouette standing on a beach at sunset, arms raised, only the dark outline of his body visible, in Tokyo or the nearby area.\nAppearance: an ordinary build and style; the face is not shown.\nPhoto quality: ordinary phone camera snapshot, natural light, slight noise.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus. The face must NOT be visible at all.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "b10.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:33:48.885Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2412,
+          "total_input_tokens": 162,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 162
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1483,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 767,
+          "initial_input_tokens": 278
+        },
+        "interactionId": "v1_ChdQSExwYXJuWUJwYVMxZThQcllLRWlBZxIXUEhMcGFybllCcGFTMWU4UHJZS0VpQWc"
+      }
+    ],
+    "at": "2026-11-03T05:34:08.779Z"
+  },
+  {
+    "id": "b11",
+    "spec": {
+      "id": "b11",
+      "gender": "M",
+      "age": 27,
+      "looks": 5,
+      "who": "a tall man in a white linen shirt with slightly wavy hair",
+      "scene": "on a seaside boardwalk on a bright summer day, turning to the camera with a relaxed smile, photo taken by a friend",
+      "game": {
+        "job": "大手商社",
+        "income": [
+          900,
+          1200
+        ],
+        "education": "top",
+        "hobbies": [
+          "旅行",
+          "サーフィン"
+        ],
+        "note": "イケメン・ハイスペ（顔評価5）"
+      }
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 27 years old, a tall man in a white linen shirt with slightly wavy hair.\nScene: on a seaside boardwalk on a bright summer day, turning to the camera with a relaxed smile, photo taken by a friend, in Tokyo or the nearby area.\nAppearance level: strikingly handsome or beautiful: sharp well-balanced features, clear skin, groomed eyebrows, stylish hair; the kind of face that gets the most likes on a dating app (b08 came out too average, so make this unmistakable). Still a real person in a casual snapshot, not a magazine shoot, and not resembling any celebrity.\nPhoto quality: ordinary phone camera snapshot, natural light, slight noise.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "b11.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:35:57.091Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2731,
+          "total_input_tokens": 216,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 216
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1424,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 1091,
+          "initial_input_tokens": 332
+        },
+        "interactionId": "v1_Chd2SExwYXZhM0hmam8xZThQcHRQWndRYxIXdkhMcGF2YTNIZmpvMWU4UHB0UFp3UWM"
+      }
+    ],
+    "at": "2026-11-03T05:36:15.939Z"
+  },
+  {
+    "id": "b12",
+    "spec": {
+      "id": "b12",
+      "gender": "M",
+      "age": 25,
+      "looks": 5,
+      "who": "a slim man with a trendy center-part haircut in a black knit and silver necklace",
+      "scene": "at a rooftop bar at night with city lights behind him, holding a glass, looking at the camera",
+      "game": {
+        "job": "アパレル販売",
+        "income": [
+          280,
+          360
+        ],
+        "education": "vocational",
+        "hobbies": [
+          "古着",
+          "音楽フェス"
+        ],
+        "note": "イケメンだが年収は低い（顔評価5）"
+      }
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 25 years old, a slim man with a trendy center-part haircut in a black knit and silver necklace.\nScene: at a rooftop bar at night with city lights behind him, holding a glass, looking at the camera, in Tokyo or the nearby area.\nAppearance level: strikingly handsome or beautiful: sharp well-balanced features, clear skin, groomed eyebrows, stylish hair; the kind of face that gets the most likes on a dating app (b08 came out too average, so make this unmistakable). Still a real person in a casual snapshot, not a magazine shoot, and not resembling any celebrity.\nPhoto quality: ordinary phone camera snapshot, natural light, slight noise.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "b12.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:36:15.942Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 2658,
+          "total_input_tokens": 217,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 217
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1511,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 930,
+          "initial_input_tokens": 333
+        },
+        "interactionId": "v1_Chd6M0xwYXFmN0N1X0gxZThQOGZMamdBYxIXejNMcGFxZjdDdV9IMWU4UDhmTGpnQWM"
+      }
+    ],
+    "at": "2026-11-03T05:36:34.537Z"
+  },
+  {
+    "id": "b13",
+    "spec": {
+      "id": "b13",
+      "gender": "M",
+      "age": 31,
+      "looks": 5,
+      "who": "a well-groomed man with short neat hair in a navy suit with a light grey tie",
+      "scene": "as a guest at the wedding reception of a friend, standing by a window with a champagne glass, candid smile, photo taken by a friend",
+      "game": {
+        "job": "弁護士",
+        "income": [
+          900,
+          1300
+        ],
+        "education": "top",
+        "hobbies": [
+          "ゴルフ",
+          "ワイン"
+        ],
+        "note": "結婚式の参列写真・イケメン・ハイスペ（顔評価5）"
+      }
+    },
+    "prompt": "A realistic smartphone photo used on a Japanese dating app profile. Subject: a fictional Japanese man, about 31 years old, a well-groomed man with short neat hair in a navy suit with a light grey tie.\nScene: as a guest at the wedding reception of a friend, standing by a window with a champagne glass, candid smile, photo taken by a friend, in Tokyo or the nearby area.\nAppearance level: strikingly handsome or beautiful: sharp well-balanced features, clear skin, groomed eyebrows, stylish hair; the kind of face that gets the most likes on a dating app (b08 came out too average, so make this unmistakable). Still a real person in a casual snapshot, not a magazine shoot, and not resembling any celebrity.\nPhoto quality: ordinary phone camera snapshot, natural light, slight noise.\nStyle: candid everyday snapshot, not a studio portrait, not retouched, no professional lighting, no bokeh-heavy portrait mode. One person only in focus, face visible.\nDo not resemble any real or famous person. No text, no watermark, no logos.",
+    "model": "gemini-nano-banana-2.1",
+    "file": "b13.jpg",
+    "attempts": [
+      {
+        "at": "2026-11-03T05:36:34.538Z",
+        "model": "gemini-nano-banana-2.1",
+        "outcome": "ok",
+        "httpStatus": 200,
+        "billable": true,
+        "usage": {
+          "total_tokens": 3185,
+          "total_input_tokens": 226,
+          "input_tokens_by_modality": [
+            {
+              "modality": "text",
+              "tokens": 226
+            }
+          ],
+          "total_cached_tokens": 0,
+          "total_output_tokens": 1856,
+          "output_tokens_by_modality": [
+            {
+              "modality": "image",
+              "tokens": 1120
+            }
+          ],
+          "total_tool_use_tokens": 0,
+          "total_thought_tokens": 1103,
+          "initial_input_tokens": 342
+        },
+        "interactionId": "v1_Chc0WExwYXNQUE1LM2Q5dE1QdE1MQXdBZxIXNFhMcGFzUFBNSzNkOXRNUHRNTEF3QWc"
+      }
+    ],
+    "at": "2026-11-03T05:37:08.041Z"
+  }
+]
