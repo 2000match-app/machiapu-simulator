@@ -119,7 +119,7 @@ function TopBar({ state, act, onBell, onLife, unread }: { state: GameState; act:
         <button className="btn adv primary" disabled={busy} onClick={onClose} title={busy ? '先に出来事を確認してください' : 'アプリを閉じると時間が進みます'}>アプリを閉じる</button>
       </div>
       {state.focusMode && !inRel && focusUnlocked(state) && (
-        <p className="focus-note">💬 トークに集中モード中（いいね通知オフ・メッセージまで早送り）<button className="link" onClick={() => act({ type: 'setFocus', on: false })}>やめる</button></p>
+        <p className="focus-note">💬 トークに集中モード中（いいね・ほかのアプリの通知オフ・メッセージまで早送り）<button className="link" onClick={() => act({ type: 'setFocus', on: false })}>やめる</button></p>
       )}
       {inRel && <p className="focus-note">💕 交際中：いいねの通知は出さず、恋人からの連絡まで早送りします</p>}
       {chooseClose && (

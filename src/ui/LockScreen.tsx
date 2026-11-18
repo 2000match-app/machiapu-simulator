@@ -152,7 +152,7 @@ export function LockScreen({ state, act, onUnlock }: { state: GameState; act: (a
           {sm !== 'normal' && state.status === 'playing' && (
             <div className="lock-focus">
               <b>{sm === 'partner' ? '💕 交際中' : '💬 トークに集中モード'}</b>
-              <span>{ffResult === 'idle' ? '返事を待っている相手がいないので、早送りを止めました（時間はふつうに進みます）' : ffResult === 'notice' ? (sm === 'partner' ? '恋人から連絡が届きました' : 'メッセージが届きました') : sm === 'partner' ? '恋人からの連絡か予定まで早送りしています' : 'メッセージが届くまで早送りしています（いいねの通知は出ません）'}</span>
+              <span>{ffResult === 'idle' ? '返事を待っている相手がいないので、早送りを止めました（時間はふつうに進みます）' : ffResult === 'notice' ? (sm === 'partner' ? '恋人から連絡が届きました' : 'メッセージが届きました') : sm === 'partner' ? '恋人からの連絡か予定まで早送りしています' : 'メッセージが届くまで早送りしています（いいね・ほかのアプリの通知は出ません）'}</span>
               {sm === 'focus' && <button className="link" onClick={() => { hold(); act({ type: 'setFocus', on: false }); }}>集中モードをやめる</button>}
             </div>
           )}
@@ -224,7 +224,7 @@ export function LockScreen({ state, act, onUnlock }: { state: GameState; act: (a
             <button className="lock-ff" onClick={() => { hold(400); act({ type: 'fastForward' }); }}>⏩ {sm === 'normal' ? '次の通知まで進める' : sm === 'partner' ? '次の連絡まで進める' : '次のメッセージまで進める'}</button>
           )}
           {state.status === 'playing' && sm === 'normal' && focusUnlocked(state) && (
-            <button className="link lock-focus-on" onClick={() => { hold(); act({ type: 'setFocus', on: true }); }}>💬 トークに集中する（いいね通知オフ・メッセージまで早送り）</button>
+            <button className="link lock-focus-on" onClick={() => { hold(); act({ type: 'setFocus', on: true }); }}>💬 トークに集中する（いいね・ほかのアプリの通知オフ・メッセージまで早送り）</button>
           )}
           <button className="lock-unlock" onClick={() => open()} disabled={!can}>{state.status !== 'playing' ? '結果を見る' : 'ロックを解除してマチアプを開く'}</button>
         </div>

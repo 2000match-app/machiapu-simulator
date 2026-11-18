@@ -218,7 +218,7 @@ export const OTHER_BY_CHAR: Record<string, OtherPack> = {
   F06: {
     line: [
       { from: '家族グループ', text: '今日の夜ごはんいる？' },
-      { from: 'クリニックのグループ', text: '明日の受付、9時からお願いします' },
+      { from: 'クリニックのグループ', text: '明日の外来、9時からお願いします' },
       { from: '専門の友達', text: '今度テーマパーク行こ！' },
     ],
     x: [

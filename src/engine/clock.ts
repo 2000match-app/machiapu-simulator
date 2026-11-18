@@ -383,10 +383,12 @@ export function focusUnlocked(state: GameState): boolean {
   return state.stats.matches >= FOCUS_UNLOCK_MATCHES;
 }
 
-/** 通知の設定でオフにした種類か（いいね・マッチ／トーク。集中モード・交際中はいいね・マッチを出さない） */
+/** 通知の設定でオフにした種類か（いいね・マッチ／トーク。集中モード・交際中はいいね・マッチを出さない。集中モードはほかのアプリの通知も出さない） */
 function noticeMuted(state: GameState, n: Notice): boolean {
   const k = noticeKind(n);
   if ((k === 'like' || k === 'match') && skipMode(state) !== 'normal') return true;
+  // トークに集中モードでは、ほかのアプリ（SNS・仕事・証券）の通知も出さない（2026-11-18 指示）
+  if ((k === 'sns' || k === 'work') && skipMode(state) === 'focus') return true;
   if ((k === 'like' || k === 'match') && state.notify?.likes === false) return true;
   if (k === 'msg' && state.notify?.talk === false) return true;
   return false;

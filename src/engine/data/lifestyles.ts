@@ -140,10 +140,10 @@ export const LIFESTYLES: Record<string, Lifestyle> = {
     overtime: { until: h(21, 30), notices: ['部下の評価面談、今日中にまとめてもらえますか', '役員報告の資料、追加でお願いします'] },
     notices: ['明日の役員会、資料の確認お願いします', 'チームの予算、来週までに'], noticeFrom: '部長', noticeChance: 0.3,
   },
-  // 葵：クリニックの医療事務。平日の日中（2026-11-13 公務員から変更）
+  // 葵：クリニックの看護師。日勤のみ・平日の日中（2026-11-13 公務員から医療事務、2026-11-18 看護師に）
   F06: {
-    occupation: '医療事務', work: office(h(8, 30), h(17, 30)), wake: h(6, 45), sleep: 1440,
-    notices: ['明日の受付、早めに入れる？', 'レセプトの締め、今週です', '来週の健診、予約がいっぱいです'], noticeFrom: 'クリニック', noticeChance: 0.25,
+    occupation: '看護師', work: office(h(8, 30), h(17, 30)), wake: h(6, 45), sleep: 1440,
+    notices: ['明日の外来、点滴の患者さん多めです', '来週の健診、採血の応援お願いできる？', '感染対策の研修、今週中に受けてください'], noticeFrom: 'クリニック', noticeChance: 0.25,
   },
   // 千尋：派遣事務
   F07: {

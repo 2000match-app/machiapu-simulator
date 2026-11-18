@@ -381,11 +381,10 @@ export const CHARACTERS: PlayableCharacter[] = [
     },
   },
   {
-    // 2026-11-13：専門卒・医療事務に（以前は東洋大学卒・公務員）
-    id: 'F06', gender: 'F', name: '葵', age: 24, job: '医療事務',
+    // 2026-11-13：専門卒・医療事務に（以前は東洋大学卒・公務員）。2026-11-18：看護師・年収500万円に（看護専門学校卒）
+    id: 'F06', gender: 'F', name: '葵', age: 24, job: '看護師',
     education: { kind: 'vocational' },
-    // 年収の表示は「400万円以下」（結衣と同じ書き方。2026-11-13）。中身は医療事務の相場の280万円
-    incomeYen: 280 * man, incomeLabel: '400万円以下', heightCm: 155, looks: 2, photoInitiallyVisible: false,
+    incomeYen: 500 * man, heightCm: 155, looks: 2, photoInitiallyVisible: false,
     datingExperience: '少ない', children: 0,
     areaId: 'koshigaya', smoking: 'none', drinking: 'sometimes', marital: 'never', holiday: 'weekend',
     baseDistanceMin: 60, lookPreference: 2,
@@ -393,10 +392,10 @@ export const CHARACTERS: PlayableCharacter[] = [
     monthlyBudgetYen: 0.8 * man, appHistoryMonths: 24, relationshipDeadlineMonths: 24,
     initialPreference: prefFor(24, 'koshigaya', { ageMin: 21, ageMax: 30 }),
     tagline: 'プロフィールは後頭部の写真だけ。それでも若い女性なのでいいねはたくさん来る',
-    lifeNote: '埼玉県越谷市の実家暮らし。医療事務の専門学校を出て、クリニックで受付と会計をしている。土日休み。アプリ歴2年。交際開始の希望まで24か月。',
+    lifeNote: '埼玉県越谷市の実家暮らし。看護専門学校を出て、クリニックで看護師をしている（年収500万円）。日勤のみで土日休み。アプリ歴2年。交際開始の希望まで24か月。',
     freeSlotsPerMonth: 8, weekendLimited: false,
     // 顔が分からなくてもいいねは多い。会ってから断られやすい
-    prologue: ['専門学校を出て、クリニックの医療事務になって4年目。仕事は慣れてきたけど、職場に出会いはほとんどない。', '顔に自信がなくて、プロフィールは後ろ姿の写真。それでも、いいねはたくさん届く。', '……みんな、私の何を見ていいねしてくれているんだろう。'],
+    prologue: ['看護専門学校を出て、クリニックの看護師になって4年目。仕事は慣れてきたけど、職場に出会いはほとんどない。', '顔に自信がなくて、プロフィールは後ろ姿の写真。それでも、いいねはたくさん届く。', '……みんな、私の何を見ていいねしてくれているんだろう。'],
     rates: { receivedPer30: [60, 200], sendSuccess: 0.25, postDateRejection: 0.6 },
     ratesPhotoPublic: { receivedPer30: [20, 70], sendSuccess: 0.15, postDateRejection: 0.45 },
     route: {

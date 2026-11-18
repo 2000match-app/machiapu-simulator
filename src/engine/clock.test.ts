@@ -393,6 +393,8 @@ describe('トークに集中するモード・交際中の早送り（2026-11-15
     }
     expect(s.received.total).toBeGreaterThan(before);
     expect(visibleNotices(s).some((n) => n.kind === 'like' || n.kind === 'match')).toBe(false);
+    // ほかのアプリ（SNS・仕事）の通知も出ない（2026-11-18）
+    expect(visibleNotices(s).some((n) => n.kind === 'sns' || n.kind === 'work')).toBe(false);
     if (last === 'notice') expect(visibleNotices(s).some((n) => n.kind === 'msg')).toBe(true);
   });
   it('男性はデートの1〜3日前に、最寄り→中間→お店の3回で場所を決める（2026-11-18）', async () => {
