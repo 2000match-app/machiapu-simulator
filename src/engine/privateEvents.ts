@@ -300,6 +300,28 @@ export function privateEventsDaily(state: GameState, force?: string): void {
   pushPending(state, { kind: `pe_${def.id}`, title: def.title, lines: def.lines(state), choices: def.choices });
 }
 
+/**
+ * 健人・大輔の持ち株（2026-11-18 指示）：ときどき値動きの通知が届き、その月のデートに使える予算が増減する。
+ * 1日あたり約3割で、評価額の変化は −5万〜＋5万円（月の予算の増減は、その半分。予算は1万円より下がらない）
+ */
+export const STOCK_HOLDERS = ['M01', 'M07'];
+export function stockDaily(state: GameState): void {
+  if (!STOCK_HOLDERS.includes(state.characterId)) return;
+  const r = Rng.fromSeed(state.seed, 'stock', state.day);
+  if (!r.chance(0.3)) return;
+  const pct = Math.round((r.normal(0, 2.2)) * 10) / 10;
+  if (pct === 0) return;
+  const holding = state.characterId === 'M01' ? 2_400_000 : 1_200_000;
+  const yen = Math.round((holding * pct) / 100 / 1000) * 1000;
+  const m = monthIndex(state.day);
+  const cur = state.player.budgetAdjust && state.player.budgetAdjust.month === m ? state.player.budgetAdjust.yen : 0;
+  const base = character(state).monthlyBudgetYen;
+  const next = Math.max(10_000 - base, cur + Math.round(yen / 2 / 1000) * 1000);
+  state.player.budgetAdjust = { month: m, yen: next };
+  state.flags.stockNote = `${state.day}|${pct > 0 ? '+' : ''}${pct}%|${yen > 0 ? '+' : ''}${yen.toLocaleString()}円`;
+  addFeed(state, `持ち株が${pct > 0 ? '上がった' : '下がった'}（${pct > 0 ? '+' : ''}${pct}%、評価額 ${yen > 0 ? '+' : ''}${yen.toLocaleString()}円）。今月のデートに使える予算が${yen > 0 ? '増えた' : '減った'}。`, yen > 0 ? 'good' : 'bad');
+}
+
 export function resolvePrivateEvent(state: GameState, kind: string, choiceId: string): boolean {
   const def = DEFS.find((d) => `pe_${d.id}` === kind);
   if (!def) return false;

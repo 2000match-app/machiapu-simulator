@@ -110,7 +110,7 @@ export const LIFESTYLES: Record<string, Lifestyle> = {
   },
   // 和樹：会社員。定時が多く、たまに飲み会
   M11: {
-    occupation: '会社員', work: office(), wake: h(7), sleep: 1440,
+    occupation: 'メーカー勤務', work: office(), wake: h(7), sleep: 1440,
     weekdayPool: [['同期と飲み', 2], ['会社の飲み会', 1], ['ジム', 1]], weekdayChance: 0.25,
     notices: ['明日の会議、資料の確認お願いします', '来週の出張、日程決まりました', '今日の打ち合わせ、10分遅れで始めます'], noticeFrom: '上司', noticeChance: 0.25,
   },
@@ -126,7 +126,7 @@ export const LIFESTYLES: Record<string, Lifestyle> = {
   },
   // 美咲：会社員。週2日在宅、土日どちらかは予定
   F03: {
-    occupation: '会社員', work: office(), wake: h(7), sleep: 1440,
+    occupation: '公務員', work: office(), wake: h(7), sleep: 1440,
     notices: ['明日の会議、10時からに変更です', '先方から返事来てました'], noticeFrom: '上司', noticeChance: 0.25,
   },
   // 沙織：パート事務。固定の勤務ロックなし。夕方からは育児
@@ -178,6 +178,7 @@ export const EVENT_WINDOWS: Record<string, { start: number; end: number; icon: s
   会社の飲み会: { start: h(19), end: h(22), icon: '🍻', state: '飲み会中' },
   同期と飲み: { start: h(19, 30), end: h(22, 30), icon: '🍻', state: '飲み会中' },
   取引先と会食: { start: h(19), end: h(22), icon: '🍽️', state: '会食中' },
+  出張: { start: h(7), end: h(23), icon: '✈️', state: '出張中' },
   残業: { start: h(18), end: h(21, 30), icon: '💼', state: '残業中' },
   歯医者: { start: h(19), end: h(20), icon: '🦷', state: '歯医者' },
   ジム: { start: h(19), end: h(20, 30), icon: '🏋️', state: 'ジム' },

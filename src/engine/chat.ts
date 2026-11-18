@@ -66,6 +66,26 @@ function opener(state: GameState, c: Contact, npc: Npc): void {
   const text = withRng(state, (rng) => sayLines(state, npc, GREET[npc.purpose], rng));
   npcSay(state, c, 'greet', { text });
   c.flags.openerFromThem = true;
+  earlyDrinkInvite(state, c, npc);
+}
+
+/**
+ * 容姿4以上のキャラは、相手の1〜2通目でいきなり飲みに誘われることがある（2026-11-18 指示）。
+ * 体目的・食事目的の相手ほど多い。誘いへの返事は「行きましょう／気軽な店を提案／今は会えない」
+ */
+export const TUNE_EARLY_DRINK = { minLooks: 4, chance: { body: 0.6, profit: 0.35, sincere: 0.12, ambiguous: 0.2 } as Record<string, number> };
+function earlyDrinkInvite(state: GameState, c: Contact, npc: Npc): boolean {
+  if (character(state).looks < TUNE_EARLY_DRINK.minLooks || !state.player.photoVisible) return false;
+  if (c.meetings > 0 || c.nextDate || c.flags.earlyDrink !== undefined || c.stage === 'ended') return false;
+  const p = TUNE_EARLY_DRINK.chance[npc.purpose] ?? 0;
+  const yes = withRng(state, (r) => r.chance(p));
+  c.flags.earlyDrink = yes;
+  if (!yes) return false;
+  c.flags.inviteTier = 'casual';
+  npcSay(state, c, 'invite_them', { text: withRng(state, (r) => r.pick(state.gender === 'F'
+    ? ['ていうか、よかったら今度飲みに行きません？笑', '写真めっちゃタイプです。今週どこかで軽く飲みに行きませんか？', 'お酒飲めますか？近いうちにサクッと飲みに行きましょうよ']
+    : ['よかったら、今度飲みに行きませんか？', 'お酒好きですか？今度軽く飲みに行きましょう！', 'メッセージより会って話したいです笑 今度飲みに行きません？'])) });
+  return true;
 }
 
 export function canInvite(c: Contact): boolean {
@@ -136,7 +156,8 @@ export function replyOptions(state: GameState, c: Contact): Choice[] {
       break;
     case 'photo_ask':
       opts.push({ id: 'explain', label: '会ってからのほうが…と伝える' });
-      if (canPublishPhoto(state)) opts.push({ id: 'publish', label: 'プロフィールに顔写真を載せる', sub: '公開すると元に戻せない' });
+      // 顔写真を見たいと言われたら、日数に関係なく必ず顔を出す選択肢を出す（2026-11-18 指示）
+      if (!state.player.photoVisible) opts.push({ id: 'publish', label: '顔を出す（プロフィールに顔写真を載せる）', sub: '公開すると元に戻せない' });
       break;
     case 'praise_blind':
       opts.push({ id: 'happy', label: '嬉しいと素直に返す' }, { id: 'temper', label: '会ってみないと分からないよと返す' });
@@ -339,7 +360,7 @@ export function playerReply(state: GameState, npcId: string, optionId: string): 
       case 'force': text = '大丈夫です、合わせます！'; c.flags.overCommitted = true; break;
       case 'explain': text = '写真は載せていなくて…会ってからのほうが嬉しいです。'; nextKind = 'photo_answer'; break;
       case 'publish':
-        publishPhoto(state);
+        publishPhoto(state, true);
         if (c.stage === 'ended') return; // 公開写真を見て離脱した
         text = 'プロフィールに顔写真を載せました。見てもらえたら嬉しいです。';
         nextKind = 'photo_answer';
@@ -597,6 +618,14 @@ function answerCallWish(state: GameState, c: Contact, npc: Npc): void {
     npcSayMany(state, c, 'chat_cool', [withRng(state, (r) => r.pick(['電話はちょっと苦手で…', 'すみません、電話はもう少し先でもいいですか？', 'ごめんなさい、最近夜はバタバタしてて…']))]);
     return;
   }
+  // 体験談（2026-11-18）：明日電話する約束をした相手から、直前にブロックされた（会う気のない相手）
+  if (isNormalPurpose(npc.purpose) && typeof c.flags.reach === 'number' && c.flags.reach < 2 && withRng(state, (r) => r.chance(0.15))) {
+    npcSay(state, c, 'chat_normal', { text: 'いいですよ！明日の夜21時とかどうですか？', awaitMe: false });
+    pushMsg(c, state.day, 'me', 'ぜひ！明日21時、楽しみにしてます');
+    c.pendingReply = { day: state.day + 1, minute: 20 * 60 + 40, kind: 'call_block', willReply: true, expireDay: state.day + 2 };
+    c.awaitingMe = false;
+    return;
+  }
   npcSay(state, c, 'chat_normal', { text: withRng(state, (r) => r.pick(['いいですよ！今夜とかどうですか？', 'ぜひ！夜なら大丈夫です', 'いいですね、話してみたいです！'])), awaitMe: false });
   pushMsg(c, state.day, 'system', '（その夜、電話で1時間ほど話した）');
   c.interest += isNormalPurpose(npc.purpose) ? 11 : 2;
@@ -611,6 +640,20 @@ function answerCallWish(state: GameState, c: Contact, npc: Npc): void {
 function deliverReply(state: GameState, c: Contact, npc: Npc): boolean {
   const pr = c.pendingReply;
   if (!pr) return false;
+  // 電話の約束をしたのに、その直前にブロック（2026-11-18 体験談）
+  if (pr.kind === 'call_block') {
+    c.pendingReply = undefined;
+    endContact(state, c, { by: 'them', cause: '電話の約束をした直前にブロックされた', eventId: 'E04', base: SPEC_LOSS.E04_EARLY, visible: `約束の電話の時間の少し前、${npc.name}とのトークを開くと「このユーザーは存在しません」と表示された。` });
+    return true;
+  }
+  // 電話で盛り上がった翌日「友達にしか思えない」
+  if (c.flags.friendZone === true && c.meetings === 0 && pr.willReply) {
+    c.pendingReply = undefined;
+    c.flags.friendZone = false;
+    npcSayMany(state, c, 'chat_cool', ['何回か電話してみて、すごく楽しかったんですけど…', 'ごめんなさい、友達にしか思えなくて。']);
+    endContact(state, c, { by: 'them', cause: '電話で盛り上がった翌日、「友達にしか思えない」とブロックされた', eventId: 'E04', base: SPEC_LOSS.E04_EARLY, visible: `${npc.name}から「友達にしか思えない」と届いたあと、トークが開けなくなった。` });
+    return true;
+  }
   if (pr.kind === 'opener') { c.pendingReply = undefined; opener(state, c, npc); return true; }
   if (pr.kind === 'site') { c.pendingReply = undefined; siteNpcMessage(state, c, npc); return true; }
   if (pr.kind === 'after_date') { c.pendingReply = undefined; afterDateReply(state, c); return true; }
@@ -741,8 +784,12 @@ function calledRecently(state: GameState, c: Contact): boolean {
 
 /** 電話をした（効果は誘いの受諾率。answerInvite の callBoost。2026-11-14） */
 function afterCall(state: GameState, c: Contact, npc: Npc): void {
-  void state; void npc;
   delete c.flags.postCallInvite; // 同じ日の朝の版の名残（古いセーブ）
+  // 体験談（2026-11-18）：何度か電話して盛り上がったのに、翌日「友達にしか思えない」と言われてブロック（会う気のない相手）
+  const noMeet = typeof c.flags.reach === 'number' && c.flags.reach < 2 && c.meetings === 0;
+  if (isNormalPurpose(npc.purpose) && noMeet && c.flags.friendZone === undefined && Number(c.flags.callsBeforeMeet ?? 0) >= 2) {
+    c.flags.friendZone = withRng(state, (r) => r.chance(0.35));
+  }
 }
 
 function enoughTalk(c: Contact): boolean {
@@ -771,6 +818,7 @@ function npcReply(state: GameState, c: Contact, npc: Npc, kind: string): void {
     const level = levelOf(state, c, npc);
     if (level <= 2) c.flags.curtReplies = Number(c.flags.curtReplies ?? 0) + 1;
     npcSayMany(state, c, 'greet', greetByLevel(state, c, npc, level, GREET_CURT, GREET[npc.purpose]));
+    earlyDrinkInvite(state, c, npc);
     return;
   }
   if (kind === 'line_answer') {
@@ -906,8 +954,9 @@ function npcReply(state: GameState, c: Contact, npc: Npc, kind: string): void {
  * 既にやり取り中で顔を知らない相手は、公開写真を初めて見た時点で一度だけ継続を判断する。
  * 離脱率は表から導出：d = 1 − (1 − 写真なし時のお断り率)/(1 − 公開後のお断り率)
  */
-export function publishPhoto(state: GameState): boolean {
-  if (!canPublishPhoto(state)) return false;
+/** force：相手に顔写真を頼まれて載せるとき（14日たつ前でも載せられる。2026-11-18） */
+export function publishPhoto(state: GameState, force = false): boolean {
+  if (state.player.photoVisible || (!force && !canPublishPhoto(state))) return false;
   const ch = character(state);
   state.player.photoVisible = true;
   state.player.photoPublishedDay = state.day;

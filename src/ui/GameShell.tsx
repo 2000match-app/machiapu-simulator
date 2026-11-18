@@ -5,7 +5,7 @@ import { scrollToTop } from './scroll';
 import type { Action } from '../engine/actions';
 import { isAdvancing, isResting } from '../engine/advance';
 import { awaitingNow, clockOf, focusUnlocked, lifeNow, timeLabel, visiblePending } from '../engine/clock';
-import { SPEC_CLEAR_DAYS, TUNE_VENUES } from '../engine/data/rules';
+import { SPEC_CLEAR_REL_DATES, TUNE_VENUES } from '../engine/data/rules';
 import { character, isInRelationship } from '../engine/state';
 import { monthBudget } from '../engine/life';
 import { activeStatuses } from '../engine/privateEvents';
@@ -47,7 +47,7 @@ const LIFE_DOWN = [
 function LifeSheet({ onClose }: { onClose: () => void }) {
   return (
     <Sheet title="ライフについて" onClose={onClose}>
-      <p className="small">ライフが0になると「マチアプ疲れ」で終了です。交際が{SPEC_CLEAR_DAYS}日続いた時点で1以上残っていればクリア。</p>
+      <p className="small">ライフが0になると「マチアプ疲れ」で終了です。交際を始めてから{SPEC_CLEAR_REL_DATES}回デートした時点で1以上残っていればクリア。</p>
       <h3 className="life-h down">減りやすいこと</h3>
       <ul className="life-list">{LIFE_DOWN.map((t) => <li key={t}>{t}</li>)}</ul>
       <h3 className="life-h up">回復について</h3>
@@ -63,7 +63,6 @@ function TopBar({ state, act, onBell, onLife, unread }: { state: GameState; act:
   const statuses = activeStatuses(state);
   const lifeTone = state.life > 60 ? 'ok' : state.life > 30 ? 'mid' : 'low';
   const partner = state.partnerId ? state.contacts[state.partnerId] : undefined;
-  const relDays = partner?.relationship ? state.day - partner.relationship.startDay : 0;
   const resting = isResting(state);
   const busy = visiblePending(state).length > 0;
   // トークに集中するモードへの誘導（2026-11-15）：やり取り中の相手がいるとき、閉じ方を選べるようにする
@@ -103,7 +102,7 @@ function TopBar({ state, act, onBell, onLife, unread }: { state: GameState; act:
       </div>
       {((partner && isInRelationship(state)) || resting) && (
         <div className="meta">
-          {partner && isInRelationship(state) && <span className="badge rel">交際{relDays}/{SPEC_CLEAR_DAYS}日</span>}
+          {partner && isInRelationship(state) && <span className="badge rel">交際後のデート {Number(partner.flags.relDates ?? 0)}/{SPEC_CLEAR_REL_DATES}回</span>}
           {resting && <span className="badge warn">休息中 あと{(state.restingUntil ?? state.day) - state.day}日</span>}
         </div>
       )}
@@ -235,7 +234,7 @@ export function GameShell({ state, act, onQuit, onRestart, nav }: { state: GameS
           <button className="rel-banner" onClick={() => go('talk', partner.npcId)}>
             <span className="rb-tag">交際中</span>
             <span className="rb-main"><b>{state.npcs[partner.npcId].name}</b>さんと交際{relDays}日目</span>
-            <span className="rb-goal">{SPEC_CLEAR_DAYS}日でクリア・あと{Math.max(0, SPEC_CLEAR_DAYS - relDays)}日</span>
+            <span className="rb-goal">交際後のデート{SPEC_CLEAR_REL_DATES}回でクリア・あと{Math.max(0, SPEC_CLEAR_REL_DATES - Number(partner.flags.relDates ?? 0))}回</span>
             <span className="rb-note">ほかの人とのトークも続けられます（知られると関係に影響することがあります）</span>
           </button>
         )}

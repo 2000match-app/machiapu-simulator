@@ -306,7 +306,7 @@ function resolve(state: GameState, uid: string, choiceId: string): void {
     case 'date_noshow': if (c) resolveDateNoshow(state, c, choiceId, ev); break;
     case 'date_e06': if (c) resolveDateE06(state, c, choiceId); break;
     case 'date_talk': if (c) resolveDateTalk(state, c, choiceId); break;
-    case 'date_e07': if (c) resolveDateE07(state, c, choiceId); break;
+    case 'date_e07': if (c) resolveDateE07(state, c, choiceId, ev); break;
     case 'date_e11': if (c) resolveDateE11(state, c, choiceId); break;
     case 'e11_seminar': if (c) resolveE11Seminar(state, c, choiceId); break;
     case 'date_bar': if (c) resolveDateBar(state, c, choiceId); break;

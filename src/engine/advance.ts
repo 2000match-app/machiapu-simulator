@@ -2,13 +2,13 @@
 // その日に選択が必要な場面がある場合は、選択が終わってから締める（同日の精算後にライフ0なら失敗を優先）。
 import { maybeSuggestFacePhoto, processRepliesDaily } from './chat';
 import { endContact } from './contact';
-import { dayCancel, processDatingDaily, startDate, maybeWorkCall } from './dates';
+import { venueDaily, dayCancel, processDatingDaily, startDate, maybeWorkCall } from './dates';
 import { monthlySettlement, recover, weeklySettlement } from './life';
 import { receiveLikesDaily, resolveLikes } from './matching';
 import { processRelationshipDaily } from './relationship';
 import { buildResult } from './feedback';
-import { cancelDatesUntil, isTiredDay, likesForToday, privateEventsDaily, tiredNightDaily, unavailableReason } from './privateEvents';
-import { DAYS_PER_MONTH, DAYS_PER_YEAR, SPEC_CLEAR_DAYS, SPEC_LOSS, SPEC_REST_MAX, SPEC_REST_RECOVERY, TUNE_LIKES_PER_DAY, TUNE_SKIPS_PER_DAY } from './data/rules';
+import { stockDaily, cancelDatesUntil, isTiredDay, likesForToday, privateEventsDaily, tiredNightDaily, unavailableReason } from './privateEvents';
+import { DAYS_PER_MONTH, DAYS_PER_YEAR, SPEC_CLEAR_REL_DATES, SPEC_LOSS, SPEC_REST_MAX, SPEC_REST_RECOVERY, TUNE_LIKES_PER_DAY, TUNE_SKIPS_PER_DAY } from './data/rules';
 import { addFeed, character, isInRelationship, pushPending, withRng } from './state';
 import type { GameState } from './types';
 
@@ -41,6 +41,7 @@ export function openDay(state: GameState): void {
   resolveLikes(state);
   processRepliesDaily(state);
   processDatingDaily(state);
+  venueDaily(state); // 男性：デートの1〜3日前に場所を決める（2026-11-18）
   preDateCancellations(state);
   // 体調不良・看病・アプリを閉じている日は会いに行けない（念のため。出来事の時点でキャンセルしている）
   if (unavailableReason(state) && !isTiredDay(state)) cancelDatesUntil(state, state.day, 'ごめんなさい、体調が悪くて…今日は行けなくなってしまいました。');
@@ -50,6 +51,7 @@ export function openDay(state: GameState): void {
   processRelationshipDaily(state);
   characterMoments(state);
   privateEventsDaily(state);
+  stockDaily(state); // 健人・大輔の持ち株（2026-11-18）
   maybeSuggestFacePhoto(state);
 
   // 締めは呼び出し側が行う（場面があれば選択の後に closeDay）
@@ -90,7 +92,7 @@ export function checkEnd(state: GameState): void {
   }
   const pid = state.partnerId;
   const c = pid ? state.contacts[pid] : undefined;
-  if (c && c.stage === 'relationship' && c.relationship?.genuine && state.day - c.relationship.startDay >= SPEC_CLEAR_DAYS) {
+  if (c && c.stage === 'relationship' && c.relationship?.genuine && Number(c.flags.relDates ?? 0) >= SPEC_CLEAR_REL_DATES) {
     state.status = 'cleared';
     state.pending = [];
     state.result = buildResult(state);

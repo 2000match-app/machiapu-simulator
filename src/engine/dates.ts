@@ -42,6 +42,7 @@ export function weekendPlan(state: GameState, day: number): string | undefined {
 export function playerFree(state: GameState, day: number): boolean {
   const ch = character(state);
   if (weekendPlan(state, day)) return false;
+  if (businessTrip(state, day)) return false;
   const r = Rng.fromSeed(state.seed, 'free', day).next();
   const s = ch.freeSlotsPerMonth;
   const pWeekend = ch.weekendLimited ? (s * 0.1) / 8.6 : Math.min(0.95, (s * 0.7) / 8.6);
@@ -71,6 +72,8 @@ function guaranteedPlayerDays(state: GameState, week: number): number[] {
   const weekday = ch.constraints.busy ? Rng.fromSeed(state.seed, 'busy-weekday', week).int(0, 4) : r.int(0, 4);
   let weekend = base + 5 + r.int(0, 1);
   if (weekendPlan(state, weekend)) weekend = weekend % 7 === 5 ? weekend + 1 : weekend - 1; // 予定で埋めた日は避ける
+  // 健人の出張の週は土日が埋まるので、平日をもう1日あける（2026-11-18）
+  if (businessTrip(state, weekend)) return [base + weekday, base + ((weekday + 2) % 5)];
   return [base + weekday, weekend];
 }
 
@@ -92,7 +95,18 @@ function guaranteedMutualDays(state: GameState, npc: Npc, week: number): number[
  * マチアプと関係ない予定（2026-11-07 指示）：会えない日の一部に、カレンダーに出す私用の予定を付ける。
  * シードと日付から決まる。平日は飲み会・残業など、休日は友人との外出・帰省など
  */
+/** 健人（M01）は月に1回、土日に出張が入る（その土日はデートできない。2026-11-18 指示） */
+export function businessTrip(state: GameState, day: number): boolean {
+  if (character(state).id !== 'M01' || !WEEKEND(day)) return false;
+  const month = Math.floor(day / 30);
+  const sats: number[] = [];
+  for (let d = month * 30; d < month * 30 + 30; d++) if (d % 7 === 5) sats.push(d);
+  const sat = Rng.fromSeed(state.seed, 'trip', month).pick(sats);
+  return day === sat || day === sat + 1;
+}
+
 export function privateEventOn(state: GameState, day: number): string | undefined {
+  if (businessTrip(state, day)) return '出張';
   const plan = weekendPlan(state, day);
   if (plan) return plan;
   if (playerFree(state, day)) return undefined;
@@ -108,7 +122,8 @@ export function privateEventOn(state: GameState, day: number): string | undefine
     return r.chance(0.6) ? r.pick(['友人と外出', '実家に帰る', '友人の誕生日会', '美容院', '買い物', '大学の友人とランチ', '家の用事']) : undefined;
   }
   if (ls.weekdayPool && r.chance(ls.weekdayChance ?? 0.22)) return r.weighted(ls.weekdayPool);
-  const generic = !ls.weekdayPool && r.chance(0.22) ? r.pick(['会社の飲み会', '残業', '同期と飲み', '歯医者', '取引先と会食', 'ジム']) : undefined;
+  // 会食は健人だけ（2026-11-18 指示）。ほかの人は飲み会
+  const generic = !ls.weekdayPool && r.chance(0.22) ? r.pick(['会社の飲み会', '残業', '同期と飲み', '歯医者', '会社の飲み会', 'ジム']) : undefined;
   // 忙しい人の会えない平日の夜は、ほかに予定がなければ残業
   return generic ?? (ls.overtime ? '残業' : undefined);
 }
@@ -220,6 +235,7 @@ function confirmDateDay(state: GameState, c: Contact, day: number): void {
       choices: [{ id: 'ok', label: '仕方ない' }],
     });
   }
+  scheduleVenue(state, c);
 }
 
 /** 候補日がどれも合わなかったと返す（2026-11-14）：こちらの返事のあと、相手の「なかなか合わないですね」 */
@@ -233,6 +249,25 @@ export function resolveDatePick(state: GameState, c: Contact, choiceId: string):
   const day = Number(choiceId);
   if (!Number.isFinite(day) || day <= state.day) return;
   confirmDateDay(state, c, day);
+}
+
+/** 男性：デートの日が決まったら、場所決めをデートの1〜3日前に予定する（その日が今日以前なら今すぐ） */
+export function scheduleVenue(state: GameState, c: Contact): void {
+  if (state.gender !== 'M' || !c.nextDate) return;
+  const before = Rng.fromSeed(state.seed, 'venue-day', c.npcId, c.nextDate.day).int(1, 3);
+  const day = Math.max(state.day, c.nextDate.day - before);
+  c.flags.venueDay = day;
+  c.flags.venueFor = c.nextDate.day;
+  if (day <= state.day) venueDaily(state);
+}
+/** 毎日：場所決めの日になった相手の場所決めを出す */
+export function venueDaily(state: GameState): void {
+  for (const c of Object.values(state.contacts)) {
+    if (c.stage !== 'scheduled' || !c.nextDate || c.flags.venueFor !== c.nextDate.day) continue;
+    if (typeof c.flags.venueDay !== 'number' || c.flags.venueDay > state.day || c.flags.venueDone === c.nextDate.day) continue;
+    c.flags.venueDone = c.nextDate.day;
+    pushVenue(state, c, 1);
+  }
 }
 
 /** 高額店の指定（E08の前兆。普通の相手が言うこともある） */
@@ -317,8 +352,7 @@ export function startDate(state: GameState, c: Contact): void {
   }
   // 女性はデートの前にメイクをする（2026-11-12 指示：手間を感じさせる。3回押す）
   if (state.gender === 'F') pushMakeup(state, c, 1);
-  // 男性はデートの場所を決める（2026-11-15 指示：女性の化粧と対になる手間。最寄り→中間→お店を3回押す）
-  else pushVenue(state, c, 1);
+  // 男性のデートの場所決めは、デートの1〜3日前に出す（2026-11-18 指示。scheduleVenue／venueDaily）
   // ドタキャン・待ちぼうけ（E05）
   const fated = typeof c.flags.reach === 'number' && c.meetings === 0 && isNormalPurpose(npc.purpose);
   const noshowP = fated ? (c.flags.forceNoshow ? 1 : 0) : (TUNE_NOSHOW[npc.purpose] ?? 0) * (c.meetings === 0 ? 1 : 0.4) * (npc.filteredPhoto ? 2 : 1);
@@ -465,7 +499,7 @@ function venuePlan(state: GameState, c: Contact): { mine: string; theirs: string
 function pushVenue(state: GameState, c: Contact, step: number): void {
   const npc = state.npcs[c.npcId];
   const v = venuePlan(state, c);
-  const text = step === 1 ? `今日は${npc.name}と会う日。どこで会うか、こちらで決めないといけない。`
+  const text = step === 1 ? `もうすぐ${npc.name}と会う日。どこで会うか、こちらで決めないといけない。`
     : step === 2 ? `${npc.name}は${v.theirs}、自分は${v.mine}。間を取るなら${v.mid}あたりか。`
       : `${v.mid}で、${TUNE_VENUES[c.nextDate?.tier ?? 'cafe'].label}に合うお店を探す。${v.shop}が良さそうだ。`;
   const ev = pushPending(state, {
@@ -480,7 +514,7 @@ export function resolveVenue(state: GameState, c: Contact, ev: PendingEvent): vo
   const step = Number(ev.data?.step ?? 1);
   if (step < VENUE_STEPS.length) { pushVenue(state, c, step + 1); return; }
   const v = venuePlan(state, c);
-  pushMsg(c, state.day, 'me', `今日は${v.mid}の${v.shop}にしようと思います！駅に着いたら連絡しますね。`);
+  pushMsg(c, state.day, 'me', `当日は${v.mid}の${v.shop}にしようと思います！楽しみにしてます。`);
 }
 
 /**
@@ -546,6 +580,43 @@ function dateMoments(state: GameState, c: Contact, npc: Npc, lines: PendingEvent
   if (npc.gender === 'M' && npc.looks <= 2 && Rng.fromSeed(state.seed, 'narrow-talk', npc.id).chance(0.3)) {
     lines.push({ who: 'narration', text: `${npc.name}の話は、風俗とパチンコとアニメの話ばかりだった。こちらの話にはあまり興味がなさそうだ。` });
     note(c, '風俗・パチンコ・アニメの話ばかりだった');
+  }
+  // 体験談（2026-11-18）：デート中ずっとスマホをチラチラ見ている（脈なしのサイン）
+  if (r.chance(c.interest < 45 ? 0.2 : 0.05)) {
+    lines.push({ who: 'narration', text: `話している間ずっと、${npc.name}はテーブルの上のスマホをチラチラ見ていた。` });
+    note(c, 'デート中ずっとスマホをチラチラ見ていた');
+    c.flags.rejMult = Number(c.flags.rejMult ?? 1) * 1.3;
+  }
+  // 趣味の自慢話が止まらない（会話がつまらない）
+  if (r.chance(0.06)) {
+    lines.push({ who: 'narration', text: `${npc.name}は${npc.hobbies[0]}の自慢話を延々と続け、こちらの話にはほとんど質問してこなかった。` });
+    note(c, `${npc.hobbies[0]}の自慢話ばかりで、会話がつまらなかった`);
+  }
+  if (npc.gender === 'M' && state.gender === 'F') {
+    // テーブルの下で足を押しつけてくる（初デートの気持ち悪い行為）
+    if (firstMeeting && r.chance(npc.purpose === 'body' ? 0.18 : 0.03)) {
+      lines.push({ who: 'narration', text: `気づくと、テーブルの下で${npc.name}の足がこちらの足に押しつけられていた。そっと離しても、また当たってくる。` });
+      note(c, 'テーブルの下で足を押しつけられた（気持ち悪かった）');
+      applyLoss(state, 3, 'event', `初デートで足を押しつけられた（${npc.name}）`);
+      c.flags.creepy = true;
+    }
+    // 体験談：タメ口・下ネタ・胸元への視線・ボディタッチ・ホテルの誘いが当たり前。敬語で穏やかな人はまれ
+    const rudeP = npc.purpose === 'body' ? 0.45 : npc.purpose === 'sincere' ? 0.04 : 0.15;
+    if (r.chance(rudeP)) {
+      const act = r.pick([
+        `会って5分で${npc.name}はタメ口になり、話の半分は下ネタだった。`,
+        `${npc.name}の視線が、話している間ずっと胸元に向いている気がした。`,
+        `店を出るとき、${npc.name}が腰に手を回してきた。`,
+        `「このあともう1軒…っていうか、ホテルで飲み直さない？」と軽く言われた。`,
+      ]);
+      lines.push({ who: 'narration', text: act });
+      note(c, act.replace(/。$/, ''));
+      c.flags.creepy = true;
+    } else if (npc.purpose === 'sincere' && r.chance(0.3)) {
+      lines.push({ who: 'narration', text: `${npc.name}は最後まで敬語で、穏やかに話を聞いてくれた。` });
+      note(c, '最後まで敬語で、穏やかに接してくれた');
+      c.interest += 3;
+    }
   }
   // 男性NPCが手を触ってくる（女性プレイヤー。ヤリ目は起きやすい）
   return npc.gender === 'M' && r.chance(npc.purpose === 'body' ? 0.35 : 0.06);
@@ -693,9 +764,15 @@ export function dayCancel(state: GameState, c: Contact): boolean {
   if (forced !== undefined ? forced !== '1' : !withRng(state, (r) => r.chance(p))) return false;
   if (fated) c.flags.reach = 1; // 仕切り直しても会えない
   const tier = c.nextDate.tier;
-  const text = withRng(state, (r) => sayLines(state, npc, DAY_CANCEL_LINES, r));
+  // 体験談（2026-11-18）：電話で「楽しみにしてます」と言っていたのに、43分前に友達との予定を優先してドタキャン
+  const afterCall = Number(c.flags.callsBeforeMeet ?? 0) > 0 && withRng(state, (r) => r.chance(0.5));
+  if (afterCall) c.flags.cancel43 = true;
+  const text = afterCall
+    ? 'ごめんなさい！急に友達との予定が入ってしまって、今日行けなくなりました…'
+    : withRng(state, (r) => sayLines(state, npc, DAY_CANCEL_LINES, r));
   // 返事はキャンセルへの返し方を選ぶ（2026-11-16 修正：ふつうの会話の選択肢が出ていた）
-  npcSay(state, c, 'day_cancel', { text: text + (isNormalPurpose(npc.purpose) && withRng(state, (r) => r.chance(0.4)) ? ' また会ってくださると嬉しいです！' : ''), awaitMe: true });
+  if (afterCall) pushMsg(c, state.day, 'system', '（約束の43分前に届いたメッセージ）');
+  npcSay(state, c, 'day_cancel', { text: text + (afterCall || (isNormalPurpose(npc.purpose) && withRng(state, (r) => r.chance(0.4))) ? ' また会ってくださると嬉しいです！' : ''), awaitMe: true });
   c.dates.push({ day: state.day, tier, costYen: 0, outcome: 'canceled', notes: [`${TUNE_VENUES[tier].label}の約束の日の朝、キャンセルの連絡が来た`], impression: 'bad' });
   c.nextDate = undefined;
   c.stage = c.meetings > 0 ? 'dating' : 'talking';
@@ -778,11 +855,20 @@ export function resolveDateTalk(state: GameState, c: Contact, choiceId: string):
       ? '「え、年収そこなんだ。正直、将来とか考えると厳しくない？」'
       : !c.flags.faceWasKnownBeforeDate ? '「写真なかったから、もっと違う感じの人を想像してた」'
         : withRng(state, (r) => r.pick(['「思ってたより…まあ、いいや」', '「え、ニュースとか見ないタイプ？会話の引き出し少なそう」']));
+    // 体験談（2026-11-18）：「VIVANT観てる？」→「観てない」→「ニュースも見ないタイプ？会話の引き出し少なそう」
+    const vivant = remark.includes('引き出し');
+    if (vivant) {
+      lines.push({ who: 'them', text: 'VIVANT観てる？' });
+      lines.push({ who: 'narration', text: '「観てないです」と答えると、相手は少し鼻で笑った。' });
+    }
     lines.push({ who: 'them', text: remark });
     note(c, `相手に言われた：${remark}`);
     pushPending(state, {
       kind: 'date_e07', npcId: c.npcId, title: '値踏みされる', lines,
-      choices: [{ id: 'push', label: '失礼だと反論する' }, { id: 'leave', label: '早めに切り上げる' }, { id: 'let', label: '笑って受け流す' }],
+      choices: vivant
+        ? [{ id: 'push', label: '「VIVANT観てる？って話しかできない人の方が、引き出し少ないんじゃないですか？」と返して解散する' }, { id: 'leave', label: '早めに切り上げる' }, { id: 'let', label: '笑って受け流す' }]
+        : [{ id: 'push', label: '失礼だと反論する' }, { id: 'leave', label: '早めに切り上げる' }, { id: 'let', label: '笑って受け流す' }],
+      data: { vivant: vivant ? 1 : 0 },
     });
     return;
   }
@@ -790,8 +876,12 @@ export function resolveDateTalk(state: GameState, c: Contact, choiceId: string):
   const bailForced = devForce(state, `bail:${c.npcId}`);
   if (isNormalPurpose(npc.purpose) && c.meetings === 0 && (bailForced === '1'
     || (bailForced === undefined && c.interest < 40 && Number(c.flags.rejMult ?? 1) >= 1 && withRng(state, (r) => r.chance(0.2))))) {
+    const cafeCake = (c.nextDate?.tier ?? 'cafe') === 'cafe' && withRng(state, (r) => r.chance(0.5));
+    if (cafeCake) lines.push({ who: 'narration', text: 'コーヒーとケーキを頼み、届いたところで——' });
     lines.push({ who: 'them', text: 'ちょっとお手洗い行ってきますね' });
-    lines.push({ who: 'narration', text: `15分たっても${npc.name}が戻ってこない。店員に聞くと「お連れ様は先ほどお店を出られました」と言われた。` });
+    lines.push({ who: 'narration', text: cafeCake
+      ? `ケーキに半分手をつけたまま、${npc.name}は戻ってこない。店員に聞くと「お連れ様は既にお店を出ています」と言われた。`
+      : `15分たっても${npc.name}が戻ってこない。店員に聞くと「お連れ様は先ほどお店を出られました」と言われた。` });
     note(c, `「お手洗いに」と席を立った${npc.name}が、そのまま帰ってしまった`);
     pushPending(state, { kind: 'date_bail', npcId: c.npcId, title: '戻ってこない', lines, choices: [{ id: 'pay', label: '2人分を払って店を出る' }] });
     return;
@@ -882,13 +972,14 @@ function pushPay(state: GameState, c: Contact, npc: Npc, pre: PendingEvent['line
   pushPending(state, { kind: 'date_pay', npcId: c.npcId, title: 'お会計', lines, choices: payChoices(state) });
 }
 
-export function resolveDateE07(state: GameState, c: Contact, choiceId: string): void {
+export function resolveDateE07(state: GameState, c: Contact, choiceId: string, ev?: PendingEvent): void {
   const npc = state.npcs[c.npcId];
+  c.flags.vivant = !!ev?.data?.vivant;
   seriesLoss(state, c, SPEC_LOSS.E07, 'E07', `容姿・年収などを露骨に値踏みされた（${npc.name}）`);
   logEvent(state, 'E07', '値踏み', c.npcId);
   c.flags.e07 = true;
   c.flags.rejMult = 3; // 失礼な相手はほぼ再会を望まない
-  const line = choiceId === 'push' ? '「そういう言い方は失礼だと思います」と伝えると、空気が冷えた。'
+  const line = choiceId === 'push' ? (c.flags.vivant ? '「VIVANT観てる？って話しかできない人の方が、会話の引き出し少ないんじゃないですか？」と返して、その場で解散した。' : '「そういう言い方は失礼だと思います」と伝えると、空気が冷えた。')
     : choiceId === 'leave' ? '「今日はこのへんで」と早めに席を立った。'
       : '笑ってやり過ごしたが、帰り道ずっとその言葉が頭に残った。';
   note(c, line);
@@ -1227,6 +1318,12 @@ function pushDateEnd(state: GameState, c: Contact, npc: Npc, pre: PendingEvent['
     { id: 'end', label: '今回で終わりにする' },
   ];
   if (c.meetings >= 2 && c.stage !== 'relationship') choices.splice(2, 0, { id: 'propose', label: '付き合ってほしいと伝える', sub: '断られたら傷はいちばん深い' });
+  // 2回目のデートの別れ際にキス（男性プレイヤー）。翌朝ノリで送ってしまう選択肢がある（2026-11-18）
+  if (state.gender === 'M' && c.meetings === 2 && c.stage !== 'relationship' && withRng(state, (r) => r.chance(0.4))) {
+    lines.push({ who: 'narration', text: `別れ際、${npc.name}とキスをした。` });
+    note(c, '2回目のデートの別れ際にキスをした');
+    choices.splice(choices.length - 1, 0, { id: 'hotel_joke', label: '翌朝「昨日キスしたし、次はホテル？笑」と送る' });
+  }
   // 次の日程まで自分から提案する（以前は女性だけ。体験談の成功パターン：相手の気持ちも少し上がる）
   if (c.stage !== 'relationship') choices.splice(2, 0, { id: 'next_plan', label: 'また会いたいと伝えて、次の日程まで提案する', sub: '断られたら傷は深い' });
   // まだLINEを交換していなければ、別れ際に交換する場面がある（相手から言われる／自分から聞く）
@@ -1301,7 +1398,7 @@ export function resolveDateEnd(state: GameState, c: Contact, rawChoiceId: string
   let choiceId = rawChoiceId;
   if (WISH_MULT[rawChoiceId] !== undefined) c.flags.wishMult = WISH_MULT[rawChoiceId];
   const polite = rawChoiceId === 'more_polite';
-  if (polite) choiceId = 'more';
+  if (polite || rawChoiceId === 'hotel_joke') choiceId = 'more';
   if (rawChoiceId === 'next_plan') {
     choiceId = 'more';
     c.interest += 6;
@@ -1375,6 +1472,18 @@ export function resolveDateEnd(state: GameState, c: Contact, rawChoiceId: string
   const delay = withRng(state, (r) => r.int(1, 2));
   c.pendingReply = { day: state.day + delay, kind: 'after_date', willReply: true, expireDay: state.day + 7 };
   c.awaitingMe = false;
+  // 体験談（2026-11-18）：2回目のデートでキスした翌朝、「昨日キスしたし、次はホテル？笑」と送って既読スルーされた
+  if (rawChoiceId === 'hotel_joke') {
+    pushMsg(c, state.day, 'me', '昨日キスしたし、次はホテル？笑');
+    note(c, '翌朝「昨日キスしたし、次はホテル？笑」と送った');
+    if (npc.purpose !== 'body') {
+      for (const m of c.messages) if (m.from === 'me') m.read = true;
+      c.pendingReply = { day: state.day + 1, kind: 'chat', willReply: false, expireDay: state.day + 4 };
+      c.flags.wishMult = Math.max(Number(c.flags.wishMult ?? 1), 1.3);
+    } else {
+      c.interest += 8;
+    }
+  }
 }
 
 /** デート後の相手の反応（返信予定日に呼ばれる） */

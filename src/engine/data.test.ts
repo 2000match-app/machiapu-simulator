@@ -20,11 +20,11 @@ const SPEC_TABLE: [string, string, number, string, string, number, number, numbe
   ['M07', '大輔', 27, 'コンサルタント', '東京大学卒', 800, 171, 3, true, 3],
   ['M08', '直人', 30, '派遣ITサポート', '日本大学卒', 320, 172, 1, false, 1.5],
   ['M09', '太郎', 35, '中小企業会社員', '龍谷大学卒', 500, 167, 1, true, 1],
-  ['M11', '和樹', 33, '会社員', '東洋大学卒', 600, 170, 3, true, 2.5],
+  ['M11', '和樹', 33, 'メーカー勤務', '東洋大学卒', 750, 170, 3, true, 2.5],
   ['M10', '誠', 44, '非正規の清掃職', '高卒', 260, 171, 2, true, 1],
   ['F01', '麻衣', 27, '大手企業勤務', '慶應義塾大学卒', 700, 164, 5, true, 3],
   ['F02', '莉奈', 23, '販売職', '専門卒', 300, 160, 5, true, 2],
-  ['F03', '美咲', 33, '会社員', '中央大学卒', 600, 158, 3, true, 1.5],
+  ['F03', '美咲', 33, '公務員', '中央大学卒', 600, 158, 3, true, 1.5],
   ['F04', '沙織', 34, 'パート事務', '専門卒', 180, 160, 3, false, 0.8],
   ['F05', '真由', 36, '大手企業管理職', '早稲田大学卒', 900, 162, 3, true, 8], // 2026-11-13 36歳・容姿3
   ['F06', '葵', 24, '医療事務', '専門卒', 280, 155, 2, false, 0.8],
@@ -103,7 +103,7 @@ describe('プレイ可能キャラクター20人', () => {
   });
   it('初期希望：M10・F01・F05・F10（容姿4以上は検索条件ではなく見た目の好みとして持つ）', () => {
     expect(getCharacter('M10').initialPreference).toMatchObject({ ageMin: 25, ageMax: 32 });
-    expect(getCharacter('F01').initialPreference).toMatchObject({ minIncomeYen: 1000 * man });
+    expect(getCharacter('F01').initialPreference).toMatchObject({ minIncomeYen: 800 * man }); // 2026-11-18 指示で1,000万→800万
     expect(getCharacter('F05').initialPreference).toMatchObject({ minIncomeYen: 1200 * man });
     expect(getCharacter('F10').initialPreference).toMatchObject({ ageMin: 30, ageMax: 39 });
     for (const id of ['M10', 'F01', 'F05', 'F10']) expect(getCharacter(id).lookPreference).toBe(4);

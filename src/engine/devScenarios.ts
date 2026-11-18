@@ -370,7 +370,7 @@ export const DEV_SCENARIOS: DevScenario[] = [
       const s = devNewGame('M04', 'dev-e22');
       devAddContact(s, { purpose: 'sincere', stage: 'relationship', meetings: 3, traits: { moneySense: 'lavish' } });
       s.flags['dev:relweekly'] = 'e22';
-      advanceDays(s, 14, { e22: 'postpone', rel_week: 'cheap', rel_phase: 'agree' });
+      advanceDays(s, 14, { e22: 'postpone', rel_week: 'cheap', rel_phase: 'agree', rel_trip: 'no' });
       return s;
     },
   },
@@ -379,7 +379,7 @@ export const DEV_SCENARIOS: DevScenario[] = [
     run: () => {
       const s = devNewGame('F03', 'dev-e23');
       const c = devAddContact(s, { purpose: 'sincere', stage: 'relationship', meetings: 3 });
-      advanceDays(s, 10, { rel_phase: 'agree', rel_week: 'meet' });
+      advanceDays(s, 10, { rel_phase: 'agree', rel_week: 'meet', rel_trip: 'no' });
       applyAction(s, { type: 'endContact', npcId: c.npcId });
       return s;
     },
@@ -392,6 +392,22 @@ export const DEV_SCENARIOS: DevScenario[] = [
       c.interest = 80;
       applyAction(s, { type: 'reply', npcId: c.npcId, optionId: 'propose' });
       advanceDays(s, 7, { rel_phase: 'agree', rel_week: 'meet', rel_others: 'close' });
+      return s;
+    },
+  },
+  // 旅行の誘い（2026-11-18）。交際後1回目のデートの翌日、誘いが届いたところで止める
+  {
+    id: 'TRIP', label: '交際後：一泊二日の旅行の誘い（泊まり・日帰り・断る）',
+    run: () => {
+      const s = devNewGame('F03', 'dev-trip');
+      s.flags.noPrivateEvents = true;
+      const c = devAddContact(s, { purpose: 'sincere', stage: 'relationship', meetings: 3 });
+      c.relationship!.compat = 1;
+      c.flags.relDateDay = s.day + 1;
+      c.flags.relDateTier = 'cafe';
+      resolveAll(s, { rel_others: 'close' });
+      c.flags.relDateDay = s.day + 1;
+      applyAction(s, { type: 'advance' });
       return s;
     },
   },

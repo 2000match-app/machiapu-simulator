@@ -3,7 +3,7 @@
 // 犯罪・欺瞞が主因なら先に示す。「高望み」は試行数・人気集中・相互条件・成立率の条件を満たす時だけ。
 import { getCharacter } from './data/characters';
 import { EVENTS } from './data/events';
-import { SPEC_CLEAR_DAYS } from './data/rules';
+import { SPEC_CLEAR_REL_DATES } from './data/rules';
 import { yenLabel } from './life';
 import { estimateCandidates } from './npc';
 import { PREFECTURES } from './data/areas';
@@ -232,7 +232,7 @@ export function buildResult(state: GameState): ResultSummary {
     return {
       outcome: 'cleared', day: state.day, partnerId: state.partnerId, totalSpend, specialLoss, lossByCategory, lossByEvent,
       secondary: [], playerChoices: [], externalFactors: [], suggestions: [],
-      headline: `${npc?.name ?? '相手'}との交際が${SPEC_CLEAR_DAYS}日続きました（残りライフ${state.life}）`,
+      headline: `${npc?.name ?? '相手'}と交際して${SPEC_CLEAR_REL_DATES}回デートしました（残りライフ${state.life}）`,
     };
   }
 

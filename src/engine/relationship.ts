@@ -4,7 +4,7 @@ import { findDateDays } from './dates';
 import { applyLoss, recoverOnce, seriesLoss, spend } from './life';
 import { npcSay } from './messaging';
 import {
-  SPEC_CLEAR_DAYS, SPEC_FIRST_RELATIONSHIP_RECOVERY, SPEC_LOSS, SPEC_MILESTONE_RECOVERY, TUNE_VENUES, isNormalPurpose,
+  SPEC_CLEAR_DAYS, SPEC_CLEAR_REL_DATES, TUNE_TRIP, TUNE_TRIP_YEN, SPEC_FIRST_RELATIONSHIP_RECOVERY, SPEC_LOSS, SPEC_MILESTONE_RECOVERY, TUNE_VENUES, isNormalPurpose,
 } from './data/rules';
 import { addFeed, character, devForce, logEvent, pushPending, withRng } from './state';
 import { getArea } from './data/areas';
@@ -58,7 +58,7 @@ export function startRelationship(state: GameState, c: Contact): void {
     lines: [
       ...(lastThem ? [{ who: 'them' as const, text: lastThem.text }] : []),
       { who: 'narration', text: `${npc.name}と、正式に付き合うことになった。今日が交際0日目。` },
-      { who: 'system', text: `このまま交際が${SPEC_CLEAR_DAYS}日続けばクリア。` },
+      { who: 'system', text: `交際してから${SPEC_CLEAR_REL_DATES}回デートすればクリア。` },
     ],
     choices: [{ id: 'ok', label: '「これからよろしくね」と返す' }],
   });
@@ -132,9 +132,39 @@ export function processRelationshipDaily(state: GameState): void {
     spend(state, cost, 'date', `${npc.name}とのデート`, { npcId: c.npcId });
     c.meetings += 1;
     rel.health += c.flags.relDateCheap && npc.traits.moneySense === 'lavish' ? 0 : pref === 'high' ? 4 : 3;
-    c.dates.push({ day: state.day, tier, costYen: cost, outcome: 'met', notes: [`交際中のデート（${TUNE_VENUES[tier].label}）`], impression: 'good' });
-    addFeed(state, `${npc.name}と${TUNE_VENUES[tier].label}でデートした。`, 'good', c.npcId);
+    const trip = !!c.flags.relDateTrip;
+    const dayTrip = !!c.flags.relDateDayTrip;
+    const place = String(c.flags.tripPlace ?? '');
+    const note = trip ? '交際中の一泊二日の旅行' : dayTrip ? `交際中の日帰り旅行（${place}）` : `交際中のデート（${TUNE_VENUES[tier].label}）`;
+    c.dates.push({ day: state.day, tier, costYen: cost, outcome: 'met', notes: [note], impression: 'good' });
+    addFeed(state, trip ? `${npc.name}と${place}に一泊二日の旅行に行った。` : dayTrip ? `${npc.name}と日帰りで${place}に行った。` : `${npc.name}と${TUNE_VENUES[tier].label}でデートした。`, 'good', c.npcId);
     c.flags.relDateDay = -1;
+    c.flags.relDateTrip = false;
+    c.flags.relDateDayTrip = false;
+    // 交際後のデートの回数（3回でクリア。2026-11-18 指示）。本気の相手との泊まりの旅行はデート2回分（近道）
+    const before = Number(c.flags.relDates ?? 0);
+    const n = (c.flags.relDates = before + (trip && rel.genuine ? TUNE_TRIP.stayCounts : 1));
+    if (trip) {
+      c.flags.tripDone = true;
+      if (rel.genuine) rel.health += TUNE_TRIP.health.go;
+    }
+    // 3回目に届いたとき、関係が固まったと分かるひと言（2026-11-18 指示）
+    if (rel.genuine && before < SPEC_CLEAR_REL_DATES && n >= SPEC_CLEAR_REL_DATES) {
+      const line = withRng(state, (r) => r.pick([
+        'これからもよろしくね。ちゃんと大事にしたいって思ってる',
+        '今度、友達に紹介してもいい？',
+        'アプリ、もう消そうと思う。一緒に消さない？',
+      ]));
+      pushMsg(c, state.day, 'them', line);
+      addFeed(state, `${npc.name}との関係が、はっきり形になった。`, 'good', c.npcId);
+    }
+    // ヤリ目は旅行の後に振る。ほかの偽交際も、3回目のデートより前に決着させる
+    if (!rel.genuine && (npc.purpose === 'body' ? trip : n >= SPEC_CLEAR_REL_DATES - 1)) rel.fakeResolveDay = state.day + 1;
+    // 1回目のデートの後、必ず一泊二日の旅行の提案がある
+    if (n === 1 && !c.flags.tripOffered && state.status === 'playing') {
+      c.flags.tripOffered = true;
+      pushTripOffer(state, c, npc);
+    }
   }
   if (d === 30) recoverOnce(state, 'milestone30', SPEC_MILESTONE_RECOVERY, '交際30日を通過');
   if (d === 60) recoverOnce(state, 'milestone60', SPEC_MILESTONE_RECOVERY, '交際60日を通過');
@@ -149,19 +179,44 @@ export function processRelationshipDaily(state: GameState): void {
     return;
   }
   if (d > 0 && d % 7 === 3) {
-    pushWeekPlan(state, c, npc);
+    // 旅行を断ったあとは、しばらく相手から誘ってこない（2026-11-18 指示）
+    if (Number(c.flags.relCoolUntil ?? -1) > state.day) {
+      addFeed(state, `${npc.name}から週末の話が出なかった。旅行を断ってから、少し距離ができた気がする。`, 'neutral', c.npcId);
+    } else {
+      pushWeekPlan(state, c, npc);
+    }
   }
   if (d > 0 && d % 7 === 5) {
     weeklyInternal(state, c, npc);
   }
 }
 
+/** 一泊二日の旅行の提案（交際後1回目のデートの後。2026-11-18 指示） */
+function pushTripOffer(state: GameState, c: Contact, _npc: Npc): void {
+  const place = withRng(state, (r) => r.pick(['箱根', '熱海', '鎌倉', '日光', '軽井沢', '草津']));
+  pushPending(state, {
+    kind: 'rel_trip', npcId: c.npcId, title: `交際${relDay(state, c)}日目：旅行の誘い`,
+    lines: [{ who: 'them', text: `今日楽しかった！今度、一泊二日で${place}とか行かない？` }],
+    choices: [
+      { id: 'go', label: `泊まりで行く（自分の負担 約${TUNE_TRIP_YEN.toLocaleString()}円）` },
+      { id: 'day', label: `日帰りならと提案する（約${TUNE_TRIP.dayTripYen.toLocaleString()}円）` },
+      { id: 'no', label: 'まだ早いかなと、やんわり断る' },
+    ],
+    data: { place },
+  });
+}
+
 function resolveFake(state: GameState, c: Contact, npc: Npc): void {
   switch (npc.purpose) {
     case 'body':
       endContact(state, c, {
-        by: 'them', cause: '交際を装った相手との関係が切られた', eventId: 'E09', base: SPEC_LOSS.E09,
-        visible: `${npc.name}からの連絡が少しずつ減り、ある日を境に既読がつかなくなった。`,
+        by: 'them', cause: c.flags.tripDone ? '一泊二日の旅行の後に関係を切られた' : '交際を装った相手との関係が切られた', eventId: 'E09',
+        // 泊まりの後に振られるのがいちばん痛く、日帰りや断ったところで離れられるのは軽い（2026-11-18 指示）
+        base: SPEC_LOSS.E09 * (c.flags.tripDone ? TUNE_TRIP.bodyLossMult.go
+          : c.flags.tripChoice === 'day' || c.flags.tripChoice === 'no' ? TUNE_TRIP.bodyLossMult[c.flags.tripChoice] : 1),
+        visible: c.flags.tripDone
+          ? `旅行から帰った次の日から、${npc.name}の返信がそっけなくなった。数日後、「なんか違ったかも、ごめん」とだけ届いて、それきりになった。`
+          : `${npc.name}からの連絡が少しずつ減り、ある日を境に既読がつかなくなった。`,
       });
       break;
     case 'married':
@@ -526,6 +581,45 @@ export function resolveRelationshipEvent(state: GameState, ev: PendingEvent, cho
       }
       break;
     }
+    case 'rel_trip': {
+      // 返事で損得が分かれる（2026-11-18 指示。TUNE_TRIP）
+      const answer = (choiceId === 'go' || choiceId === 'day' ? choiceId : 'no') as 'go' | 'day' | 'no';
+      const place = String(ev.data?.place ?? '');
+      c.flags.tripChoice = answer;
+      c.flags.tripPlace = place;
+      // ヤリ目は泊まり以外なら冷めて離れる
+      if (npc.purpose === 'body' && answer !== 'go') {
+        rel.fakeResolveDay = state.day + 1;
+        pushMsg(c, state.day, 'them', answer === 'day' ? '日帰りかー、じゃあまた今度でいいや' : 'そっか、わかった〜');
+        break;
+      }
+      if (answer !== 'no') {
+        const all = findDateDays(state, npc, state.day, 8).filter((d) => d <= state.day + 14);
+        // 泊まりは金曜か土曜の出発にする（平日に一泊二日は不自然。合わなければ全部の候補から）
+        const weekend = all.filter((d) => d % 7 === 4 || d % 7 === 5);
+        const days = answer === 'go' && weekend.length > 0 ? weekend : all.slice(0, 6);
+        if (days.length > 0) {
+          pushMsg(c, state.day, 'them', answer === 'go' ? 'やった！宿探しとくね' : 'いいね！日帰りで行こう');
+          pushPending(state, {
+            kind: 'rel_pick', npcId: c.npcId, title: `交際${relDay(state, c)}日目：旅行の日を決める`,
+            lines: [{ who: 'narration', text: `${npc.name}と${place}に${answer === 'go' ? '一泊二日' : '日帰り'}で行くことにした。お互いに空いている日から選ぼう。` }],
+            choices: days.map((d) => ({ id: String(d), label: dateWithWeekday(d), sub: `${d - state.day}日後` })),
+            data: answer === 'go'
+              ? { cost: TUNE_TRIP_YEN, tier: 'dinner', trip: true }
+              : { cost: TUNE_TRIP.dayTripYen, tier: 'casual', dayTrip: true },
+          });
+          break;
+        }
+        addFeed(state, `${npc.name}と旅行の日程が合わなかった。`, 'neutral', c.npcId);
+        pushMsg(c, state.day, 'them', 'また都合のいいときに行こうね');
+        break;
+      }
+      // 断った：本気の相手は残念がり、しばらく誘ってこない
+      rel.health += TUNE_TRIP.health.no;
+      c.flags.relCoolUntil = state.day + TUNE_TRIP.coolDays;
+      pushMsg(c, state.day, 'them', 'そっか、わかった〜');
+      break;
+    }
     case 'rel_pick': {
       const day = Number(choiceId);
       if (!Number.isFinite(day) || day <= state.day) break;
@@ -533,6 +627,8 @@ export function resolveRelationshipEvent(state: GameState, ev: PendingEvent, cho
       c.flags.relDateCost = Number(ev.data?.cost ?? 0);
       c.flags.relDateTier = String(ev.data?.tier ?? 'cafe');
       c.flags.relDateCheap = !!ev.data?.cheap;
+      c.flags.relDateTrip = !!ev.data?.trip;
+      c.flags.relDateDayTrip = !!ev.data?.dayTrip;
       pushMsg(c, state.day, 'system', `予定：${dateWithWeekday(day)}・${day - state.day}日後（${TUNE_VENUES[c.flags.relDateTier as VenueTier].label}）`);
       addFeed(state, `${npc.name}と${day - state.day}日後に会う約束をした。`, 'good', c.npcId);
       break;

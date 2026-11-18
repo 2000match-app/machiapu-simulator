@@ -38,7 +38,7 @@ function afterLabel(state: GameState, c: Contact, rec: DateRecord): string {
 /** カレンダーのマスに収まる短い呼び名 */
 const PRIVATE_SHORT: Record<string, string> = {
   会社の飲み会: '飲み会', 友人と外出: '友人', 実家に帰る: '帰省', 友人の誕生日会: '誕生会', 大学の友人とランチ: 'ランチ',
-  取引先と会食: '会食', 家の用事: '用事', 同期と飲み: '飲み', シフト勤務: '仕事', 子どもの習い事: '習い事', 保育園の行事: '行事',
+  取引先と会食: '会食', 出張: '出張', 家の用事: '用事', 同期と飲み: '飲み', シフト勤務: '仕事', 子どもの習い事: '習い事', 保育園の行事: '行事',
 };
 function shortPrivate(label: string): string {
   return PRIVATE_SHORT[label] ?? label;

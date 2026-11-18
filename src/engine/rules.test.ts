@@ -258,47 +258,122 @@ describe('月末の精算', () => {
   });
 });
 
-describe('交際60日（SPEC_CLEAR_DAYS）のクリア判定', () => {
-  function relState(seed: string): { s: GameState; id: string } {
-    const s = newGame('M01', seed);
+describe('交際後のデート3回でクリア（2026-11-18。以前は交際60日）', () => {
+  function relState(seed: string, id = 'F03'): { s: GameState; id: string } {
+    const s = newGame(id, seed);
+    s.flags.noPrivateEvents = true;
     const c = devAddContact(s, { purpose: 'sincere', stage: 'relationship', meetings: 3 });
     c.relationship!.compat = 1;
     return { s, id: c.npcId };
   }
-  it('前日では未クリア、当日でクリア', () => {
-    const { s, id } = relState('clear-1');
-    const start = s.contacts[id].relationship!.startDay;
-    while (s.day < start + SPEC_CLEAR_DAYS - 1 && s.status === 'playing') stepDay(s);
-    expect(s.day - start).toBe(SPEC_CLEAR_DAYS - 1);
-    expect(s.status).toBe('playing');
-    stepDay(s);
-    expect(s.status).toBe('cleared');
-    expect(s.day - start).toBe(SPEC_CLEAR_DAYS);
-  });
-  it('クリア当日の精算でライフ0なら失敗を優先', () => {
-    const { s, id } = relState('clear-2');
-    const start = s.contacts[id].relationship!.startDay;
-    while (s.day < start + SPEC_CLEAR_DAYS - 1 && s.status === 'playing') stepDay(s);
+  /** 交際中のデートを1回する（翌日をデートの日にして1日進める。場面は「旅行は断る」「電話で過ごす」などで流す） */
+  function relDate(s: GameState, id: string, fatal = false): void {
+    const c = s.contacts[id];
+    c.flags.relDateDay = s.day + 1;
+    c.flags.relDateTier = 'cafe';
     openDay(s);
-    while (s.pending.length > 0) applyAction(s, { type: 'resolve', uid: s.pending[0].uid, choiceId: s.pending[0].choices[0].id });
-    applyLoss(s, 1000, 'event', 'テスト：致命的な損失');
+    if (fatal) applyLoss(s, 1000, 'event', 'テスト：致命的な損失');
+    for (let g = 0; g < 20 && s.pending.length > 0 && s.status === 'playing'; g++) {
+      const ev = s.pending[0];
+      const pick = ev.kind === 'rel_trip' ? 'no' : ev.kind === 'rel_week' ? 'call' : ev.choices[0].id;
+      applyAction(s, { type: 'resolve', uid: ev.uid, choiceId: pick });
+    }
     closeDay(s);
+  }
+  it('交際後の2回目のデートでは未クリア、3回目でクリア', () => {
+    const { s, id } = relState('clear-1');
+    relDate(s, id);
+    relDate(s, id);
+    expect(s.contacts[id].flags.relDates).toBe(2);
+    expect(s.status).toBe('playing');
+    relDate(s, id);
+    expect(s.status).toBe('cleared');
+  });
+  it('1回目のデートの後に、一泊二日の旅行の誘いが必ず来る', () => {
+    const { s, id } = relState('clear-trip');
+    const c = s.contacts[id];
+    c.flags.relDateDay = s.day + 1;
+    openDay(s);
+    expect(s.pending.some((p) => p.kind === 'rel_trip')).toBe(true);
+  });
+  /** 1回目のデートをして、旅行の誘いに answer で返事する。日にちの選択まで済ませる */
+  function tripAnswer(s: GameState, id: string, answer: 'go' | 'day' | 'no'): void {
+    const c = s.contacts[id];
+    c.flags.relDateDay = s.day + 1;
+    c.flags.relDateTier = 'cafe';
+    openDay(s);
+    const ev = s.pending.find((p) => p.kind === 'rel_trip')!;
+    applyAction(s, { type: 'resolve', uid: ev.uid, choiceId: answer });
+    const pick = s.pending.find((p) => p.kind === 'rel_pick');
+    if (pick) applyAction(s, { type: 'resolve', uid: pick.uid, choiceId: pick.choices[0].id });
+  }
+  it('旅行：本気の相手と泊まりならデート2回分になり、2回のデートでクリア（近道）', () => {
+    const { s, id } = relState('trip-go');
+    tripAnswer(s, id, 'go');
+    const c = s.contacts[id];
+    expect(c.flags.relDateTrip).toBe(true);
+    const tripDay = Number(c.flags.relDateDay);
+    for (let g = 0; g < 20 && s.day < tripDay && s.status === 'playing'; g++) {
+      s.life = 100;
+      for (const p of [...s.pending]) applyAction(s, { type: 'resolve', uid: p.uid, choiceId: p.kind === 'rel_week' ? 'call' : p.choices[0].id });
+      closeDay(s);
+      openDay(s);
+    }
+    expect(c.flags.relDates).toBe(3);
+    closeDay(s);
+    expect(s.status).toBe('cleared');
+  });
+  it('旅行：日帰りはデート1回分、断ると次の週の誘いが止まる', () => {
+    const a = relState('trip-day');
+    tripAnswer(a.s, a.id, 'day');
+    expect(a.s.contacts[a.id].flags.relDateDayTrip).toBe(true);
+    expect(a.s.contacts[a.id].flags.relDateTrip).toBe(false);
+    const b = relState('trip-no');
+    const h0 = b.s.contacts[b.id].relationship!.health;
+    tripAnswer(b.s, b.id, 'no');
+    const cb = b.s.contacts[b.id];
+    expect(Number(cb.flags.relCoolUntil)).toBeGreaterThan(b.s.day);
+    expect(cb.relationship!.health).toBeLessThan(h0 + 4); // デートの +3〜4 を、断った −6 が打ち消す
+  });
+  it('旅行：ヤリ目に振られたときの痛さは 泊まり ＞ 日帰り ＞ 断る', () => {
+    const loss: Record<string, number> = {};
+    for (const answer of ['go', 'day', 'no'] as const) {
+      const s = newGame('F03', `trip-body-${answer}`);
+      s.flags.noPrivateEvents = true;
+      const c = devAddContact(s, { purpose: 'body', stage: 'relationship', meetings: 3 });
+      c.relationship!.fakeResolveDay = 999;
+      tripAnswer(s, c.npcId, answer);
+      for (let g = 0; g < 30 && c.stage !== 'ended'; g++) {
+        for (const p of [...s.pending]) applyAction(s, { type: 'resolve', uid: p.uid, choiceId: p.kind === 'rel_week' ? 'call' : p.choices[0].id });
+        if ((c.stage as string) === 'ended') break;
+        closeDay(s);
+        s.life = 100;
+        openDay(s);
+      }
+      expect(c.stage).toBe('ended');
+      loss[answer] = s.ledger.filter((l) => l.eventId === 'E09').reduce((t, l) => t - l.delta, 0);
+    }
+    expect(loss.go).toBeGreaterThan(loss.day);
+    expect(loss.day).toBeGreaterThan(loss.no);
+  });
+  it('3回目のデートの日の精算でライフ0なら失敗を優先', () => {
+    const { s, id } = relState('clear-2');
+    relDate(s, id);
+    relDate(s, id);
+    relDate(s, id, true);
     expect(s.status).toBe('gameover');
   });
-  it('別れた相手との日数を次の相手へ持ち越さない', () => {
-    const s = newGame('F03', 'clear-3');
-    const a = devAddContact(s, { purpose: 'sincere', stage: 'relationship', meetings: 3 });
-    a.relationship!.compat = 1;
-    for (let i = 0; i < SPEC_CLEAR_DAYS - 10; i++) stepDay(s);
-    applyAction(s, { type: 'endContact', npcId: a.npcId });
+  it('別れた相手とのデート回数を次の相手へ持ち越さない', () => {
+    const { s, id } = relState('clear-3');
+    relDate(s, id);
+    relDate(s, id);
+    applyAction(s, { type: 'endContact', npcId: id });
     expect(s.partnerId).toBeUndefined();
     s.life = 100;
     const b = devAddContact(s, { purpose: 'sincere', stage: 'relationship', meetings: 3 });
     b.relationship!.compat = 1;
-    const startB = b.relationship!.startDay;
-    for (let i = 0; i < SPEC_CLEAR_DAYS - 10 && s.status === 'playing'; i++) stepDay(s);
-    expect(s.status).toBe('playing'); // 合計でクリア日数を超えてもクリアしない
-    expect(s.day - startB).toBe(SPEC_CLEAR_DAYS - 10);
+    relDate(s, b.npcId);
+    expect(s.status).toBe('playing'); // 合計で3回を超えてもクリアしない
   });
   it('偽交際はクリアできず、クリア日数より前に決着する', () => {
     for (const purpose of ['body', 'married', 'scam', 'profit'] as const) {

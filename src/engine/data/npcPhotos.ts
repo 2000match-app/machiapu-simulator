@@ -466,7 +466,7 @@ export const MALE_PHOTOS: PhotoTemplate[] = [
   { id: 'p1151', file: 'p1151.jpg', age: 28, looks: 3, faceVisible: true, job: '医師', income: [1030, 1180], education: 'grad', hobbies: ['温泉旅行', '国内旅行', '映画鑑賞'], note: '容姿レベル3・travel' },
   { id: 'p1152', file: 'p1152.jpg', age: 30, looks: 3, faceVisible: true, job: '会社員（営業）', income: [420, 490], education: 'univ', hobbies: ['国内旅行', '神社仏閣巡り', 'ランニング'], note: '容姿レベル3・travel' },
   { id: 'p1153', file: 'p1153.jpg', age: 26, looks: 3, faceVisible: true, job: '介護職', income: [300, 350], education: 'vocational', hobbies: ['道の駅巡り', '日帰り旅行', '音楽鑑賞'], note: '容姿レベル3・car' },
-  { id: 'p1154', file: 'p1154.jpg', age: 28, looks: 3, faceVisible: true, job: 'タクシー運転手', income: [280, 320], education: 'highschool', hobbies: ['喫茶店で過ごす', 'カフェ巡り', 'ゲーム'], note: '容姿レベル3・cafe' },
+  // p1154 は和樹（M11）の写真にしたので、NPCには使わない（2026-11-18）
   { id: 'p1155', file: 'p1155.jpg', age: 34, looks: 3, faceVisible: true, job: '会社員（営業）', income: [410, 480], education: 'univ', hobbies: ['料理', '音楽鑑賞', '読書'], note: '容姿レベル3・close' },
   { id: 'p1156', file: 'p1156.jpg', age: 35, looks: 3, faceVisible: true, job: '弁護士', income: [1250, 1430], education: 'univ', hobbies: ['読書', '映画鑑賞', 'ゲーム'], note: '容姿レベル3・close' },
   { id: 'p1157', file: 'p1157.jpg', age: 37, looks: 3, faceVisible: true, job: '会社員（事務・企画）', income: [460, 530], education: 'univ', hobbies: ['温泉旅行', '国内旅行', 'ゲーム'], note: '容姿レベル3・travel' },

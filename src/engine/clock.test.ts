@@ -395,12 +395,17 @@ describe('トークに集中するモード・交際中の早送り（2026-11-15
     expect(visibleNotices(s).some((n) => n.kind === 'like' || n.kind === 'match')).toBe(false);
     if (last === 'notice') expect(visibleNotices(s).some((n) => n.kind === 'msg')).toBe(true);
   });
-  it('男性はデートの日に、最寄り→中間→お店の3回で場所を決める', async () => {
-    const { startDate } = await import('./dates');
+  it('男性はデートの1〜3日前に、最寄り→中間→お店の3回で場所を決める（2026-11-18）', async () => {
+    const { scheduleVenue, venueDaily } = await import('./dates');
     const s = newGame('M01', 'venue-1');
     const c = devAddContact(s, { purpose: 'sincere', stage: 'scheduled' });
-    c.nextDate = { day: s.day, tier: 'cafe', proposedBy: 'me' };
-    startDate(s, c);
+    c.nextDate = { day: s.day + 5, tier: 'cafe', proposedBy: 'me' };
+    scheduleVenue(s, c);
+    const venueDay = Number(c.flags.venueDay);
+    expect(c.nextDate.day - venueDay).toBeGreaterThanOrEqual(1);
+    expect(c.nextDate.day - venueDay).toBeLessThanOrEqual(3);
+    s.day = venueDay;
+    venueDaily(s);
     const steps: string[] = [];
     for (let i = 0; i < 5; i++) {
       const ev = s.pending.find((p) => p.kind === 'date_venue');

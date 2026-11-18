@@ -7,7 +7,7 @@ import type { Gender, PlayableCharacter } from '../engine/types';
 import { Portrait, Scenery } from './Avatar';
 import { PLAYER_SCENERY } from '../engine/data/npcPhotos';
 import { Sheet } from './common';
-import { SPEC_CLEAR_DAYS, TUNE_RECEIVED_SCALE } from '../engine/data/rules';
+import { SPEC_CLEAR_REL_DATES, TUNE_RECEIVED_SCALE } from '../engine/data/rules';
 import { looksStars, man } from './format';
 
 const LOOKS_TEXT: Record<number, string> = {
@@ -129,7 +129,7 @@ export function SelectScreen({ onStart, onContinue, hasSave }: { onStart: (id: s
         <div className="win-lose">
           <div className="wl clear">
             <span className="wl-tag">クリア</span>
-            <p>同じ相手と交際を始め、<b>交際{SPEC_CLEAR_DAYS}日</b>をライフが残ったまま迎える</p>
+            <p>同じ相手と交際を始め、<b>交際後に{SPEC_CLEAR_REL_DATES}回デート</b>するまでライフを残す</p>
           </div>
           <div className="wl fail">
             <span className="wl-tag">失敗</span>

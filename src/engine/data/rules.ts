@@ -8,7 +8,27 @@ export const DATA_VERSION = 'spec-v0.3/data-1';
 export const DAYS_PER_MONTH = 30;
 export const DAYS_PER_YEAR = 360;
 export const DAYS_PER_WEEK = 7;
-export const SPEC_CLEAR_DAYS = 60; // 仕様v0.3は90日。2026-11-03 指示で60日
+export const SPEC_CLEAR_DAYS = 60; // 仕様v0.3は90日。2026-11-03 指示で60日（2026-11-18 からクリアは交際後のデート回数。下の SPEC_CLEAR_REL_DATES）
+/** クリア：交際を始めてから3回デートする（2026-11-18 指示）。その3回のうちに必ず一泊二日の旅行の提案がある */
+export const SPEC_CLEAR_REL_DATES = 3;
+/** 一泊二日の旅行の費用（自分の負担の目安） */
+export const TUNE_TRIP_YEN = 40_000;
+/**
+ * 旅行の誘いへの返事で、損得を分ける（2026-11-18 指示。断るのが常に得にならないように）
+ * - 泊まり：本気の相手ならデート2回分（クリアの近道）。ヤリ目なら旅行の後に振られ、ライフの減りが大きい
+ * - 日帰り：ふつうのデート1回分。ヤリ目は冷めて離れる（減りは中くらい）
+ * - 断る：デートの回数は増えず、関係が冷えて次の週の誘いがない。ヤリ目はすぐ離れる（減りは小さい）
+ */
+export const TUNE_TRIP = {
+  dayTripYen: 12_000,
+  stayCounts: 2,
+  /** ヤリ目に振られたときのライフの減り（E09 の倍率） */
+  bodyLossMult: { go: 1.3, day: 0.7, no: 0.5 } as Record<'go' | 'day' | 'no', number>,
+  /** 本気の相手との関係の安定度の変化 */
+  health: { go: 8, day: 0, no: -6 } as Record<'go' | 'day' | 'no', number>,
+  /** 断ったあと、相手から週の誘いが来ない日数 */
+  coolDays: 7,
+} as const;
 export const SPEC_PHOTO_PUBLISH_MIN_DAY = 14;
 export const SPEC_LIKE_WAIT_DAYS = 7;
 export const SPEC_E02_WAIT_DAYS = 7;

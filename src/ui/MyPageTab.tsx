@@ -154,6 +154,13 @@ export function MyPageTab({ state, act, onQuit, onRestart }: TabProps & { onQuit
           )}
         </div>
       </section>
+
+      <section className="card thanks" aria-label="Special thanks">
+        <h2>Special thanks</h2>
+        <ul className="thanks-list">
+          <li>陰キャ文学 <span className="muted">@cheeeee9</span></li>
+        </ul>
+      </section>
     </div>
   );
 }

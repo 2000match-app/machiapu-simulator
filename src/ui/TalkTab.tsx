@@ -2,6 +2,7 @@
 // 場所は行の背景色（LINE＝緑、外部サイト＝紫）と小さな札で見分ける。
 // 男性はアプリ内でメッセージを送るのに有料会員（30日4,000円）が必要。返事が来なくても返金はない。
 import { useEffect, useRef, useState } from 'react';
+import { PLAYER_FACE } from '../engine/data/faceReveal';
 import { Hensachi } from './preview';
 import type { Action } from '../engine/actions';
 import { SITE_MESSAGE_YEN, SITE_NAME, firstMessageOptions, needsMembership, replyOptions } from '../engine/chat';
@@ -137,7 +138,8 @@ function ChatView({ state, act, contact: c, onBack }: Pick<TabProps, 'state' | '
   const [draft, setDraft] = useState<'ans_d' | 'ans_c' | null>(null);
   const [askFrom, setAskFrom] = useState<'talk' | 'answer' | null>(null);
   const [confirmBlock, setConfirmBlock] = useState(false);
-  useEffect(() => { setDraft(null); setAskFrom(null); setConfirmBlock(false); }, [c.messages.length, c.npcId]);
+  const [confirmFace, setConfirmFace] = useState(false);
+  useEffect(() => { setDraft(null); setAskFrom(null); setConfirmBlock(false); setConfirmFace(false); }, [c.messages.length, c.npcId]);
   const bottom = useRef<HTMLDivElement>(null);
   useEffect(() => {
     // 新しいブラウザでは scrollIntoView が Promise を返すため、戻り値を useEffect から返さない
@@ -209,6 +211,7 @@ function ChatView({ state, act, contact: c, onBack }: Pick<TabProps, 'state' | '
                 const click = o.id === 'ans_d' || o.id === 'ans_c' ? () => setDraft(o.id as 'ans_d' | 'ans_c')
                   : o.id === 'profile_q' ? () => setAskFrom('talk')
                   : o.id === 'block' ? () => setConfirmBlock(true)
+                  : o.id === 'publish' ? () => setConfirmFace(true)
                   : reply;
                 const preview = ['aizuchi', 'ans_d', 'ans_c'].includes(o.id);
                 return (
@@ -217,6 +220,16 @@ function ChatView({ state, act, contact: c, onBack }: Pick<TabProps, 'state' | '
                   </button>
                 );
               })}
+              {confirmFace && (
+                <div className="confirm-face" role="dialog" aria-label="顔写真を載せる確認">
+                  <p className="small"><b>本当に顔を出しますか？</b>この写真をプロフィールに載せます。公開すると元に戻せません。</p>
+                  {PLAYER_FACE[state.characterId] && <img className="confirm-face-img" src={`${import.meta.env.BASE_URL}npc/${PLAYER_FACE[state.characterId]}`} alt="載せる顔写真" />}
+                  <div className="row">
+                    <button className="btn primary small" onClick={() => { setConfirmFace(false); send({ type: 'reply', npcId: c.npcId, optionId: 'publish' }); }}>顔を出す</button>
+                    <button className="btn ghost small" onClick={() => setConfirmFace(false)}>やめる</button>
+                  </div>
+                </div>
+              )}
               {confirmBlock && (
                 <div className="confirm-row">
                   <span className="small">{npc.name}をブロックしますか？（やり取りは終わります）</span>

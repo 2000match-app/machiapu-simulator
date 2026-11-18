@@ -488,7 +488,7 @@ export function dayTransition(state: GameState): void {
     if (before.pending.has(p.uid) || p.at !== undefined) continue;
     const db = dateBlocks.find((b) => b.npcId === p.npcId);
     let at: number;
-    if (db && p.kind.startsWith('date_') && p.kind !== 'date_pick' && p.kind !== 'date_nomatch') at = p.kind === 'date_makeup' || p.kind === 'date_venue' ? Math.max(ls.wake, db.start - 60) : db.start;
+    if (db && p.kind.startsWith('date_') && p.kind !== 'date_pick' && p.kind !== 'date_nomatch') at = p.kind === 'date_makeup' ? Math.max(ls.wake, db.start - 60) : db.start;
     else if (p.npcId && msgMinute[p.npcId] !== undefined) at = nextFreeMinute(state, msgMinute[p.npcId] + 1);
     else at = nextFreeMinute(state, ls.wake);
     p.at = Math.min(DAY_MIN - 1, at);
@@ -497,7 +497,7 @@ export function dayTransition(state: GameState): void {
     pushNotice(state, {
       id: `${day}:ev:${p.uid}`, day, minute: p.at, app: db && p.npcId === db.npcId ? 'カレンダー' : 'お知らせ', icon: db && p.npcId === db.npcId ? '💕' : '📌',
       from: npc ? npc.name : 'お知らせ',
-      text: db && p.npcId === db.npcId ? (p.kind === 'date_makeup' || p.kind === 'date_venue' ? 'そろそろデートの準備をする時間です' : `${npc?.name ?? '相手'}さんとの約束の時間です（${db.label.replace(/^.*（|）$/g, '')}）`) : p.title,
+      text: db && p.npcId === db.npcId ? (p.kind === 'date_makeup' ? 'そろそろデートの準備をする時間です' : `${npc?.name ?? '相手'}さんとの約束の時間です（${db.label.replace(/^.*（|）$/g, '')}）`) : p.title,
       npcId: p.npcId, target: 'app', kind: 'event',
     });
   }
@@ -505,6 +505,12 @@ export function dayTransition(state: GameState): void {
   workNotices(state, ls);
   // ほかのアプリの通知（表示だけ）
   otherAppNotices(state);
+  // 持ち株の値動き（健人・大輔。予算が増減する。2026-11-18）
+  const sn = String(state.flags.stockNote ?? '').split('|');
+  if (Number(sn[0]) === day && sn.length === 3) {
+    const up = sn[1].startsWith('+');
+    pushNotice(state, { id: `${day}:stock`, day, minute: 15 * 60 + 5, app: '証券', icon: up ? '📈' : '📉', from: '保有株の値動き', text: `保有株が${sn[1]}（評価額 ${sn[2]}）。今月のデートの予算が${up ? '増えました' : '減りました'}`, kind: 'work' });
+  }
 }
 
 /** ほかのアプリの通知：1日3〜6件。人物ごとの文面を多めに、誰にでも届く文面を混ぜる（2026-11-14） */
