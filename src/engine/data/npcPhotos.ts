@@ -855,7 +855,7 @@ export const FEMALE_PHOTOS: PhotoTemplate[] = [
   { id: 'p0737', file: 'p0737.jpg', age: 26, looks: 3, faceVisible: true, job: 'IT・Web', income: [500, 570], education: 'univ', hobbies: ['建築巡り', '展示会に行く', 'ゲーム'], note: '容姿レベル3' },
   { id: 'p0741', file: 'p0741.jpg', age: 33, looks: 3, faceVisible: true, job: '販売職', income: [240, 280], education: 'highschool', hobbies: ['海外旅行', '旅行の写真を撮る', '映画鑑賞'], note: '容姿レベル3' },
   { id: 'p0747', file: 'p0747.jpg', age: 32, looks: 3, faceVisible: true, job: '大手企業勤務', income: [550, 630], education: 'univ', hobbies: ['展示会に行く', '建築巡り', '音楽鑑賞'], note: '容姿レベル3' },
-  { id: 'p0749', file: 'p0749.jpg', age: 32, looks: 3, faceVisible: true, job: '会社員（事務）', income: [320, 360], education: 'highschool', hobbies: ['建築巡り', '展示会に行く', '音楽鑑賞'], note: '容姿レベル3' },
+  // p0749 は結衣（F08）の写真にしたので、NPCには使わない（2026-11-18）
   { id: 'p0751', file: 'p0751.jpg', age: 28, looks: 3, faceVisible: true, job: 'パート・アルバイト', income: [120, 140], education: 'highschool', hobbies: ['海外旅行', '旅先の街歩き', 'ランニング'], note: '容姿レベル3' },
   { id: 'p0755', file: 'p0755.jpg', age: 25, looks: 3, faceVisible: true, job: '販売職', income: [220, 250], education: 'highschool', hobbies: ['ライブ鑑賞', '野外フェス', 'スポーツ観戦'], note: '容姿レベル3' },
   { id: 'p0756', file: 'p0756.jpg', age: 27, looks: 3, faceVisible: true, job: '販売職', income: [260, 300], education: 'univ', hobbies: ['建築巡り', '美術館巡り', '読書'], note: '容姿レベル3' },

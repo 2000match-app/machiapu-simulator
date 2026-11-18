@@ -251,8 +251,8 @@ export const CHARACTERS: PlayableCharacter[] = [
   // 和樹（2026-11-13 追加）：メーカー勤務・年収750万（2026-11-18）。写真は p1154（NPCの素材から外した。以前は p1080）
   {
     id: 'M11', gender: 'M', name: '和樹', age: 33, job: 'メーカー勤務',
-    education: { kind: 'university', group: '日東駒専', school: '東洋大学' },
-    incomeYen: 750 * man, heightCm: 170, looks: 3, photoInitiallyVisible: true,
+    education: { kind: 'university', group: 'MARCH', school: '横浜国立大学' }, // 国立だが大学群はMARCH扱い（2026-11-18）
+    incomeYen: 750 * man, heightCm: 170, looks: 3.5, photoInitiallyVisible: true, // 容姿3.5（2026-11-18 指示）
     datingExperience: 'あり', children: 0,
     areaId: 'nerima', smoking: 'none', drinking: 'sometimes', marital: 'never', holiday: 'weekend',
     baseDistanceMin: 60, lookPreference: 3,
@@ -430,7 +430,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     // 2026-11-14：跡見学園女子大学卒に（11/13 は日本女子大学、以前は専門卒）。学歴の段階は 大東亜帝国 相当として扱う（画面には大学群を出さない）
     id: 'F08', gender: 'F', name: '結衣', age: 28, job: '事務職',
     education: { kind: 'university', group: '大東亜帝国', school: '跡見学園女子大学' },
-    incomeYen: 260 * man, incomeLabel: '400万円以下', heightCm: 161, looks: 4, photoInitiallyVisible: true,
+    incomeYen: 260 * man, incomeLabel: '400万円以下', heightCm: 161, looks: 3.5, photoInitiallyVisible: true, // 容姿3.5・写真は p0749（2026-11-18 指示）
     datingExperience: 'あり', children: 0,
     areaId: 'itabashi', smoking: 'none', drinking: 'sometimes', marital: 'never', holiday: 'weekend',
     baseDistanceMin: 60, lookPreference: 4,

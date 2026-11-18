@@ -243,7 +243,8 @@ export const HENSACHI_TUNE = {
   /** 学歴の点（大学群）。女性は旧帝大を早慶と同じに、男性はMARCHと早慶の間に崖（2026-11-16） */
   eduScoreFemale: { 旧帝大: 2.5, 早慶: 2.5, MARCH: 1.8, 日東駒専: 1.3, 産近甲龍: 1.2, 大東亜帝国: 1 } as Record<string, number>,
   // 男性のMARCHと早慶の崖は、MARCHを下げて作る（早慶・旧帝大を上げると東大の大輔が上がりすぎた。2026-11-16）
-  eduScoreMale: { 旧帝大: 2.65, 早慶: 2.5, MARCH: 1.2, 日東駒専: 1.3, 産近甲龍: 1.2, 大東亜帝国: 1 } as Record<string, number>,
+  // MARCH は日東駒専（1.3）より上に戻す（2026-11-18。以前の1.2は日東駒専より低く逆転していた）
+  eduScoreMale: { 旧帝大: 2.65, 早慶: 2.5, MARCH: 1.4, 日東駒専: 1.3, 産近甲龍: 1.2, 大東亜帝国: 1 } as Record<string, number>,
   femaleEdu: { highschool: -0.55, vocational: -0.4 } as Record<string, number>,
   /** 年齢の倍率（上から当てはまるもの）。28〜33歳0.95、34歳から崖で0.8、36〜40歳0.7、41歳以上0.6（2026-11-16） */
   femaleAge: [[41, 0.6], [36, 0.7], [34, 0.8], [28, 0.95]] as [number, number][],
@@ -265,7 +266,9 @@ export const FACELESS_LOOKS = 2;
  *   28歳以上0.9倍・33歳以上0.85倍・36歳以上0.6倍、大学がMARCH以上なら1.1倍
  * 範囲は20〜80
  */
-export function hensachiOf(npc: Pick<Npc, 'gender' | 'looks' | 'heightCm' | 'education' | 'incomeYen'> & {
+export function hensachiOf(npc: Pick<Npc, 'gender' | 'heightCm' | 'education' | 'incomeYen'> & {
+  /** 容姿（主人公は 3.5 もある） */
+  looks: number;
   age?: number;
   /** 顔写真を出していない（容姿は2相当として計算）。なければ profilePhotoVisible／photoInitiallyVisible から決める */
   faceHidden?: boolean; profilePhotoVisible?: boolean; photoInitiallyVisible?: boolean;

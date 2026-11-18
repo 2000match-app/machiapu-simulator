@@ -86,7 +86,10 @@ export function educationOf(npc: Npc): string {
 }
 
 export function looksStars(n: number): string {
-  return '★'.repeat(n) + '☆'.repeat(5 - n);
+  // 3.5 のような半分は「⯪」（半分の星）で表す
+  const full = Math.floor(n);
+  const half = n - full >= 0.5 ? 1 : 0;
+  return '★'.repeat(full) + (half ? '⯪' : '') + '☆'.repeat(5 - full - half);
 }
 
 export function distanceLabel(min: number): string {

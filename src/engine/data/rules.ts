@@ -309,7 +309,7 @@ export const TUNE_FUNNEL = {
   promise: 0.3,
   meet: 0.2,
   // 自分の容姿による倍率（2026-11-14 指示：容姿2を1倍・3を1.5倍・4を2倍・5を3倍。1は0.5倍のまま）。上限 cap は0.95
-  looksMult: { 1: 0.5, 2: 1, 3: 1.5, 4: 2, 5: 3 } as Record<number, number>,
+  looksMult: { 1: 0.5, 2: 1, 3: 1.5, 3.5: 1.75, 4: 2, 5: 3 } as Record<number, number>,
   cap: 0.95,
   /** 会話が続く相手の、会うまでの返信率の下限 */
   talkingReply: 0.92,
