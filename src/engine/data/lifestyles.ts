@@ -140,10 +140,14 @@ export const LIFESTYLES: Record<string, Lifestyle> = {
     overtime: { until: h(21, 30), notices: ['部下の評価面談、今日中にまとめてもらえますか', '役員報告の資料、追加でお願いします'] },
     notices: ['明日の役員会、資料の確認お願いします', 'チームの予算、来週までに'], noticeFrom: '部長', noticeChance: 0.3,
   },
-  // 葵：クリニックの看護師。日勤のみ・平日の日中（2026-11-13 公務員から医療事務、2026-11-18 看護師に）
+  // 葵：病院の看護師。日勤のシフト（土日も出る・週2日の不定休）＋月4回ほどの夜勤（dates.ts の nightShift）
+  // 2026-11-13 公務員から医療事務、2026-11-18 看護師（クリニック）、2026-11-19 病院勤めに
   F06: {
-    occupation: '看護師', work: office(h(8, 30), h(17, 30)), wake: h(6, 45), sleep: 1440,
-    notices: ['明日の外来、点滴の患者さん多めです', '来週の健診、採血の応援お願いできる？', '感染対策の研修、今週中に受けてください'], noticeFrom: 'クリニック', noticeChance: 0.25,
+    occupation: '看護師', work: { kind: 'shift', start: h(8, 30), end: h(17, 30), days: [0, 1, 2, 3, 4, 5, 6], rotatingOff: 2, label: '病棟で勤務中' }, wake: h(6, 45), sleep: 1440,
+    eventNotices: {
+      夜勤: { text: '明日の夜勤、よろしくお願いします。申し送り多めです', at: h(18), from: '病棟の師長', daysBefore: 1 },
+    },
+    notices: ['来月の勤務表、出ました', '明日の日勤、1人休みなので少し早めに来られる？', '感染対策の研修、今週中に受けてください'], noticeFrom: '病棟の師長', noticeChance: 0.3,
   },
   // 千尋：派遣事務
   F07: {
@@ -179,6 +183,9 @@ export const EVENT_WINDOWS: Record<string, { start: number; end: number; icon: s
   同期と飲み: { start: h(19, 30), end: h(22, 30), icon: '🍻', state: '飲み会中' },
   取引先と会食: { start: h(19), end: h(22), icon: '🍽️', state: '会食中' },
   出張: { start: h(7), end: h(23), icon: '✈️', state: '出張中' },
+  // 看護師の夜勤（2026-11-19）：夕方から翌朝まで。翌日は昼過ぎまで寝ている
+  夜勤: { start: h(16, 30), end: h(24), icon: '🌙', state: '夜勤中' },
+  夜勤明け: { start: 0, end: h(13), icon: '😪', state: '夜勤明けで寝ている' },
   残業: { start: h(18), end: h(21, 30), icon: '💼', state: '残業中' },
   歯医者: { start: h(19), end: h(20), icon: '🦷', state: '歯医者' },
   ジム: { start: h(19), end: h(20, 30), icon: '🏋️', state: 'ジム' },

@@ -13,7 +13,7 @@ import { isMember, memberFee, monthBudget } from '../engine/life';
 import { unavailableReason } from '../engine/privateEvents';
 import type { Channel, Contact, GameState } from '../engine/types';
 import type { TabProps } from './GameShell';
-import { NpcAvatar, npcPhotoLabel, npcPhotoUrl } from './Avatar';
+import { NpcAvatar, npcPhotoLabel, npcPhotoUrl, npcRevealTags } from './Avatar';
 import { NpcProfile } from './SearchTab';
 import { Sheet } from './common';
 import { contactStatus, inDays, man } from './format';
@@ -140,6 +140,7 @@ function ChatView({ state, act, contact: c, onBack }: Pick<TabProps, 'state' | '
   const [confirmBlock, setConfirmBlock] = useState(false);
   const [confirmFace, setConfirmFace] = useState(false);
   useEffect(() => { setDraft(null); setAskFrom(null); setConfirmBlock(false); setConfirmFace(false); }, [c.messages.length, c.npcId]);
+  useEffect(() => { setShowProfile(false); }, [c.npcId]);
   const bottom = useRef<HTMLDivElement>(null);
   useEffect(() => {
     // 新しいブラウザでは scrollIntoView が Promise を返すため、戻り値を useEffect から返さない
@@ -166,14 +167,22 @@ function ChatView({ state, act, contact: c, onBack }: Pick<TabProps, 'state' | '
     <div className={`chat ch-${channel}`}>
       <div className="chat-head">
         <button className="link" onClick={onBack} aria-label="トーク一覧へ戻る">‹ 戻る</button>
-        <button className="ch-who" onClick={() => setShowProfile(!showProfile)}>
+        {/* 名前・アイコンか「プロフィール」で、いつでも相手のプロフィールを開ける（2026-11-19 指示） */}
+        <button className="ch-who" onClick={() => setShowProfile(true)} aria-label={`${npc.name}さんのプロフィールを見る`}>
           <NpcAvatar npc={npc} size="sm" />
           <span><b>{npc.name}（{npc.age}）</b><Hensachi of={npc} /><small>{npcPhotoLabel(npc)}</small></span>
         </button>
-        <span className={`st st-${st.tone}`}>{st.label}</span>
+        <span className="ch-head-side">
+          <span className={`st st-${st.tone}`}>{st.label}</span>
+          <button className="link small ch-profile" onClick={() => setShowProfile(true)}>プロフィール</button>
+        </span>
       </div>
       <div className={`channel-bar ${channel}`}>{CHANNEL_HEAD[channel]}{channel === 'external' && spentOnThem > 0 ? `・ここまでのポイント ${Number(c.flags.sakuraPaid ?? 0).toLocaleString()}円` : ''}</div>
-      {showProfile && <div className="card"><NpcProfile npc={npc} /></div>}
+      {showProfile && (
+        <Sheet title={`${npc.name}さんのプロフィール`} onClose={() => setShowProfile(false)}>
+          <NpcProfile npc={npc} reveal={npcRevealTags(state, npc)} large />
+        </Sheet>
+      )}
       <div className="messages" role="log" aria-live="polite">
         {shown.map((m, i) => (
           <div key={i} className={`msg ${m.from} ${m.channel ?? 'app'}`}>

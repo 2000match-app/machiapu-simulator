@@ -382,20 +382,21 @@ export const CHARACTERS: PlayableCharacter[] = [
   },
   {
     // 2026-11-13：専門卒・医療事務に（以前は東洋大学卒・公務員）。2026-11-18：看護師・年収500万円に（看護専門学校卒）
+    // 2026-11-19：病院勤め（日勤のシフト＋月4回ほどの夜勤。土日も出勤があり、休みは週2日の不定休）
     id: 'F06', gender: 'F', name: '葵', age: 24, job: '看護師',
     education: { kind: 'vocational' },
     incomeYen: 500 * man, heightCm: 155, looks: 2, photoInitiallyVisible: false,
     datingExperience: '少ない', children: 0,
-    areaId: 'koshigaya', smoking: 'none', drinking: 'sometimes', marital: 'never', holiday: 'weekend',
+    areaId: 'koshigaya', smoking: 'none', drinking: 'sometimes', marital: 'never', holiday: 'irregular',
     baseDistanceMin: 60, lookPreference: 2,
-    constraints: {},
+    constraints: { shiftWork: true },
     monthlyBudgetYen: 0.8 * man, appHistoryMonths: 24, relationshipDeadlineMonths: 24,
     initialPreference: prefFor(24, 'koshigaya', { ageMin: 21, ageMax: 30 }),
     tagline: 'プロフィールは後頭部の写真だけ。それでも若い女性なのでいいねはたくさん来る',
-    lifeNote: '埼玉県越谷市の実家暮らし。看護専門学校を出て、クリニックで看護師をしている（年収500万円）。日勤のみで土日休み。アプリ歴2年。交際開始の希望まで24か月。',
-    freeSlotsPerMonth: 8, weekendLimited: false,
+    lifeNote: '埼玉県越谷市の実家暮らし。看護専門学校を出て、病院で看護師をしている（年収500万円）。シフト勤務で月に4回ほど夜勤があり、休みは週2日の不定休。アプリ歴2年。交際開始の希望まで24か月。',
+    freeSlotsPerMonth: 8, weekendLimited: true,
     // 顔が分からなくてもいいねは多い。会ってから断られやすい
-    prologue: ['看護専門学校を出て、クリニックの看護師になって4年目。仕事は慣れてきたけど、職場に出会いはほとんどない。', '顔に自信がなくて、プロフィールは後ろ姿の写真。それでも、いいねはたくさん届く。', '……みんな、私の何を見ていいねしてくれているんだろう。'],
+    prologue: ['看護専門学校を出て、病院の看護師になって4年目。夜勤にも慣れてきた。仕事は慣れてきたけど、職場に出会いはほとんどない。', '顔に自信がなくて、プロフィールは後ろ姿の写真。それでも、いいねはたくさん届く。', '……みんな、私の何を見ていいねしてくれているんだろう。'],
     rates: { receivedPer30: [60, 200], sendSuccess: 0.25, postDateRejection: 0.6 },
     ratesPhotoPublic: { receivedPer30: [20, 70], sendSuccess: 0.15, postDateRejection: 0.45 },
     route: {

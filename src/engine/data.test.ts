@@ -160,3 +160,24 @@ describe('NPCの画像状態とプロフィール写真は別', () => {
     expect(visible / N).toBeLessThan(0.8);
   });
 });
+
+describe('デート中の具体的なセリフ（2026-11-19。Gemini で生成した data/dateLines.ts）', () => {
+  it('写真の相手の趣味の9割以上にセリフがあり、文面に「」や改行がない', async () => {
+    const { DATE_LINES } = await import('./data/dateLines');
+    const { FEMALE_PHOTOS, MALE_PHOTOS } = await import('./data/npcPhotos');
+    for (const [g, pool] of [['F', FEMALE_PHOTOS], ['M', MALE_PHOTOS]] as const) {
+      let all = 0;
+      let hit = 0;
+      for (const p of pool) for (const h of (p as { hobbies?: string[] }).hobbies ?? []) {
+        all++;
+        if (DATE_LINES.hobby[h]?.[g]?.chat.length) hit++;
+      }
+      expect(hit / all).toBeGreaterThan(0.9);
+    }
+    const texts: string[] = [];
+    const walk = (v: unknown) => { if (typeof v === 'string') texts.push(v); else if (v && typeof v === 'object') Object.values(v).forEach(walk); };
+    walk(DATE_LINES);
+    expect(texts.length).toBeGreaterThan(1000);
+    expect(texts.filter((t) => /[「」\n]/.test(t))).toEqual([]);
+  });
+});

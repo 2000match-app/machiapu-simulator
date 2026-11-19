@@ -13,7 +13,7 @@ import { deliverRepliesUntil } from './chat';
 import { EVENT_WINDOWS, lifestyleOf, type Lifestyle } from './data/lifestyles';
 import { COMMON_OTHER, OTHER_APPS, OTHER_BY_CHAR, OTHER_FALLBACK, type OtherAppKey, type OtherLine } from './data/otherApps';
 import { TUNE_VENUES } from './data/rules';
-import { privateEventOn, weekendPlan, workFromHome } from './dates';
+import { nightShift, privateEventOn, weekendPlan, workFromHome } from './dates';
 import { isTiredDay, unavailableReason } from './privateEvents';
 import { Rng } from './rng';
 import { character, isInRelationship } from './state';
@@ -48,6 +48,8 @@ function worksOn(state: GameState, day: number, ls: Lifestyle): boolean {
   const w = ls.work;
   if (w.kind === 'part' || w.kind === 'none') return false;
   if (!w.days.includes(day % 7)) return false;
+  // 夜勤の日・夜勤明けの日は日勤に出ない（看護師。2026-11-19）
+  if (nightShift(state, day)) return false;
   if (w.rotatingOff) {
     const off = Rng.fromSeed(state.seed, 'shift-off', Math.floor(day / 7)).shuffle([...w.days]).slice(0, w.rotatingOff);
     if (off.includes(day % 7)) return false;

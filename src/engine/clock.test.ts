@@ -5,7 +5,7 @@ import {
   DAY_MIN, GAME_MIN_PER_REAL_SEC, advanceFree, awaitingNow, blockAt, canOpenApp, clockOf, dayTransition, lifeNow, lockMode,
   nextStop, noticeSection, scheduleOf, skipBlock, visibleNotices, visiblePending,
 } from './clock';
-import { privateEventOn, workFromHome } from './dates';
+import { nightShift, playerFree, privateEventOn, workFromHome } from './dates';
 import { devAddContact } from './devScenarios';
 import { deserialize, serialize } from './save';
 import type { GameState } from './types';
@@ -417,5 +417,28 @@ describe('トークに集中するモード・交際中の早送り（2026-11-15
     }
     expect(steps).toEqual(['お互いの最寄り駅を確認する', '中間あたりの駅を確認する', 'お店を確認する']);
     expect(c.messages.some((m) => m.from === 'me' && m.text.includes('にしようと思います'))).toBe(true);
+  });
+});
+
+describe('葵は病院の看護師（2026-11-19）', () => {
+  it('週に1回の夜勤と翌日の夜勤明けがあり、その日は会えず、日勤にも出ない', () => {
+    const s = newGame('F06', 'nurse-1');
+    for (let week = 0; week < 4; week++) {
+      const days = Array.from({ length: 7 }, (_, i) => week * 7 + i);
+      const nights = days.filter((d) => nightShift(s, d) === '夜勤');
+      expect(nights.length).toBe(1);
+      const n = nights[0];
+      expect(nightShift(s, n + 1)).toBe('夜勤明け');
+      expect(playerFree(s, n)).toBe(false);
+      expect(playerFree(s, n + 1)).toBe(false);
+      expect(privateEventOn(s, n)).toBe('夜勤');
+      s.day = n;
+      const blocks = scheduleOf(s);
+      expect(blocks.some((b) => b.label === '夜勤中')).toBe(true);
+      expect(blocks.some((b) => b.kind === 'work' && b.start === 8 * 60 + 30)).toBe(false);
+    }
+    // ほかの人には夜勤はない
+    const m = newGame('F03', 'nurse-2');
+    expect(Array.from({ length: 28 }, (_, d) => nightShift(m, d)).some(Boolean)).toBe(false);
   });
 });

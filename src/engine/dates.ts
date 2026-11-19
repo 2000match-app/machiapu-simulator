@@ -6,6 +6,7 @@ import { applyLoss, noteE02, recoverOnce, seriesLoss, spend } from './life';
 import { npcSay, sayLines, vars } from './messaging';
 import { pushScamPitch, startRelationship } from './relationship';
 import { CHAT, DATE_TALK, MESHI_STORES, NIGHT_INVITE, fill } from './data/dialogue';
+import { DATE_LINES } from './data/dateLines';
 import { FEMALE_PHOTOS, MALE_PHOTOS } from './data/npcPhotos';
 import { revealFacePhoto } from './photos';
 import {
@@ -43,6 +44,7 @@ export function playerFree(state: GameState, day: number): boolean {
   const ch = character(state);
   if (weekendPlan(state, day)) return false;
   if (businessTrip(state, day)) return false;
+  if (nightShift(state, day)) return false;
   const r = Rng.fromSeed(state.seed, 'free', day).next();
   const s = ch.freeSlotsPerMonth;
   const pWeekend = ch.weekendLimited ? (s * 0.1) / 8.6 : Math.min(0.95, (s * 0.7) / 8.6);
@@ -105,8 +107,25 @@ export function businessTrip(state: GameState, day: number): boolean {
   return day === sat || day === sat + 1;
 }
 
+/**
+ * 看護師（葵）の夜勤（2026-11-19 指示：病院勤め）。週に1回、夕方から翌朝まで。翌日は夜勤明けで昼過ぎまで寝ている
+ * 戻り値：'夜勤'（その日の夕方から）／'夜勤明け'（前の日が夜勤）
+ */
+export function nightShift(state: GameState, day: number): '夜勤' | '夜勤明け' | undefined {
+  if (character(state).id !== 'F06') return undefined;
+  const at = (d: number) => {
+    const week = Math.floor(d / 7);
+    return week * 7 + Rng.fromSeed(state.seed, 'night-shift', week).int(0, 5) === d; // 月〜土に入る（夜勤明けが次の週の夜勤と重ならない）
+  };
+  if (at(day)) return '夜勤';
+  if (day > 0 && at(day - 1)) return '夜勤明け';
+  return undefined;
+}
+
 export function privateEventOn(state: GameState, day: number): string | undefined {
   if (businessTrip(state, day)) return '出張';
+  const night = nightShift(state, day);
+  if (night) return night;
   const plan = weekendPlan(state, day);
   if (plan) return plan;
   if (playerFree(state, day)) return undefined;
@@ -544,6 +563,24 @@ function fakeCommit(state: GameState, c: Contact, npc: Npc, why: string): void {
 const exWord = (npc: Npc) => (npc.gender === 'M' ? '元カノ' : '元カレ');
 
 /**
+ * デート中の相手の具体的なセリフ（2026-11-19 指示：「元カレの話が止まらない」のような説明だけでなく、「」の会話を入れる。
+ * 文面は Gemini で作った data/dateLines.ts）。相手の性別で選ぶ
+ */
+type LineKey = 'work' | 'ex' | 'ex_more' | 'late' | 'phone' | 'narrow' | 'rude' | 'after' | 'polite';
+function dateLine(r: Rng, npc: Npc, key: LineKey): string | undefined {
+  const pool = (DATE_LINES[key] as Partial<Record<'F' | 'M', string[]>>)[npc.gender];
+  return pool && pool.length ? r.pick(pool) : undefined;
+}
+function hobbyLine(r: Rng, npc: Npc, hobby: string, kind: 'chat' | 'brag'): string | undefined {
+  const pool = DATE_LINES.hobby[hobby]?.[npc.gender]?.[kind];
+  return pool && pool.length ? r.pick(pool) : undefined;
+}
+/** 相手のセリフを場面に足す（なければ何もしない） */
+function say(lines: PendingEvent['lines'], text: string | undefined): void {
+  if (text) lines.push({ who: 'them', text });
+}
+
+/**
  * デート中に低い確率で起きる出来事（2026-11-12 指示）。場面の文とデートのメモに足す。
  * 遅刻・身長のサバ読み・歯・写真より良いと言われる・元恋人の話・話題が偏る男性。手を触ってくるは別の場面（戻り値 true）
  */
@@ -552,7 +589,8 @@ function dateMoments(state: GameState, c: Contact, npc: Npc, lines: PendingEvent
   // 待ち合わせに5〜10分遅れてくる
   if (r.chance(0.08)) {
     const min = r.int(5, 10);
-    lines.push({ who: 'narration', text: `${npc.name}は待ち合わせに${min}分遅れてきた。「ごめんなさい、電車が遅れてて…」` });
+    lines.push({ who: 'narration', text: `${npc.name}は待ち合わせに${min}分遅れてきた。` });
+    say(lines, dateLine(r, npc, 'late') ?? 'ごめんなさい、電車が遅れてて…');
     note(c, `待ち合わせに${min}分遅れてきた`);
   }
   // 身長のサバ読み：会うと分かる（プロフィールの170〜172cmより低い）
@@ -573,22 +611,32 @@ function dateMoments(state: GameState, c: Contact, npc: Npc, lines: PendingEvent
   }
   // 元恋人の話をしてくる
   if (r.chance(0.08)) {
-    lines.push({ who: 'narration', text: `${npc.name}は途中から${exWord(npc)}の話を始め、しばらく止まらなかった。` });
+    lines.push({ who: 'narration', text: `${npc.name}は途中から${exWord(npc)}の話を始めた。` });
+    say(lines, dateLine(r, npc, 'ex'));
+    say(lines, dateLine(r, npc, 'ex_more'));
+    lines.push({ who: 'narration', text: 'その話は、しばらく止まらなかった。' });
     note(c, `${exWord(npc)}の話を長々とされた`);
   }
   // 容姿1〜2の男性の一部は、風俗・パチンコ・アニメの話ばかり（相手ごとに決まる）
   if (npc.gender === 'M' && npc.looks <= 2 && Rng.fromSeed(state.seed, 'narrow-talk', npc.id).chance(0.3)) {
+    const a = dateLine(r, npc, 'narrow');
+    let b = dateLine(r, npc, 'narrow');
+    if (b === a) b = undefined;
+    say(lines, a);
+    say(lines, b);
     lines.push({ who: 'narration', text: `${npc.name}の話は、風俗とパチンコとアニメの話ばかりだった。こちらの話にはあまり興味がなさそうだ。` });
     note(c, '風俗・パチンコ・アニメの話ばかりだった');
   }
   // 体験談（2026-11-18）：デート中ずっとスマホをチラチラ見ている（脈なしのサイン）
   if (r.chance(c.interest < 45 ? 0.2 : 0.05)) {
     lines.push({ who: 'narration', text: `話している間ずっと、${npc.name}はテーブルの上のスマホをチラチラ見ていた。` });
+    say(lines, dateLine(r, npc, 'phone'));
     note(c, 'デート中ずっとスマホをチラチラ見ていた');
     c.flags.rejMult = Number(c.flags.rejMult ?? 1) * 1.3;
   }
   // 趣味の自慢話が止まらない（会話がつまらない）
   if (r.chance(0.06)) {
+    say(lines, hobbyLine(r, npc, npc.hobbies[0], 'brag'));
     lines.push({ who: 'narration', text: `${npc.name}は${npc.hobbies[0]}の自慢話を延々と続け、こちらの話にはほとんど質問してこなかった。` });
     note(c, `${npc.hobbies[0]}の自慢話ばかりで、会話がつまらなかった`);
   }
@@ -607,12 +655,16 @@ function dateMoments(state: GameState, c: Contact, npc: Npc, lines: PendingEvent
         `会って5分で${npc.name}はタメ口になり、話の半分は下ネタだった。`,
         `${npc.name}の視線が、話している間ずっと胸元に向いている気がした。`,
         `店を出るとき、${npc.name}が腰に手を回してきた。`,
-        `「このあともう1軒…っていうか、ホテルで飲み直さない？」と軽く言われた。`,
+        `お店を出る前に、${npc.name}から軽い調子でホテルに誘われた。`,
       ]);
       lines.push({ who: 'narration', text: act });
+      // 具体的なセリフ：タメ口・下ネタ／ホテルの誘い（2026-11-19）
+      if (act.includes('タメ口')) say(lines, dateLine(r, npc, 'rude'));
+      if (act.includes('ホテル')) say(lines, dateLine(r, npc, 'after') ?? 'このあともう1軒…っていうか、ホテルで飲み直さない？');
       note(c, act.replace(/。$/, ''));
       c.flags.creepy = true;
     } else if (npc.purpose === 'sincere' && r.chance(0.3)) {
+      say(lines, dateLine(r, npc, 'polite'));
       lines.push({ who: 'narration', text: `${npc.name}は最後まで敬語で、穏やかに話を聞いてくれた。` });
       note(c, '最後まで敬語で、穏やかに接してくれた');
       c.interest += 3;
@@ -659,21 +711,44 @@ function talkChoices(state: GameState, npc: Npc, c: Contact): Choice[] {
 
 function pushTalk(state: GameState, c: Contact, npc: Npc, pre: PendingEvent['lines'], image?: PendingEvent['image']): void {
   const lines = [...pre];
-  const topic = withRng(state, (r) => r.pick([
-    `${npc.name}は最近ハマっている${npc.hobbies[0]}の話をしてくれた。`,
-    `仕事の話になると、${npc.name}は少しだけ愚痴をこぼした。`,
-    `${npc.hobbies[1] ?? npc.hobbies[0]}の話題で、思ったより盛り上がった。`,
-  ]));
-  lines.push({ who: 'narration', text: topic });
-  note(c, topic);
-  // デート中に見えるサイン（体験談 2026-11-09）
-  const sign = withRng(state, (r) => {
-    if (npc.purpose === 'body' && state.gender === 'F' && r.chance(0.6)) return r.pick([`テーブルの下で、${npc.name}の足が何度も当たってくる。`, `${npc.name}の視線が、さっきから顔より下に向いている気がする。`, `まだ2杯目なのに、${npc.name}は「この後どうする？」とばかり聞いてくる。`]);
-    if (isNormalPurpose(npc.purpose) && c.interest < 45 && r.chance(0.5)) return r.pick([`${npc.name}は、テーブルの上のスマホをちらちら見ている。`, `${npc.name}の相槌が、だんだん短くなってきた。`]);
-    if (r.chance(0.12)) return r.pick([`${npc.name}の元恋人の話が、なかなか終わらない。`, `${npc.name}の趣味の自慢話が、30分ほど続いた。`]);
-    return '';
+  // 話題：説明だけでなく、相手の具体的なセリフを入れる（2026-11-19。data/dateLines.ts）
+  withRng(state, (r) => {
+    const h0 = npc.hobbies[0];
+    const h1 = npc.hobbies[1] ?? h0;
+    const k = r.int(0, 2);
+    const topic = k === 0 ? `${npc.name}は最近ハマっている${h0}の話をしてくれた。`
+      : k === 1 ? `仕事の話になると、${npc.name}は少しだけ愚痴をこぼした。`
+        : `${h1}の話題で、思ったより盛り上がった。`;
+    lines.push({ who: 'narration', text: topic });
+    say(lines, k === 0 ? hobbyLine(r, npc, h0, 'chat') : k === 1 ? dateLine(r, npc, 'work') : hobbyLine(r, npc, h1, 'chat'));
+    note(c, topic);
   });
-  if (sign) { lines.push({ who: 'narration', text: sign }); note(c, sign); }
+  // デート中に見えるサイン（体験談 2026-11-09）
+  // サインにも、相手の具体的なセリフを添える（2026-11-19）
+  const sign = withRng(state, (r): { text: string; quote?: string; before?: boolean } | null => {
+    if (npc.purpose === 'body' && state.gender === 'F' && r.chance(0.6)) {
+      const k = r.int(0, 2);
+      if (k === 2) return { text: `まだ2杯目なのに、${npc.name}はこの後の予定ばかり聞いてくる。`, quote: dateLine(r, npc, 'after') ?? 'この後どうする？', before: true };
+      return { text: k === 0 ? `テーブルの下で、${npc.name}の足が何度も当たってくる。` : `${npc.name}の視線が、さっきから顔より下に向いている気がする。` };
+    }
+    if (isNormalPurpose(npc.purpose) && c.interest < 45 && r.chance(0.5)) {
+      return r.chance(0.5)
+        ? { text: `${npc.name}は、テーブルの上のスマホをちらちら見ている。`, quote: dateLine(r, npc, 'phone') }
+        : { text: `${npc.name}の相槌が、だんだん短くなってきた。`, quote: r.pick(['へー、そうなんですね。', 'あ、はい。', 'なるほどです。']) };
+    }
+    if (r.chance(0.12)) {
+      return r.chance(0.5)
+        ? { text: `${npc.name}の${exWord(npc)}の話が、なかなか終わらない。`, quote: dateLine(r, npc, 'ex'), before: true }
+        : { text: `${npc.name}の${npc.hobbies[0]}の自慢話が、30分ほど続いた。`, quote: hobbyLine(r, npc, npc.hobbies[0], 'brag'), before: true };
+    }
+    return null;
+  });
+  if (sign) {
+    if (sign.before) say(lines, sign.quote);
+    lines.push({ who: 'narration', text: sign.text });
+    if (!sign.before) say(lines, sign.quote);
+    note(c, sign.text);
+  }
   pushPending(state, {
     kind: 'date_talk', npcId: c.npcId, title: `${npc.name}とのデート`,
     lines,

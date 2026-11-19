@@ -285,6 +285,8 @@ dl.spec dd { margin: 0; }
 .chat-head { display: flex; align-items: center; gap: 8px; background: var(--bg); padding: 8px 0; }
 .ch-who { display: flex; gap: 8px; align-items: center; border: none; background: none; cursor: pointer; text-align: left; flex: 1; min-width: 0; }
 .ch-who small { display: block; color: var(--muted); font-size: 0.72rem; }
+.ch-head-side { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
+.ch-profile { font-size: 0.75rem; padding: 0; }
 .messages { display: flex; flex-direction: column; gap: 6px; padding: 8px 0 12px; }
 .msg { display: flex; flex-direction: column; max-width: 82%; }
 .msg.me { align-self: flex-end; align-items: flex-end; }
