@@ -5,7 +5,9 @@
 import { NPC_FACE_POOL } from './data/faceReveal';
 import { FEMALE_PHOTOS, MALE_PHOTOS, type PhotoEducation, type PhotoTemplate } from './data/npcPhotos';
 import { FEMALE_NAMES, MALE_NAMES, MALE_JOBS, UNIVERSITIES } from './data/npcPool';
-import { JOB_MIN_AGE, medicalEducation, normCdf, passesPlayerPrefs, profileText } from './npc';
+import { JOB_MIN_AGE, MAKER_AREA_WEIGHTS, isMakerJob, medicalEducation, normCdf, passesPlayerPrefs, profileText } from './npc';
+import { getCharacter } from './data/characters';
+import { travelMinutes } from './data/areas';
 import { Rng } from './rng';
 import type { Education, GameState, Npc, UniversityGroup } from './types';
 
@@ -54,6 +56,11 @@ function withTemplate(state: GameState, npc: Npc, t: PhotoTemplate): Npc {
   // 名前は写真ごとに固定（2026-11-21 指示：同じ人は毎回同じ名前。プレイのシードに関係なく、写真のIDだけで決める）
   n.name = Rng.fromSeed('npc-name', t.id).pick(npc.gender === 'M' ? MALE_NAMES : FEMALE_NAMES);
   if (t.job) n.job = t.job;
+  // 写真の設定でメーカー勤務になった人は、住まいを千葉・埼玉寄りに引き直す（2026-11-21 指示。別の乱数列で、ほかの抽選は変えない）
+  if (t.job && isMakerJob(t.job) && !isMakerJob(npc.job)) {
+    n.areaId = Rng.fromSeed(state.seed, 'maker-area', npc.id).weighted(MAKER_AREA_WEIGHTS);
+    n.distanceMin = travelMinutes(getCharacter(state.characterId).areaId, n.areaId);
+  }
   if (t.income) n.incomeYen = Math.round(rng.range(t.income[0], t.income[1]) / 10) * 10 * 10_000;
   // 学歴と年収の相関（2026-11-09）：大学院卒は大卒より少し高め、高卒・専門卒は少し低め（例外は残す）
   const eduAdj = t.education === 'grad' ? 1.12 : t.education === 'top' ? 1.08 : t.education === 'highschool' ? 0.95 : 1;

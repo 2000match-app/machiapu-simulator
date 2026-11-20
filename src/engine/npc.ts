@@ -72,6 +72,13 @@ function pickEducation(rng: Rng, gender: Gender, income: number, prestige = 0.4)
 }
 
 const AREA_WEIGHTS = AREAS.map((a) => [a.id, a.weight] as const);
+/**
+ * メーカー勤務の人は、工場・研究所のある千葉・埼玉に多めに住む（2026-11-21 指示）。千葉・埼玉の重みを3倍にする
+ * （全体では東京42%・埼玉30%・千葉28%くらい。ほかの職業は東京68%・埼玉17%・千葉15%のまま）
+ */
+export const MAKER_AREA_MULT = 3;
+export const MAKER_AREA_WEIGHTS = AREAS.map((a) => [a.id, a.pref === '東京都' ? a.weight : a.weight * MAKER_AREA_MULT] as const);
+export const isMakerJob = (job: string) => job.includes('メーカー');
 
 /** プロフィールの基本情報の分布（仮置き） */
 function pickBasics(rng: Rng, gender: Gender, age: number): { smoking: Smoking; drinking: Drinking; marital: Marital; holiday: Holiday; hasChildren: boolean } {
@@ -125,7 +132,7 @@ export function generateNpc(ctx: NpcContext, index: number, source: 'search' | '
   const education = job.name === '医師' ? medicalEducation(rng) : pickEducation(rng, gender, baseIncome, gender === 'M' ? job.prestige : baseIncome >= 500 ? 0.7 : 0.4);
   const incomeMan = Math.round(baseIncome * eduIncomeFactor(education) / 10) * 10;
   const heightCm = Math.round(gender === 'M' ? rng.normal(171, 5.5) : rng.normal(158, 5));
-  const areaId = rng.weighted(AREA_WEIGHTS);
+  const areaId = rng.weighted(isMakerJob(job.name) ? MAKER_AREA_WEIGHTS : AREA_WEIGHTS);
   const distanceMin = travelMinutes(ch.areaId, areaId);
   const basics = pickBasics(rng, gender, age);
   let purpose = npcPurpose(rng, ch.gender);
