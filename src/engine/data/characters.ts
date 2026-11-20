@@ -36,7 +36,7 @@ export const CHARACTERS: PlayableCharacter[] = [
   {
     id: 'M01', gender: 'M', name: '健人', age: 30, job: '総合商社',
     education: { kind: 'university', group: '早慶', school: '早稲田大学' },
-    incomeYen: 1500 * man, heightCm: 183, looks: 4, photoInitiallyVisible: true,
+    incomeYen: 1500 * man, heightCm: 177, looks: 4, photoInitiallyVisible: true, // 身長 183→177cm（2026-11-21 指示）
     datingExperience: 'あり', children: 0,
     areaId: 'minato', smoking: 'none', drinking: 'sometimes', marital: 'never', holiday: 'weekend',
     baseDistanceMin: 60, lookPreference: 3,
@@ -99,7 +99,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     // 2026-11-21：職業を美容師から不動産営業（賃貸仲介）に。休みは火曜・水曜で、土日は出勤（平日休みのまま）
     id: 'M04', gender: 'M', name: '蓮', age: 22, job: '不動産営業',
     education: { kind: 'vocational' },
-    incomeYen: 400 * man, heightCm: 181, looks: 4.5, photoInitiallyVisible: true, // 容姿 5→4.5（2026-11-21 指示）
+    incomeYen: 400 * man, heightCm: 183, looks: 4.5, photoInitiallyVisible: true, // 容姿 5→4.5・身長 181→183cm（2026-11-21 指示）
     datingExperience: '豊富', children: 0,
     areaId: 'nakano', smoking: 'sometimes', drinking: 'yes', marital: 'never', holiday: 'weekday',
     baseDistanceMin: 60, lookPreference: 3,

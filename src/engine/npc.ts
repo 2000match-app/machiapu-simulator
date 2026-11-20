@@ -240,13 +240,14 @@ export function npcHensachi(npc: Npc): number {
 
 export const HENSACHI_TUNE = {
   // 男性
-  maleRichIncomeMan: 600, maleRichLooksWeight: 3.5, maleShortCm: 169, maleShortMult: 0.7,
+  // 169cm以下の倍率 0.7→0.84（2026-11-21 指示：大輔（東大・年収900万・169cm）が45と低すぎた。54くらいに）
+  maleRichIncomeMan: 600, maleRichLooksWeight: 3.5, maleShortCm: 169, maleShortMult: 0.84,
   /** 容姿2以下は、ほかがどれだけ良くても偏差値50まで（2026-11-16） */
   maleLowLooksCap: 50,
   // 女性
   femaleLooksWeight: 1.22,
-  /** 容姿2以下はさらに下げる（容姿2と3の間に崖。2026-11-16） */
-  femaleLowLooksPenalty: 1.2,
+  /** 容姿2以下はさらに下げる（容姿2と3の間に崖。2026-11-16）。1.2→2.05（2026-11-21 指示：葵が52と高すぎた。47くらいに） */
+  femaleLowLooksPenalty: 2.05,
   /** 学歴の点（大学群）。女性は旧帝大を早慶と同じに、男性はMARCHと早慶の間に崖（2026-11-16） */
   // MARCH未満の大学（日東駒専・大東亜帝国・産近甲龍）は画面では「大卒」とだけ出すので、点もひとつにそろえる（2026-11-21 指示）
   eduScoreFemale: { 旧帝大: 2.5, 早慶: 2.5, MARCH: 1.8, 日東駒専: 1.2, 産近甲龍: 1.2, 大東亜帝国: 1.2 } as Record<string, number>,
