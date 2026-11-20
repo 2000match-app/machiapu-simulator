@@ -96,7 +96,8 @@ export const CHARACTERS: PlayableCharacter[] = [
     },
   },
   {
-    id: 'M04', gender: 'M', name: '蓮', age: 22, job: '美容師',
+    // 2026-11-21：職業を美容師から不動産営業（賃貸仲介）に。休みは火曜・水曜で、土日は出勤（平日休みのまま）
+    id: 'M04', gender: 'M', name: '蓮', age: 22, job: '不動産営業',
     education: { kind: 'vocational' },
     incomeYen: 400 * man, heightCm: 181, looks: 5, photoInitiallyVisible: true,
     datingExperience: '豊富', children: 0,
@@ -106,9 +107,9 @@ export const CHARACTERS: PlayableCharacter[] = [
     monthlyBudgetYen: 1.5 * man, appHistoryMonths: 6, relationshipDeadlineMonths: 12,
     initialPreference: prefFor(22, 'nakano'),
     tagline: 'レモンサワー君。爽やかだが中身が薄く、低収入', // 2026-11-21 指示
-    lifeNote: '東京都中野区で一人暮らし。休みは平日。恋愛経験豊富。',
+    lifeNote: '東京都中野区で一人暮らし。不動産の営業（賃貸仲介）で、休みは火曜・水曜。土日は内見で忙しい。恋愛経験豊富。',
     freeSlotsPerMonth: 7, weekendLimited: true,
-    prologue: ['美容師になって3年目。指名も増えて、見た目を褒められることには慣れている。', 'でも休みは平日だけで、手取りは25万円ほど。前の彼女とは、休みが合わないまま終わった。', '今度は、ちゃんと続く相手を見つけたい。'],
+    prologue: ['不動産の営業になって3年目。内見のお客さんには、見た目のおかげか受けがいい。', 'でも休みは火曜と水曜だけで、手取りは25万円ほど。前の彼女とは、休みが合わないまま終わった。', '今度は、ちゃんと続く相手を見つけたい。'],
     rates: { receivedPer30: [80, 250], sendSuccess: 0.28, postDateRejection: 0.30 },
     futureConcern: 0.4,
     route: {

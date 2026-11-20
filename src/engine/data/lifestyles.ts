@@ -70,10 +70,10 @@ export const LIFESTYLES: Record<string, Lifestyle> = {
     occupation: 'アルバイト', work: { kind: 'part', start: h(17), end: h(22), days: [], label: 'バイト中' }, wake: h(9), sleep: 1440,
     notices: ['明日シフト入れそう？', '今日暇だから早上がりでいいよ！', '来週のシフト希望、今日までに出してね'], noticeFrom: 'バイト先', noticeChance: 0.35,
   },
-  // 蓮：美容師。火曜定休＋週1日の休み、土日は出勤
+  // 蓮：不動産営業（賃貸仲介）。火曜・水曜が定休、土日は出勤（2026-11-21 美容師から変更）
   M04: {
-    occupation: '美容師', work: { kind: 'shift', start: h(10), end: h(20), days: [0, 2, 3, 4, 5, 6], rotatingOff: 1, label: 'サロン勤務中' }, wake: h(8), sleep: 1440,
-    notices: ['明日の朝イチ、カットの予約入りました', '今月の指名数、店長から連絡あり', '練習会、木曜の閉店後です'], noticeFrom: 'サロン', noticeChance: 0.3,
+    occupation: '不動産営業', work: { kind: 'shift', start: h(10), end: h(19, 30), days: [0, 3, 4, 5, 6], label: '店舗で勤務中' }, wake: h(8), sleep: 1440,
+    notices: ['明日10時、内見の予約入りました', '今月の契約件数、店長から連絡あり', '反響のお客様、折り返しお願いします'], noticeFrom: '店長', noticeChance: 0.3,
   },
   // 悠斗：弁護士。期日前は遅くまで
   M05: {

@@ -49,5 +49,7 @@ export default defineConfig(({ mode }) => ({
   test: {
     include: ['src/**/*.test.ts'],
     environment: 'node',
+    // 何週間分も進める重いテストが、全部を同時に流すと5秒（既定）を少し超えることがある（2026-11-21）
+    testTimeout: 30_000,
   },
 }) as never);
