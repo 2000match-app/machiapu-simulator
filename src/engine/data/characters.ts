@@ -105,7 +105,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     constraints: {},
     monthlyBudgetYen: 1.5 * man, appHistoryMonths: 6, relationshipDeadlineMonths: 12,
     initialPreference: prefFor(22, 'nakano'),
-    tagline: 'レモンサワー。容姿は優れているが、年収は物足りない',
+    tagline: 'レモンサワー君。爽やかだが中身が薄く、低収入', // 2026-11-21 指示
     lifeNote: '東京都中野区で一人暮らし。休みは平日。恋愛経験豊富。',
     freeSlotsPerMonth: 7, weekendLimited: true,
     prologue: ['美容師になって3年目。指名も増えて、見た目を褒められることには慣れている。', 'でも休みは平日だけで、手取りは25万円ほど。前の彼女とは、休みが合わないまま終わった。', '今度は、ちゃんと続く相手を見つけたい。'],
@@ -173,7 +173,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     homeWorkPerWeek: 2, // 週2日は在宅勤務（2026-11-14 指示。勤務中もアプリを開ける。化粧の手間は女性だけ）
     monthlyBudgetYen: 3 * man, appHistoryMonths: 12, relationshipDeadlineMonths: 12,
     initialPreference: prefFor(27, 'shinagawa'),
-    tagline: 'エナドリ。スペックは高いが、容姿が刺さらない',
+    tagline: 'エナドリ君。学歴とキャリアはあるが、容姿に魅力はない', // 2026-11-21 指示
     lifeNote: '東京都品川区で一人暮らし。外資系コンサルで深夜まで働くことが多い。交際経験が少ない。',
     freeSlotsPerMonth: 5, weekendLimited: false,
     tiredNights: { perWeek: 2, reasons: ['残業で疲れて、アプリを開かずに寝てしまった'] },
@@ -280,7 +280,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     constraints: {},
     monthlyBudgetYen: 3 * man, appHistoryMonths: 12, relationshipDeadlineMonths: 18,
     initialPreference: prefFor(27, 'chuo', { ageMin: 25, ageMax: 33, minIncomeYen: 800 * man }),
-    tagline: '爆美女。容姿と学歴を兼ね備えた令和の女性。希望は同年代・年収800万円以上',
+    tagline: '美人バリキャリ。容姿もよく、かつキャリアも高い', // 2026-11-21 指示
     lifeNote: '東京都中央区在住（2026-11-14 指示。以前は世田谷区）。アプリ歴1年。交際開始の希望まで18か月。',
     freeSlotsPerMonth: 8, weekendLimited: false,
     homeWorkPerWeek: 2, weekendPlans: ['ピラティス', '友達とお出かけ'],
@@ -322,7 +322,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     constraints: {},
     monthlyBudgetYen: 1.5 * man, appHistoryMonths: 24, relationshipDeadlineMonths: 12,
     initialPreference: prefFor(33, 'suginami'),
-    tagline: 'パン職。平成では人気のあった層。婚期を逃さなければ……',
+    tagline: '食パン女子。真面目・勤勉で学歴もあるが、容姿は普通', // 2026-11-21 指示。写真は p0725
     lifeNote: '東京都杉並区在住。アプリ歴2年。交際開始の希望まで12か月。',
     freeSlotsPerMonth: 8, weekendLimited: false,
     homeWorkPerWeek: 2, weekendPlans: ['ピラティス', '友達とお出かけ'],
@@ -438,7 +438,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     monthlyBudgetYen: 1 * man, appHistoryMonths: 12, relationshipDeadlineMonths: 18,
     // 高望み：年収700万円以上・身長172cm以上・大卒以上・同年代〜少し上
     initialPreference: prefFor(28, 'itabashi', { ageMin: 27, ageMax: 35, minIncomeYen: 600 * man, heightMin: 172, universityOnly: true }),
-    tagline: 'フラッペ',
+    tagline: 'フラッペ女子。低キャリアの実家暮らし。容姿は平均以上', // 2026-11-21 指示
     lifeNote: '東京都板橋区の実家暮らし（2026-11-14 指示）。跡見学園女子大学を出て事務職。手取りは美容と旅行で使い切っている。いいねは多く届くが、自分の希望に合う相手は少ない。',
     freeSlotsPerMonth: 8, weekendLimited: false,
     prologue: ['跡見学園女子大学を出て、都内の会社で事務をしている。手取りは18万円。実家暮らしだけど、美容院とネイルと旅行で毎月きれいに消えていく。', '友達がインスタに載せるホテルのアフタヌーンティーが、遠い世界に見える。', '見た目には少し自信がある。お金に余裕のある人と出会えたら、この生活も変わるかもしれない。'],

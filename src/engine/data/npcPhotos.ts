@@ -844,7 +844,7 @@ export const FEMALE_PHOTOS: PhotoTemplate[] = [
   { id: 'p0722', file: 'p0722.jpg', age: 29, looks: 3, faceVisible: true, job: '美容関係', income: [290, 340], education: 'highschool', hobbies: ['焼きたてパンの食べ比べ', 'カフェ巡り', 'ランニング'], note: '容姿レベル3' },
   { id: 'p0723', file: 'p0723.jpg', age: 25, looks: 3, faceVisible: true, job: '会社員（事務・企画）', income: [300, 340], education: 'univ', hobbies: ['野外フェス', 'ライブ鑑賞', 'スポーツ観戦'], note: '容姿レベル3' },
   { id: 'p0724', file: 'p0724.jpg', age: 36, looks: 3, faceVisible: true, job: '会社員（事務・企画）', income: [430, 490], education: 'univ', hobbies: ['街歩き', '散歩', 'ランニング'], weakPhoto: true, note: '容姿レベル3・back・mosaic' },
-  { id: 'p0725', file: 'p0725.jpg', age: 34, looks: 3, faceVisible: true, job: '医療事務', income: [280, 320], education: 'junior', hobbies: ['日帰り旅行', '旅先の街歩き', 'ランニング'], note: '容姿レベル3' },
+  // p0725 は美咲（F03）の写真にしたので、NPCには使わない（2026-11-21）
   { id: 'p0727', file: 'p0727.jpg', age: 32, looks: 3, faceVisible: true, job: '教員', income: [510, 590], education: 'univ', hobbies: ['友人との食事', '飲食店の開拓', 'スポーツ観戦'], note: '容姿レベル3' },
   { id: 'p0728', file: 'p0728.jpg', age: 35, looks: 3, faceVisible: true, job: '看護師', income: [400, 460], education: 'vocational', hobbies: ['韓国料理の食べ歩き', '旅行の写真を撮る', '散歩'], note: '容姿レベル3' },
   { id: 'p0730', file: 'p0730.jpg', age: 32, looks: 3, faceVisible: true, job: '薬剤師', income: [490, 560], education: 'univ', hobbies: ['旅行の写真を撮る', '旅先の街歩き', '国内旅行'], note: '容姿レベル3' },
