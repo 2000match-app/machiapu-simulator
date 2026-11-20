@@ -6,8 +6,8 @@ export type Yen = number;
 /** 開始日を0とした経過ゲーム日。1か月=30日、1年=12か月=360日。 */
 export type Day = number;
 export type Looks = 1 | 2 | 3 | 4 | 5;
-/** 主人公の容姿。和樹だけ 3.5（2026-11-18 指示）。NPC は整数のまま */
-export type PlayerLooks = Looks | 3.5;
+/** 主人公の容姿。和樹・結衣は 3.5、蓮は 4.5（2026-11-18・21 指示）。NPC は整数のまま */
+export type PlayerLooks = Looks | 3.5 | 4.5;
 
 export type UniversityGroup = '旧帝大' | '早慶' | 'MARCH' | '日東駒専' | '大東亜帝国' | '産近甲龍';
 export type Education =

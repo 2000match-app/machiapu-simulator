@@ -99,7 +99,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     // 2026-11-21：職業を美容師から不動産営業（賃貸仲介）に。休みは火曜・水曜で、土日は出勤（平日休みのまま）
     id: 'M04', gender: 'M', name: '蓮', age: 22, job: '不動産営業',
     education: { kind: 'vocational' },
-    incomeYen: 400 * man, heightCm: 181, looks: 5, photoInitiallyVisible: true,
+    incomeYen: 400 * man, heightCm: 181, looks: 4.5, photoInitiallyVisible: true, // 容姿 5→4.5（2026-11-21 指示）
     datingExperience: '豊富', children: 0,
     areaId: 'nakano', smoking: 'sometimes', drinking: 'yes', marital: 'never', holiday: 'weekday',
     baseDistanceMin: 60, lookPreference: 3,
@@ -166,7 +166,7 @@ export const CHARACTERS: PlayableCharacter[] = [
   {
     id: 'M07', gender: 'M', name: '大輔', age: 27, job: 'コンサルタント',
     education: { kind: 'university', group: '旧帝大', school: '東京大学' },
-    incomeYen: 800 * man, heightCm: 171, looks: 3, photoInitiallyVisible: true,
+    incomeYen: 800 * man, heightCm: 168, looks: 3, photoInitiallyVisible: true, // 身長 171→168cm（2026-11-21 指示）
     datingExperience: '少ない', children: 0,
     areaId: 'shinagawa', smoking: 'none', drinking: 'sometimes', marital: 'never', holiday: 'weekend',
     baseDistanceMin: 60, lookPreference: 3,
@@ -532,7 +532,13 @@ export const DRINKING_LABEL = { none: '飲まない', sometimes: 'ときどき�
  * ほかの10人のデータはテスト・自動プレイ用に残す。
  */
 // 2026-11-13：和樹（M11）を追加し、蓮（M04）も残して男性6人。女性は真由（F05：管理職・バリキャリ・男性からの需要は低め）を足して6人（計12人）
-export const SELECTABLE_IDS = ['M01', 'M04', 'M05', 'M09', 'M07', 'M11', 'F01', 'F03', 'F05', 'F06', 'F08', 'F10'];
+/**
+ * 一時的に選択画面から外している人物（2026-11-21 指示：和樹・真由）。データ・写真・トークはそのまま残してある。
+ * 復活させるときは、この配列から消すだけでよい（前回の続きのセーブも、そのまま遊べる）
+ */
+export const PAUSED_IDS = ['M11', 'F05'];
+const ALL_SELECTABLE_IDS = ['M01', 'M04', 'M05', 'M09', 'M07', 'M11', 'F01', 'F03', 'F05', 'F06', 'F08', 'F10'];
+export const SELECTABLE_IDS = ALL_SELECTABLE_IDS.filter((id) => !PAUSED_IDS.includes(id));
 
 /**
  * ゲーム開始時の検索条件：そのまま進めるとゲームオーバーになりやすい「格上狙い」（2026-11-03 指示）。

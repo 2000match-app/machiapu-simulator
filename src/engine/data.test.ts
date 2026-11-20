@@ -14,10 +14,10 @@ const SPEC_TABLE: [string, string, number, string, string, number, number, numbe
   ['M01', '健人', 30, '総合商社', '早稲田大学卒', 1500, 183, 4, true, 8],
   ['M02', '圭', 34, '弁護士', '慶應義塾大学卒・同大学法科大学院修了', 1200, 178, 4, true, 12],
   ['M03', '亮', 36, 'フリーター', '高卒', 240, 176, 2, true, 1],
-  ['M04', '蓮', 22, '不動産営業', '専門卒', 400, 181, 5, true, 1.5],
+  ['M04', '蓮', 22, '不動産営業', '専門卒', 400, 181, 4.5, true, 1.5],
   ['M05', '悠斗', 33, '弁護士', '京都大学卒', 1300, 170, 2, false, 3],
   ['M06', '和也', 38, '事務職', '帝京大学卒', 400, 165, 2, false, 2],
-  ['M07', '大輔', 27, 'コンサルタント', '東京大学卒', 800, 171, 3, true, 3],
+  ['M07', '大輔', 27, 'コンサルタント', '東京大学卒', 800, 168, 3, true, 3],
   ['M08', '直人', 30, '派遣ITサポート', '日本大学卒', 320, 172, 1, false, 1.5],
   ['M09', '太郎', 35, '中小企業会社員', '龍谷大学卒', 500, 167, 1, true, 1],
   ['M11', '和樹', 33, 'メーカー勤務', '横浜国立大学卒', 750, 170, 3.5, true, 2.5],
@@ -53,8 +53,11 @@ describe('プレイ可能キャラクター20人', () => {
   it('男性11人（2026-11-13 和樹を追加）・女性10人。選べるのは男女6人ずつの12人（蓮・和樹・真由を含む）', () => {
     expect(CHARACTERS.filter((c) => c.gender === 'M')).toHaveLength(11);
     expect(CHARACTERS.filter((c) => c.gender === 'F')).toHaveLength(10);
-    expect(SELECTABLE_IDS).toHaveLength(12);
-    expect(SELECTABLE_IDS).toEqual(expect.arrayContaining(['M04', 'M11', 'F05']));
+    // 和樹（M11）・真由（F05）は一時的に外している（2026-11-21。PAUSED_IDS から消せば戻る）
+    expect(SELECTABLE_IDS).toHaveLength(10);
+    expect(SELECTABLE_IDS).toEqual(expect.arrayContaining(['M04']));
+    expect(SELECTABLE_IDS).not.toEqual(expect.arrayContaining(['M11']));
+    expect(SELECTABLE_IDS).not.toEqual(expect.arrayContaining(['F05']));
     for (const id of SELECTABLE_IDS) expect(getCharacter(id).prologue?.length, id).toBeGreaterThan(0);
   });
   it.each(SPEC_TABLE)('%s %s の設定が仕様表と一致', (id, name, age, job, edu, income, height, looks, photo, budget) => {
