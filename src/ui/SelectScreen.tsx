@@ -37,6 +37,8 @@ function CharCard({ c, onPick }: { c: PlayableCharacter; onPick: () => void }) {
       <span className="cc-job">{c.job}</span>
       <span className="cc-job">{educationShort(c.education)}</span>
       <span className="cc-job cc-income">年収 {c.incomeLabel ?? man(c.incomeYen)}</span>
+      {/* 身長も一覧で見せる（2026-11-21 指示） */}
+      <span className="cc-job">身長 {c.heightCm}cm</span>
       <span className="cc-badges">
         <span className="stars" aria-label={`容姿${c.looks}/5`} title="容姿（ゲーム上の設定値）"><span className="stars-lbl">容姿</span><Stars value={c.looks} /></span>
         <Hensachi of={c} />

@@ -166,7 +166,7 @@ export const CHARACTERS: PlayableCharacter[] = [
   {
     id: 'M07', gender: 'M', name: '大輔', age: 27, job: 'コンサルタント',
     education: { kind: 'university', group: '旧帝大', school: '東京大学' },
-    incomeYen: 800 * man, heightCm: 168, looks: 3, photoInitiallyVisible: true, // 身長 171→168cm（2026-11-21 指示）
+    incomeYen: 900 * man, heightCm: 169, looks: 3, photoInitiallyVisible: true, // 身長 171→169cm・年収 800→900万円（2026-11-21 指示）
     datingExperience: '少ない', children: 0,
     areaId: 'shinagawa', smoking: 'none', drinking: 'sometimes', marital: 'never', holiday: 'weekend',
     baseDistanceMin: 60, lookPreference: 3,
@@ -263,7 +263,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     tagline: '安定くん。スペックは物足りないが、清潔感のある容姿',
     lifeNote: '東京都練馬区で一人暮らし。都内のメーカーに勤める（年収750万円）。土日休みで、残業はほどほど。',
     freeSlotsPerMonth: 8, weekendLimited: false,
-    prologue: ['33歳。都内の会社に勤めて10年。仕事も生活も、特に不満はない。', 'ただ、気づけば周りはほとんど結婚していた。前の彼女と別れてから、もう3年がたつ。', '年収も身長も、たぶん平均くらい。普通の自分でも、ちゃんと出会えるだろうか。'],
+    prologue: ['33歳。横浜の大学を出て、メーカーに勤めて10年。仕事も生活も、特に不満はない。', 'ただ、気づけば周りはほとんど結婚していた。前の彼女と別れてから、もう3年がたつ。', '年収はそこそこ、身長は平均くらい。目立つところのない自分でも、ちゃんと出会えるだろうか。'],
     rates: { receivedPer30: [8, 30], sendSuccess: 0.07, postDateRejection: 0.35 },
     route: {
       hardship: '強みも弱みもないので、プロフィールで埋もれやすい。マッチしても比べられて、返信が途切れがち',
@@ -285,7 +285,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     lifeNote: '東京都中央区在住（2026-11-14 指示。以前は世田谷区）。アプリ歴1年。交際開始の希望まで18か月。',
     freeSlotsPerMonth: 8, weekendLimited: false,
     homeWorkPerWeek: 2, weekendPlans: ['ピラティス', '友達とお出かけ'],
-    prologue: ['大手企業で働いて5年目。仕事も見た目も、自分なりに磨いてきた。', 'だからこそ、相手にも妥協したくない。同年代で、年収1,000万円以上で、見た目も素敵な人。', 'アプリを開けば、いいねは毎日のように届く。……なのに、どうして「この人」という相手に出会えないのだろう。'],
+    prologue: ['大手企業で働いて5年目。仕事も見た目も、自分なりに磨いてきた。', 'だからこそ、相手にも妥協したくない。同年代で、年収800万円以上で、見た目も素敵な人。', 'アプリを開けば、いいねは毎日のように届く。……なのに、どうして「この人」という相手に出会えないのだろう。'],
     rates: { receivedPer30: [400, 1000], sendSuccess: 0.60, postDateRejection: 0.20 },
     route: {
       hardship: '受信1,000でも条件一致は少ない。条件の揃う男性との曖昧な関係を続け、別の本命を選ばれる',
@@ -316,7 +316,7 @@ export const CHARACTERS: PlayableCharacter[] = [
   {
     id: 'F03', gender: 'F', name: '美咲', age: 33, job: '公務員',
     education: { kind: 'university', group: 'MARCH', school: '中央大学' },
-    incomeYen: 600 * man, heightCm: 158, looks: 3, photoInitiallyVisible: true,
+    incomeYen: 600 * man, heightCm: 161, looks: 3, photoInitiallyVisible: true,
     datingExperience: 'あり', children: 0,
     areaId: 'suginami', smoking: 'none', drinking: 'sometimes', marital: 'never', holiday: 'weekend',
     baseDistanceMin: 60, lookPreference: 2,
@@ -327,7 +327,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     lifeNote: '東京都杉並区在住。アプリ歴2年。交際開始の希望まで12か月。',
     freeSlotsPerMonth: 8, weekendLimited: false,
     homeWorkPerWeek: 2, weekendPlans: ['ピラティス', '友達とお出かけ'],
-    prologue: ['30歳を過ぎてから、友人の結婚式が続いている。', '式のたびにご祝儀を包み、二次会で「次は美咲だね」と言われて笑ってみせる。', 'アプリを始めて2年。いいなと思う人には既読無視され、来る人にはときめかない。「今年こそ」という気持ちが、少しずつ焦りに変わっていく。'],
+    prologue: ['区役所で働いて10年。30歳を過ぎてから、友人の結婚式が続いている。', '式のたびにご祝儀を包み、二次会で「次は美咲だね」と言われて笑ってみせる。', 'アプリを始めて2年。いいなと思う人には既読無視され、来る人にはときめかない。「今年こそ」という気持ちが、少しずつ焦りに変わっていく。'],
     rates: { receivedPer30: [80, 250], sendSuccess: 0.35, postDateRejection: 0.35 },
     route: {
       hardship: '何人も会うが好きになれない。気になった人には既読無視。周囲の結婚報告で焦る',
@@ -386,7 +386,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     // 2026-11-19：病院勤め（日勤のシフト＋月4回ほどの夜勤。土日も出勤があり、休みは週2日の不定休）
     id: 'F06', gender: 'F', name: '葵', age: 24, job: '看護師',
     education: { kind: 'vocational' },
-    incomeYen: 500 * man, heightCm: 155, looks: 2, photoInitiallyVisible: false,
+    incomeYen: 500 * man, heightCm: 167, looks: 2, photoInitiallyVisible: false,
     datingExperience: '少ない', children: 0,
     areaId: 'koshigaya', smoking: 'none', drinking: 'sometimes', marital: 'never', holiday: 'irregular',
     baseDistanceMin: 60, lookPreference: 2,
@@ -397,7 +397,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     lifeNote: '埼玉県越谷市の実家暮らし。看護専門学校を出て、病院で看護師をしている（年収500万円）。シフト勤務で月に4回ほど夜勤があり、休みは週2日の不定休。アプリ歴2年。交際開始の希望まで24か月。',
     freeSlotsPerMonth: 8, weekendLimited: true,
     // 顔が分からなくてもいいねは多い。会ってから断られやすい
-    prologue: ['看護専門学校を出て、病院の看護師になって4年目。夜勤にも慣れてきた。仕事は慣れてきたけど、職場に出会いはほとんどない。', '顔に自信がなくて、プロフィールは後ろ姿の写真。それでも、いいねはたくさん届く。', '……みんな、私の何を見ていいねしてくれているんだろう。'],
+    prologue: ['看護専門学校を出て、病院の看護師になって4年目。夜勤にも慣れてきたけど、職場に出会いはほとんどない。', '顔に自信がなくて、プロフィールは後ろ姿の写真。それでも、いいねはたくさん届く。', '……みんな、私の何を見ていいねしてくれているんだろう。'],
     rates: { receivedPer30: [60, 200], sendSuccess: 0.25, postDateRejection: 0.6 },
     ratesPhotoPublic: { receivedPer30: [20, 70], sendSuccess: 0.15, postDateRejection: 0.45 },
     route: {
@@ -431,7 +431,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     // 2026-11-14：跡見学園女子大学卒に（11/13 は日本女子大学、以前は専門卒）。学歴の段階は 大東亜帝国 相当として扱う（画面には大学群を出さない）
     id: 'F08', gender: 'F', name: '結衣', age: 28, job: '事務職',
     education: { kind: 'university', group: '大東亜帝国', school: '跡見学園女子大学' },
-    incomeYen: 260 * man, incomeLabel: '400万円以下', heightCm: 161, looks: 3.5, photoInitiallyVisible: true, // 容姿3.5・写真は p0749（2026-11-18 指示）
+    incomeYen: 260 * man, incomeLabel: '400万円以下', heightCm: 155, looks: 3.5, photoInitiallyVisible: true, // 容姿3.5・写真は p0749（2026-11-18 指示）
     datingExperience: 'あり', children: 0,
     areaId: 'itabashi', smoking: 'none', drinking: 'sometimes', marital: 'never', holiday: 'weekend',
     baseDistanceMin: 60, lookPreference: 4,
