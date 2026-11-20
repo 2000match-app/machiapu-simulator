@@ -507,6 +507,17 @@ export function educationLabel(e: PlayableCharacter['education']): string {
   return `${e.school}${e.detail ?? '卒'}`;
 }
 
+/** MARCH未満の大学（日東駒専・大東亜帝国・産近甲龍）。ゲームの中では大学名を出さず「大卒」にする（2026-11-21 指示） */
+export function belowMarch(e: PlayableCharacter['education']): boolean {
+  return e.kind === 'university' && !['旧帝大', '早慶', 'MARCH'].includes(e.group);
+}
+
+/** ゲームの中（マイページなど）での自分の学歴。MARCH未満は「大卒」。キャラ選択画面は educationLabel で大学名まで出す */
+export function educationInGame(e: PlayableCharacter['education']): string {
+  if (belowMarch(e) && e.kind === 'university') return e.detail === '在学中' ? '大学在学中' : e.detail ?? '大卒';
+  return educationLabel(e);
+}
+
 export function educationShort(e: PlayableCharacter['education']): string {
   if (e.kind === 'vocational') return e.label ?? '専門卒';
   if (e.kind === 'highschool') return '高卒';

@@ -4,7 +4,7 @@
 // 検索から出す相手は、割り当て後も自分の絞り込み条件に合う場合だけ使う。素材を使い切った後は従来の共通アイコン。
 import { NPC_FACE_POOL } from './data/faceReveal';
 import { FEMALE_PHOTOS, MALE_PHOTOS, type PhotoEducation, type PhotoTemplate } from './data/npcPhotos';
-import { MALE_JOBS, UNIVERSITIES } from './data/npcPool';
+import { FEMALE_NAMES, MALE_NAMES, MALE_JOBS, UNIVERSITIES } from './data/npcPool';
 import { JOB_MIN_AGE, medicalEducation, normCdf, passesPlayerPrefs, profileText } from './npc';
 import { Rng } from './rng';
 import type { Education, GameState, Npc, UniversityGroup } from './types';
@@ -51,6 +51,8 @@ function pickEducation(kind: PhotoEducation, rng: Rng, incomeMan: number): Educa
 function withTemplate(state: GameState, npc: Npc, t: PhotoTemplate): Npc {
   const rng = Rng.fromSeed(state.seed, 'photo', npc.id, t.id);
   const n: Npc = { ...npc, photo: t.file, looks: t.looks, profilePhotoVisible: t.faceVisible, portraitAssetStatus: 'approved' };
+  // 名前は写真ごとに固定（2026-11-21 指示：同じ人は毎回同じ名前。プレイのシードに関係なく、写真のIDだけで決める）
+  n.name = Rng.fromSeed('npc-name', t.id).pick(npc.gender === 'M' ? MALE_NAMES : FEMALE_NAMES);
   if (t.job) n.job = t.job;
   if (t.income) n.incomeYen = Math.round(rng.range(t.income[0], t.income[1]) / 10) * 10 * 10_000;
   // 学歴と年収の相関（2026-11-09）：大学院卒は大卒より少し高め、高卒・専門卒は少し低め（例外は残す）

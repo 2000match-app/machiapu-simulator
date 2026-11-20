@@ -241,10 +241,11 @@ export const HENSACHI_TUNE = {
   /** 容姿2以下はさらに下げる（容姿2と3の間に崖。2026-11-16） */
   femaleLowLooksPenalty: 1.2,
   /** 学歴の点（大学群）。女性は旧帝大を早慶と同じに、男性はMARCHと早慶の間に崖（2026-11-16） */
-  eduScoreFemale: { 旧帝大: 2.5, 早慶: 2.5, MARCH: 1.8, 日東駒専: 1.3, 産近甲龍: 1.2, 大東亜帝国: 1 } as Record<string, number>,
+  // MARCH未満の大学（日東駒専・大東亜帝国・産近甲龍）は画面では「大卒」とだけ出すので、点もひとつにそろえる（2026-11-21 指示）
+  eduScoreFemale: { 旧帝大: 2.5, 早慶: 2.5, MARCH: 1.8, 日東駒専: 1.2, 産近甲龍: 1.2, 大東亜帝国: 1.2 } as Record<string, number>,
   // 男性のMARCHと早慶の崖は、MARCHを下げて作る（早慶・旧帝大を上げると東大の大輔が上がりすぎた。2026-11-16）
   // MARCH は日東駒専（1.3）より上に戻す（2026-11-18。以前の1.2は日東駒専より低く逆転していた）
-  eduScoreMale: { 旧帝大: 2.65, 早慶: 2.5, MARCH: 1.4, 日東駒専: 1.3, 産近甲龍: 1.2, 大東亜帝国: 1 } as Record<string, number>,
+  eduScoreMale: { 旧帝大: 2.65, 早慶: 2.5, MARCH: 1.4, 日東駒専: 1.2, 産近甲龍: 1.2, 大東亜帝国: 1.2 } as Record<string, number>,
   femaleEdu: { highschool: -0.55, vocational: -0.4 } as Record<string, number>,
   /** 年齢の倍率（上から当てはまるもの）。28〜33歳0.95、34歳から崖で0.8、36〜40歳0.7、41歳以上0.6（2026-11-16） */
   femaleAge: [[41, 0.6], [36, 0.7], [34, 0.8], [28, 0.95]] as [number, number][],

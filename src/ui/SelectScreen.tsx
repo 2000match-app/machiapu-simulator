@@ -6,9 +6,9 @@ import { CHARACTERS, SELECTABLE_IDS, educationShort, HOLIDAY_LABEL, MARITAL_LABE
 import type { Gender, PlayableCharacter } from '../engine/types';
 import { Portrait, Scenery } from './Avatar';
 import { PLAYER_SCENERY } from '../engine/data/npcPhotos';
-import { Sheet } from './common';
+import { Sheet, Stars } from './common';
 import { SPEC_CLEAR_REL_DATES, TUNE_RECEIVED_SCALE } from '../engine/data/rules';
-import { looksStars, man } from './format';
+import { man } from './format';
 
 const LOOKS_TEXT: Record<number, string> = {
   1: '見た目の第一印象ではかなり不利',
@@ -37,7 +37,7 @@ function CharCard({ c, onPick }: { c: PlayableCharacter; onPick: () => void }) {
       <span className="cc-job">{educationShort(c.education)}</span>
       <span className="cc-job cc-income">年収 {c.incomeLabel ?? man(c.incomeYen)}</span>
       <span className="cc-badges">
-        <span className="stars" aria-label={`容姿${c.looks}/5`} title="容姿（ゲーム上の設定値）"><span className="stars-lbl">容姿</span>{looksStars(c.looks)}</span>
+        <span className="stars" aria-label={`容姿${c.looks}/5`} title="容姿（ゲーム上の設定値）"><span className="stars-lbl">容姿</span><Stars value={c.looks} /></span>
         <Hensachi of={c} />
         {!c.photoInitiallyVisible && <span className="badge warn">顔写真なし</span>}
       </span>

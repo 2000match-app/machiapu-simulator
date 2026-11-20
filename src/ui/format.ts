@@ -2,6 +2,7 @@
 import { awaitingNow, visibleMessages } from '../engine/clock';
 import type { Contact, GameState, Npc, Preference, Stage } from '../engine/types';
 import { DAYS_PER_MONTH } from '../engine/data/rules';
+import { belowMarch } from '../engine/data/characters';
 
 export function yen(n: number): string {
   return `${Math.round(n).toLocaleString('ja-JP')}円`;
@@ -80,13 +81,15 @@ export function educationOf(npc: Npc): string {
   const e = npc.education;
   if (e.kind === 'vocational') return e.label ?? '専門卒';
   if (e.kind === 'highschool') return '高卒';
+  // MARCH未満の大学は大学名を出さず「大卒」にそろえる（2026-11-21 指示）
+  if (belowMarch(e)) return e.detail === '在学中' ? '大学在学中' : e.detail ?? '大卒';
   // 大学群（MARCHなど）の説明は出さない（2026-11-08 指示）。医学部・大学院は書く
   if (e.detail === '在学中') return `${e.school}在学中`;
   return e.detail ? `${e.school}${e.detail}` : `${e.school}卒`;
 }
 
+/** 文字だけで星を出す（読み上げ・テキスト用）。画面の星は common.tsx の Stars（半分の星を塗り分ける） */
 export function looksStars(n: number): string {
-  // 3.5 のような半分は「⯪」（半分の星）で表す
   const full = Math.floor(n);
   const half = n - full >= 0.5 ? 1 : 0;
   return '★'.repeat(full) + (half ? '⯪' : '') + '☆'.repeat(5 - full - half);

@@ -185,12 +185,13 @@ export const SPEC_LOSS = {
   E25_LAWYER: scaled(40),
   E25_SETTLE: scaled(45),
   E25_IGNORE: scaled(60),
-  E11_EARLY: scaled(3),
+  // こちらから先に断った・離れた場合はライフを減らさない（2026-11-21 指示。以前は E11_EARLY −3・E12_CLOSED −8・E13_DECLINED −3）
+  E11_EARLY: 0,
   E11_AFTER: scaled(15),
   E12_SENT: scaled(40),
-  E12_CLOSED: scaled(8),
+  E12_CLOSED: 0,
   E13_FOUND: scaled(20),
-  E13_DECLINED: scaled(3),
+  E13_DECLINED: 0,
   E14: scaled(30),
   E15_PER30: scaled(8),
   /** キープ：関係を決めてもらえないまま14日ごと（2026-11-13 指示で30日ごと−8から変更） */
@@ -307,7 +308,8 @@ export const TUNE_MALE_EMPTY = { silentShare: 0.5, extraDelay: 3, curtTalking: 0
 export const TUNE_FUNNEL = {
   talk: 0.7,
   promise: 0.3,
-  meet: 0.2,
+  // 当日ドタキャン（約束したのに会えない相手）を半分に（2026-11-21 指示）：約束30%のうち会えない相手を10%→5%に。会えるのは20%→25%
+  meet: 0.25,
   // 自分の容姿による倍率（2026-11-14 指示：容姿2を1倍・3を1.5倍・4を2倍・5を3倍。1は0.5倍のまま）。上限 cap は0.95
   looksMult: { 1: 0.5, 2: 1, 3: 1.5, 3.5: 1.75, 4: 2, 5: 3 } as Record<number, number>,
   cap: 0.95,
@@ -328,7 +330,8 @@ export const TUNE_INTIMACY_SURE = 70;
 /** 容姿4・5の男性NPCのうち、誠実・曖昧と決まった人を身体目的（ヤリ捨て）に置き換える割合。男性NPC全体の身体目的は約8%（以前は15%） */
 export const TUNE_BODY_HANDSOME = 0.3;
 /** 当日ドタキャン（連絡あり）の確率（目的別）。興味が低いと1.5倍。2回目以降も起きる */
-export const TUNE_DAY_CANCEL: Record<string, number> = { sincere: 0.04, ambiguous: 0.1, body: 0.1, profit: 0.08, married: 0.14, business: 0.05, scam: 0, sakura: 0, bijin: 0 };
+// 2026-11-21 指示で半分に（以前は sincere 0.04・ambiguous 0.1・body 0.1・profit 0.08・married 0.14・business 0.05）
+export const TUNE_DAY_CANCEL: Record<string, number> = { sincere: 0.02, ambiguous: 0.05, body: 0.05, profit: 0.04, married: 0.07, business: 0.025, scam: 0, sakura: 0, bijin: 0 };
 /** 無言キャンセル（待ちぼうけ）の確率（目的別）。2回目以降は0.4倍 */
 export const TUNE_NOSHOW: Record<string, number> = { sincere: 0.03, ambiguous: 0.08, body: 0.07, profit: 0.05, married: 0.06, business: 0.03, scam: 0.5, sakura: 1, bijin: 0 };
 export const TUNE_REQUIRES_FACE_RATE = 0.35; // 顔写真なしの相手とは会わないNPCの割合

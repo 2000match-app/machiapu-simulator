@@ -1400,3 +1400,25 @@ describe('交際スタートの表示（2026-11-10）', () => {
     expect(checked).toBe(1);
   });
 });
+
+describe('すぐ飲みに誘ってくる相手（2026-11-21）', () => {
+  it('会いたい・電話したいと返しても「もう少しお話ししてから」と断られない', () => {
+    for (const opt of ['meet_wish', 'callwish']) {
+      const s = newGame('F01', `eager-${opt}`);
+      s.flags.noPrivateEvents = true;
+      s.player.photoVisible = true;
+      const c = devAddContact(s, { purpose: 'sincere', stage: 'talking' });
+      c.flags.earlyDrink = true;
+      c.flags.reach = 3;
+      c.exchanges = 1;
+      c.awaitingMe = true;
+      applyAction(s, { type: 'reply', npcId: c.npcId, optionId: opt } as never);
+      if (opt === 'meet_wish') {
+        expect(c.pendingReply?.kind).toBe('date_answer');
+        expect(c.flags.meetWishDeclinedDay).toBeUndefined();
+      } else {
+        expect(c.pendingReply?.kind).toBe('call_wish');
+      }
+    }
+  });
+});

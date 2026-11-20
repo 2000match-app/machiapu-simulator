@@ -227,7 +227,7 @@ export const DEV_SCENARIOS: DevScenario[] = [
     run: () => scheduledDate('M02', 'bijin', 'dev-e10', undefined, { date_e10: 'help' }),
   },
   {
-    id: 'E11-early', label: 'E11 業者：会う前に断る（−3）',
+    id: 'E11-early', label: 'E11 業者：会う前に断る（ライフ減らず）',
     run: () => {
       const s = devNewGame('M04', 'dev-e11a');
       const c = devAddContact(s, { purpose: 'business', stage: 'talking', topic: 'business_pitch_hint' });
@@ -250,7 +250,7 @@ export const DEV_SCENARIOS: DevScenario[] = [
     },
   },
   {
-    id: 'E12-closed', label: 'E12 送金前に関係を閉じる（−8）',
+    id: 'E12-closed', label: 'E12 送金前に関係を閉じる（ライフ減らず）',
     run: () => {
       const s = devNewGame('M06', 'dev-e12b');
       const c = devAddContact(s, { purpose: 'scam', stage: 'talking', topic: 'scam_love', exchanges: 3 });
@@ -274,7 +274,7 @@ export const DEV_SCENARIOS: DevScenario[] = [
     },
   },
   {
-    id: 'E13-declined', label: 'E13 誘導段階で断る（−3）',
+    id: 'E13-declined', label: 'E13 誘導段階で断る（ライフ減らず）',
     run: () => {
       const s = devNewGame('M06', 'dev-e13b');
       const c = devAddContact(s, { purpose: 'sakura', stage: 'talking', topic: 'sakura_move' });

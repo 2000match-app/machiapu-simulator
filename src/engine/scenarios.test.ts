@@ -26,12 +26,12 @@ const EXPECT: [string, string, number | null][] = [
   ['E08', 'E08', scaled(18)],
   ['E09', 'E09', scaled(35)],
   ['E10', 'E10', scaled(45)],
-  ['E11-early', 'E11', scaled(3)],
+  ['E11-early', 'E11', 0], // 自分から先に断るとライフは減らない（2026-11-21）
   ['E11-after', 'E11', scaled(15)],
   ['E12', 'E12', scaled(40)],
-  ['E12-closed', 'E12', scaled(8)],
+  ['E12-closed', 'E12', 0],
   ['E13', 'E13', scaled(20)],
-  ['E13-declined', 'E13', scaled(3)],
+  ['E13-declined', 'E13', 0],
   ['E14', 'E14', scaled(30)],
   ['E15', 'E15', scaled(6)], // 2026-11-13：14日ごと−6
   ['E16', 'E16', scaled(18)],

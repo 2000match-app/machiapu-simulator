@@ -6,7 +6,7 @@ import { lifestyleOf } from '../engine/data/lifestyles';
 import { timeLabel } from '../engine/clock';
 import { canPublishPhoto } from '../engine/chat';
 import { isMember, memberFee } from '../engine/life';
-import { DRINKING_LABEL, HOLIDAY_LABEL, MARITAL_LABEL, SMOKING_LABEL, educationLabel } from '../engine/data/characters';
+import { DRINKING_LABEL, HOLIDAY_LABEL, MARITAL_LABEL, SMOKING_LABEL, educationInGame } from '../engine/data/characters';
 import { areaLabel } from '../engine/data/areas';
 import { DAYS_PER_MONTH, SPEC_PHOTO_PUBLISH_MIN_DAY } from '../engine/data/rules';
 import { character, currentRates } from '../engine/state';
@@ -53,7 +53,7 @@ export function MyPageTab({ state, act, onQuit, onRestart }: TabProps & { onQuit
           <dt>年齢</dt><dd>{state.player.age}歳</dd>
           <dt>居住地</dt><dd>{areaLabel(ch.areaId)}</dd>
           <dt>職業</dt><dd>{ch.job}</dd>
-          <dt>学歴</dt><dd>{educationLabel(ch.education)}</dd>
+          <dt>学歴</dt><dd>{educationInGame(ch.education)}</dd>
           <dt>年収</dt><dd>{ch.incomeLabel ?? man(ch.incomeYen)}</dd>
           <dt>身長</dt><dd>{ch.heightCm}cm</dd>
           <dt>結婚歴</dt><dd>{MARITAL_LABEL[ch.marital]}</dd>

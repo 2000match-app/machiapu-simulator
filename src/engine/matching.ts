@@ -170,8 +170,8 @@ export function becomeMatched(state: GameState, c: Contact): void {
   // どこまで進むかの上限（会話70%・約束30%・対面20%×自分の容姿の倍率）
   if (isNormalPurpose(npc.purpose)) {
     let reach = rollReach(state);
-    // 加工写真の相手はドタキャンが多い：会えるはずの相手の半分は約束だけで来ない（2026-11-07）
-    if (npc.filteredPhoto && reach === 3 && withRng(state, (r) => r.chance(0.5))) reach = 2;
+    // 加工写真の相手はドタキャンが多い：会えるはずの相手の一部は約束だけで来ない（2026-11-07。2026-11-21 に半分→4分の1）
+    if (npc.filteredPhoto && reach === 3 && withRng(state, (r) => r.chance(0.25))) reach = 2;
     c.flags.reach = c.flags.reachRolled = reach;
     // 男性プレイヤー：会話にならない相手の半分は、マッチしても一度も返信しない
     if (state.gender === 'M' && reach === 0) c.flags.silent = withRng(state, (r) => r.chance(TUNE_MALE_EMPTY.silentShare * (1 - 0.7 * playerPopularity(state))));

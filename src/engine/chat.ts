@@ -82,10 +82,17 @@ function earlyDrinkInvite(state: GameState, c: Contact, npc: Npc): boolean {
   c.flags.earlyDrink = yes;
   if (!yes) return false;
   c.flags.inviteTier = 'casual';
+  // 自分から飲みに誘ってきた相手は、会う気がある（2026-11-21 指示：電話・会いたいと返して断られるのはおかしい）
+  if (isNormalPurpose(npc.purpose) && typeof c.flags.reach === 'number' && c.flags.reach < 3) c.flags.reach = 3;
   npcSay(state, c, 'invite_them', { text: withRng(state, (r) => r.pick(state.gender === 'F'
     ? ['ていうか、よかったら今度飲みに行きません？笑', '写真めっちゃタイプです。今週どこかで軽く飲みに行きませんか？', 'お酒飲めますか？近いうちにサクッと飲みに行きましょうよ']
     : ['よかったら、今度飲みに行きませんか？', 'お酒好きですか？今度軽く飲みに行きましょう！', 'メッセージより会って話したいです笑 今度飲みに行きません？'])) });
   return true;
+}
+
+/** まだ会っていない相手が、自分から「飲みに行こう」と誘ってきたか（会う気のある相手） */
+function eagerToMeet(c: Contact): boolean {
+  return c.flags.earlyDrink === true && c.meetings === 0;
 }
 
 export function canInvite(c: Contact): boolean {
@@ -326,7 +333,8 @@ export function playerReply(state: GameState, npcId: string, optionId: string): 
         text = playerMeetLine(state, c, npc);
         // 食べ物の話題から「〇〇食べに行きませんか？」と誘ったときは食事（2026-11-16）
         c.flags.inviteTier = c.meetings > 0 || c.flags.convTopic === 'food' ? 'casual' : 'cafe';
-        if ((!enoughTalk(c) || !inviteReady(state, c, npc)) && !calledRecently(state, c)) {
+        // すぐに飲みに誘ってきた相手には、話した回数に関係なく会いたいと伝えられる（2026-11-21）
+        if ((!enoughTalk(c) || !inviteReady(state, c, npc)) && !calledRecently(state, c) && !eagerToMeet(c)) {
           // 相槌ばかりで話していない相手からの誘いは、話をそらされる（2026-11-06 指示）。ライフは減らないが、7日間は誘い直せない
           c.flags.meetWishDeclinedDay = state.day;
           nextKind = 'invite_ignored';
@@ -383,7 +391,7 @@ export function playerReply(state: GameState, npcId: string, optionId: string): 
       case 'decline':
         if (c.topic === 'business_pitch_hint') {
           pushMsg(c, state.day, 'me', '二人で会うのでなければ、遠慮しておきます。');
-          endContact(state, c, { by: 'me', cause: '勧誘の気配に気づいて会う前に断った', eventId: 'E11', base: SPEC_LOSS.E11_EARLY, visible: '会う前に断った。期待していた分、少しだけ疲れた。' });
+          endContact(state, c, { by: 'me', cause: '勧誘の気配に気づいて会う前に断った', eventId: 'E11', base: SPEC_LOSS.E11_EARLY, visible: '勧誘の気配に気づいて、会う前に断った。' });
           return;
         }
         if (c.topic === 'sakura_move') {
@@ -544,6 +552,8 @@ function answerInvite(state: GameState, c: Contact, npc: Npc, byThem: boolean): 
   }
   let p: number;
   if (noPromise) c.interest = Math.min(c.interest, TUNE_FUNNEL.noPromiseInterestCap);
+  // 自分から飲みに誘ってきた相手は、こちらの誘いも必ず受ける（2026-11-21）
+  const eager = eagerToMeet(c);
   if (noPromise) {
     p = 0; // 会う約束までは進まない相手
   } else if (typeof c.flags.reach === 'number' && c.meetings === 0) {
@@ -562,6 +572,7 @@ function answerInvite(state: GameState, c: Contact, npc: Npc, byThem: boolean): 
   const callBoost = !byThem && isNormalPurpose(npc.purpose) && calledRecently(state, c) && p < TUNE_AFTER_CALL.acceptCap;
   if (callBoost) p = Math.min(TUNE_AFTER_CALL.acceptCap, p + TUNE_AFTER_CALL.acceptBonus);
   // 「先に一度電話したい」という返事は、実際には見ないのでやめた（2026-11-11 ユーザー指示：誘いの返事は承諾／予定が合わない／無視の3つだけ）
+  if (eager) p = 1;
   const ok = p >= 1 || (p > 0 && withRng(state, (r) => r.chance(Math.min(0.97, p))));
   if (ok && callBoost && noPromise) c.flags.reach = 3;
   const wished = !!c.flags.meetWishPending;
@@ -609,7 +620,8 @@ function answerInvite(state: GameState, c: Contact, npc: Npc, byThem: boolean): 
  */
 function answerCallWish(state: GameState, c: Contact, npc: Npc): void {
   const level = c.meetings === 0 ? levelOf(state, c, npc) : 4;
-  const p = !isNormalPurpose(npc.purpose) ? 0.6 : level >= 4 ? 0.9 : level === 3 ? 0.65 : level === 2 ? 0.25 : 0.05;
+  // 自分から飲みに誘ってきた相手は、電話も受ける（2026-11-21）
+  const p = eagerToMeet(c) ? 1 : !isNormalPurpose(npc.purpose) ? 0.6 : level >= 4 ? 0.9 : level === 3 ? 0.65 : level === 2 ? 0.25 : 0.05;
   const ok = withRng(state, (r) => r.chance(p));
   c.flags.myAct = '';
   c.flags.convAct = '';
@@ -619,7 +631,7 @@ function answerCallWish(state: GameState, c: Contact, npc: Npc): void {
     return;
   }
   // 体験談（2026-11-18）：明日電話する約束をした相手から、直前にブロックされた（会う気のない相手）
-  if (isNormalPurpose(npc.purpose) && typeof c.flags.reach === 'number' && c.flags.reach < 2 && withRng(state, (r) => r.chance(0.15))) {
+  if (isNormalPurpose(npc.purpose) && !eagerToMeet(c) && typeof c.flags.reach === 'number' && c.flags.reach < 2 && withRng(state, (r) => r.chance(0.15))) {
     npcSay(state, c, 'chat_normal', { text: 'いいですよ！明日の夜21時とかどうですか？', awaitMe: false });
     pushMsg(c, state.day, 'me', 'ぜひ！明日21時、楽しみにしてます');
     c.pendingReply = { day: state.day + 1, minute: 20 * 60 + 40, kind: 'call_block', willReply: true, expireDay: state.day + 2 };

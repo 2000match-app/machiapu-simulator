@@ -42,3 +42,23 @@ export function Sentinel({ onVisible, enabled, deps }: { onVisible: () => void; 
   }, [enabled, deps]);
   return <div ref={ref} className="sentinel" aria-hidden="true" />;
 }
+
+/**
+ * 容姿の星（2026-11-21 指示：3.5 のような半分の星をきちんと見せる）。
+ * 空の星（☆）の上に、塗った星（★）を幅で切って重ねる。3.5 なら4つ目の星を左半分だけ塗る
+ */
+export function Stars({ value, max = 5 }: { value: number; max?: number }) {
+  return (
+    <span className="star-row" role="img" aria-label={`${value}/${max}`}>
+      {Array.from({ length: max }, (_, i) => {
+        const fill = Math.max(0, Math.min(1, value - i));
+        return (
+          <span key={i} className="star">
+            <span className="star-empty" aria-hidden="true">★</span>
+            {fill > 0 && <span className="star-fill" aria-hidden="true" style={{ width: `${fill * 100}%` }}>★</span>}
+          </span>
+        );
+      })}
+    </span>
+  );
+}
