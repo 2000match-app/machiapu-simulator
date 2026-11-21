@@ -35,12 +35,15 @@ export function applyLoss(
   note: string,
   opts: { eventId?: string; npcId?: string; detail?: string } = {},
 ): number {
+  // ライフは整数（2026-11-21 指示：「また会いたい」の本気度・旅行の倍率などで 4.55 のような小数になっていた）
+  amount = Math.round(amount);
   if (amount <= 0) return 0;
   // 友人の婚約などで焦っている間は、断られたり途切れたりした時のダメージが大きい
   if (category === 'event' && opts.eventId && state.day <= (state.player.effects?.anxiousUntil ?? -1)) amount += 3;
   amount = charScaled(state, amount);
   const before = state.life;
-  state.life = Math.max(0, state.life - amount);
+  // 古いセーブに小数のライフが残っていても、ここで整数に戻す
+  state.life = Math.max(0, Math.round(state.life) - amount);
   state.ledger.push({ day: state.day, delta: -amount, category, note, ...opts });
   // ライフが減ると相手の容姿・偏差値が見える機能は、実際のアプリにないので 2026-11-13 にやめた
   if (before >= 50 && state.life < 50 && state.life > 0) addFeed(state, 'ライフが50を切った。絞り込みを広げてみよう。', 'bad');
@@ -52,7 +55,8 @@ export function applyLoss(
  * 系列中の最大損失を採用し、既に差し引いた分との差額だけを追加する。
  */
 export function seriesLoss(state: GameState, contact: Contact, base: number, eventId: string, note: string): number {
-  const prev = contact.series.maxLoss;
+  base = Math.round(base); // 倍率をかけた損失も整数で数える（2026-11-21）
+  const prev = Math.round(contact.series.maxLoss);
   const add = Math.max(0, base - prev);
   contact.series.maxLoss = Math.max(prev, base);
   const detail = prev > 0

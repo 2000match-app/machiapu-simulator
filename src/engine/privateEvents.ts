@@ -8,6 +8,7 @@ import { addFeed, character, isInRelationship, monthIndex, pushPending, withRng 
 import { Rng } from './rng';
 export { monthBudget } from './life';
 import type { Choice, GameState, PendingEvent } from './types';
+import { calendarParts } from './calendar';
 
 /** 出来事どうしの間隔（日）と、1日あたりの発生確率 */
 /** 2026-11-09 指示（マイナスの出来事が多い）で間隔を14日→28日、確率を0.07→0.04に */
@@ -110,7 +111,37 @@ function loss(state: GameState, n: number, note: string): void {
   applyLoss(state, n, 'event', note);
 }
 
+/** 結衣（フラッペ女子）のクリスマス・イブで必ず減るライフ（2026-11-21 指示）。交際中でも少し減る */
+export const TUNE_XMAS_FLAPPE = { single: 12, partner: 6 };
+
 const DEFS: Def[] = [
+  {
+    // 結衣だけの、12月24日に必ず起きる出来事（ランダムには選ばない。xmasDaily が起こす）
+    id: 'xmas_flappe', title: '12月24日 クリスマス・イブ',
+    ok: () => false,
+    lines: (s) => {
+      const partner = s.partnerId ? s.npcs[s.partnerId] : undefined;
+      return partner
+        ? [
+          nar(`${partner.name}が予約してくれたのは、駅前のふつうのイタリアンだった。プレゼントはハンドクリーム。`),
+          nar('インスタを開くと、友達のストーリーには夜景の見えるホテルのディナーと、ブランドのショッパーが並んでいる。'),
+          nar('……ありがたいはずなのに、どうしても比べてしまう。'),
+          sys(`変化：ライフ −${TUNE_XMAS_FLAPPE.partner}`),
+        ]
+        : [
+          nar('クリスマス・イブ。実家のリビングで、母が買ってきたチキンとケーキを家族で食べる。'),
+          nar('インスタを開くと、友達のストーリーは夜景の見えるホテルのディナー、ティファニーの箱、「彼からのサプライズ🎄」ばかり。'),
+          nar('去年も同じ景色を見ていた気がする。'),
+          sys(`変化：ライフ −${TUNE_XMAS_FLAPPE.single}`),
+        ];
+    },
+    choices: [{ id: 'ok', label: 'スマホを伏せる' }],
+    resolve: (s) => {
+      const n = s.partnerId ? TUNE_XMAS_FLAPPE.partner : TUNE_XMAS_FLAPPE.single;
+      loss(s, n, s.partnerId ? 'クリスマス・イブに友達のインスタと比べてしまった' : 'クリスマス・イブを実家で過ごし、友達のインスタを見てしまった');
+      addFeed(s, `クリスマス・イブ。友達のインスタと比べてしまった。ライフ −${n}。`, 'bad');
+    },
+  },
   {
     id: 'wedding', title: '友人の結婚式の招待状',
     ok: (s) => s.characterId !== 'F03', // 美咲には人物固有の招待状がある
@@ -320,6 +351,14 @@ export function stockDaily(state: GameState): void {
   state.player.budgetAdjust = { month: m, yen: next };
   state.flags.stockNote = `${state.day}|${pct > 0 ? '+' : ''}${pct}%|${yen > 0 ? '+' : ''}${yen.toLocaleString()}円`;
   addFeed(state, `持ち株が${pct > 0 ? '上がった' : '下がった'}（${pct > 0 ? '+' : ''}${pct}%、評価額 ${yen > 0 ? '+' : ''}${yen.toLocaleString()}円）。今月のデートに使える予算が${yen > 0 ? '増えた' : '減った'}。`, yen > 0 ? 'good' : 'bad');
+}
+
+/** 結衣（フラッペ女子）は12月24日に必ずクリスマスの出来事が起きる（2026-11-21 指示） */
+export function xmasDaily(state: GameState): void {
+  if (state.characterId !== 'F08' || state.status !== 'playing') return;
+  const { m, d } = calendarParts(state.day);
+  if (m !== 12 || d !== 24 || (state.player.privateEventsDone ?? []).includes('xmas_flappe')) return;
+  privateEventsDaily(state, 'xmas_flappe');
 }
 
 export function resolvePrivateEvent(state: GameState, kind: string, choiceId: string): boolean {

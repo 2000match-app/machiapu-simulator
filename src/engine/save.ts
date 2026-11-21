@@ -17,6 +17,8 @@ export function deserialize(json: string): GameState {
     // データ版が違う場合も読み込むが、画面で警告する
     s.flags = { ...s.flags, dataVersionMismatch: `${s.dataVersion} → ${DATA_VERSION}` };
   }
+  // ライフは整数（2026-11-21。小数が残った古いセーブを直す）
+  if (typeof s.life === 'number') s.life = Math.round(s.life);
   return s;
 }
 

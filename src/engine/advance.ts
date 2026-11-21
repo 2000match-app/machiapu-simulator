@@ -7,7 +7,7 @@ import { monthlySettlement, recover, weeklySettlement } from './life';
 import { receiveLikesDaily, resolveLikes } from './matching';
 import { processRelationshipDaily } from './relationship';
 import { buildResult } from './feedback';
-import { stockDaily, cancelDatesUntil, isTiredDay, likesForToday, privateEventsDaily, tiredNightDaily, unavailableReason } from './privateEvents';
+import { stockDaily, xmasDaily, cancelDatesUntil, isTiredDay, likesForToday, privateEventsDaily, tiredNightDaily, unavailableReason } from './privateEvents';
 import { DAYS_PER_MONTH, DAYS_PER_YEAR, SPEC_CLEAR_REL_DATES, SPEC_LOSS, SPEC_REST_MAX, SPEC_REST_RECOVERY, TUNE_LIKES_PER_DAY, TUNE_SKIPS_PER_DAY } from './data/rules';
 import { addFeed, character, isInRelationship, pushPending, withRng } from './state';
 import type { GameState } from './types';
@@ -52,6 +52,7 @@ export function openDay(state: GameState): void {
   characterMoments(state);
   privateEventsDaily(state);
   stockDaily(state); // 健人・大輔の持ち株（2026-11-18）
+  xmasDaily(state); // 結衣のクリスマス・イブ（2026-11-21）
   maybeSuggestFacePhoto(state);
 
   // 締めは呼び出し側が行う（場面があれば選択の後に closeDay）

@@ -30,7 +30,7 @@ const extraJobs = (['F', 'M'] as const).flatMap((g) => {
   const n = Math.ceil(extraHobbies(g).length / BATCH);
   return Array.from({ length: n }, (_, i) => `extra${g}${i + 1}`);
 });
-const jobs = arg('jobs', ['hobbyF', 'hobbyM', 'misc', ...extraJobs].join(',')).split(',').filter(Boolean);
+const jobs = arg('jobs', ['hobbyF', 'hobbyM', 'misc', 'oshi', ...extraJobs].join(',')).split(',').filter(Boolean);
 
 const str = { type: 'string' };
 const arr = (n: number, items: unknown = str) => ({ type: 'array', items, minItems: n, maxItems: n });
@@ -77,6 +77,20 @@ function miscPrompt(): string {
 ${RULES}`;
 }
 
+/** 女性NPCの推し活の話が止まらない（2026-11-21 指示） */
+function oshiPrompt(): string {
+  return `あなたは恋愛シミュレーションゲームのシナリオライターです。マッチングアプリの初デートで、女性が「推し」（アイドル・俳優・Vtuber・2.5次元・K-POPなど）の話を止まらずに続けるセリフをJSONで作ってください。
+
+# 書くもの
+- oshi：推しの話を始める1言目（8つ。推しのジャンルを散らす。ライブ遠征・グッズ・握手会・配信・ペンライト・同担拒否・アクスタ・缶バッジなど具体的に）
+- oshi_more：さらに続く2言目（6つ。どの1言目のあとでも自然につながる。チケット代やグッズ代の金額、遠征の回数、推しの尊さを語る。聞いている側が置いていかれる内容）
+- 推しの名前（実在・架空とも）・グループ名は出さない（「推し」「メンバー」「あの子」などで書く）。
+${RULES}`;
+}
+function oshiSchema() {
+  return obj({ oshi: obj({ F: arr(8) }), oshi_more: obj({ F: arr(6) }) });
+}
+
 function hobbySchema(list: string[] = HOBBIES, counts = { chat: 3, brag: 2 }) {
   return obj(Object.fromEntries(list.map((h) => [h, obj({ chat: arr(counts.chat), brag: arr(counts.brag) })])));
 }
@@ -115,8 +129,8 @@ async function genJob(job: string, budget: RequestBudget, log: Record<string, un
   const file = path.join(OUT, `${job}.json`);
   if (fs.existsSync(file) && !force) { console.log(`skip ${job}（生成済み）`); return; }
   const ex = extraOf(job);
-  const prompt = job === 'misc' ? miscPrompt() : ex ? hobbyPrompt(ex.g, ex.list, EXTRA_COUNTS) : hobbyPrompt(job === 'hobbyF' ? 'F' : 'M');
-  const schema = job === 'misc' ? miscSchema() : ex ? hobbySchema(ex.list, EXTRA_COUNTS) : hobbySchema();
+  const prompt = job === 'misc' ? miscPrompt() : job === 'oshi' ? oshiPrompt() : ex ? hobbyPrompt(ex.g, ex.list, EXTRA_COUNTS) : hobbyPrompt(job === 'hobbyF' ? 'F' : 'M');
+  const schema = job === 'misc' ? miscSchema() : job === 'oshi' ? oshiSchema() : ex ? hobbySchema(ex.list, EXTRA_COUNTS) : hobbySchema();
   let feedback = '';
   for (let round = 1; round <= 3; round++) {
     const attempts: Attempt[] = [];
@@ -144,6 +158,8 @@ function writeTs(): void {
   const hf = read('hobbyF');
   const hm = read('hobbyM');
   const misc = read('misc');
+  const oshiFile = path.join(OUT, 'oshi.json');
+  const oshi = fs.existsSync(oshiFile) ? JSON.parse(fs.readFileSync(oshiFile, 'utf8')).data : { oshi: { F: [] }, oshi_more: { F: [] } };
   const hobby: Record<string, Record<string, unknown>> = {};
   for (const h of HOBBIES) hobby[h] = { F: hf[h], M: hm[h] };
   // 写真の相手の趣味（性別ごと）
@@ -157,11 +173,13 @@ function writeTs(): void {
 // hobby：趣味ごと・話す人の性別ごと（chat＝楽しそうな話／brag＝自慢話）。ほかは F＝女性が話す・M＝男性が話す
 type FM = { F: string[]; M: string[] };
 type MOnly = { M: string[] };
+type FOnly = { F: string[] };
 export const DATE_LINES: {
   hobby: Record<string, Partial<Record<'F' | 'M', { chat: string[]; brag: string[] }>>>;
   work: FM; ex: FM; ex_more: FM; late: FM; phone: FM;
   narrow: MOnly; rude: MOnly; after: MOnly; polite: MOnly;
-} = ${JSON.stringify({ hobby, ...misc }, null, 1)};
+  oshi: FOnly; oshi_more: FOnly;
+} = ${JSON.stringify({ hobby, ...misc, ...oshi }, null, 1)};
 `;
   fs.writeFileSync(TS_OUT, body, 'utf8');
   console.log(`書き出した：${path.relative(process.cwd(), TS_OUT)}`);

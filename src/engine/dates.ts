@@ -566,7 +566,7 @@ const exWord = (npc: Npc) => (npc.gender === 'M' ? '元カノ' : '元カレ');
  * デート中の相手の具体的なセリフ（2026-11-19 指示：「元カレの話が止まらない」のような説明だけでなく、「」の会話を入れる。
  * 文面は Gemini で作った data/dateLines.ts）。相手の性別で選ぶ
  */
-type LineKey = 'work' | 'ex' | 'ex_more' | 'late' | 'phone' | 'narrow' | 'rude' | 'after' | 'polite';
+type LineKey = 'work' | 'ex' | 'ex_more' | 'late' | 'phone' | 'narrow' | 'rude' | 'after' | 'polite' | 'oshi' | 'oshi_more';
 function dateLine(r: Rng, npc: Npc, key: LineKey): string | undefined {
   const pool = (DATE_LINES[key] as Partial<Record<'F' | 'M', string[]>>)[npc.gender];
   return pool && pool.length ? r.pick(pool) : undefined;
@@ -616,6 +616,14 @@ function dateMoments(state: GameState, c: Contact, npc: Npc, lines: PendingEvent
     say(lines, dateLine(r, npc, 'ex_more'));
     lines.push({ who: 'narration', text: 'その話は、しばらく止まらなかった。' });
     note(c, `${exWord(npc)}の話を長々とされた`);
+  }
+  // 女性NPCの推し活の話が止まらない（2026-11-21 指示。若い人ほど多い）
+  if (npc.gender === 'F' && r.chance(npc.age <= 29 ? 0.1 : 0.05)) {
+    lines.push({ who: 'narration', text: `途中から、${npc.name}の推しの話が始まった。` });
+    say(lines, dateLine(r, npc, 'oshi'));
+    say(lines, dateLine(r, npc, 'oshi_more'));
+    lines.push({ who: 'narration', text: 'その話は1時間近く続き、こちらのことはほとんど聞かれなかった。' });
+    note(c, '推しの話が止まらず、こちらのことはほとんど聞かれなかった');
   }
   // 容姿1〜2の男性の一部は、風俗・パチンコ・アニメの話ばかり（相手ごとに決まる）
   if (npc.gender === 'M' && npc.looks <= 2 && Rng.fromSeed(state.seed, 'narrow-talk', npc.id).chance(0.3)) {
@@ -1592,8 +1600,8 @@ export function afterDateReply(state: GameState, c: Contact): void {
   }
   if (npc.purpose === 'body') {
     if (c.flags.intimate) {
-      // E09は後日（e09Day）に確定
-      npcSay(state, c, 'body_hint', { text: '昨日はありがとう！また会おうね', awaitMe: false });
+      // E09は後日（e09Day）に確定。メッセージには返事ができる（2026-11-21：相手から届いているのに「待っている」扱いになっていた）
+      npcSay(state, c, 'body_hint', { text: '昨日はありがとう！また会おうね', awaitMe: true });
       return;
     }
     if (c.interest < 30) {

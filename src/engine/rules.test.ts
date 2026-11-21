@@ -1422,3 +1422,33 @@ describe('すぐ飲みに誘ってくる相手（2026-11-21）', () => {
     }
   });
 });
+
+describe('2026-11-21：ライフは整数・結衣のクリスマス', () => {
+  it('小数の損失でもライフは整数のまま', () => {
+    const s = newGame('F03', 'int-life');
+    applyLoss(s, 4.55, 'event', 'テスト');
+    applyLoss(s, 3.3, 'event', 'テスト');
+    expect(Number.isInteger(s.life)).toBe(true);
+    expect(s.life).toBe(100 - 5 - 3);
+  });
+  it('結衣は12月24日に必ずクリスマスの出来事でライフが減る（ほかの人には起きない）', async () => {
+    const { xmasDaily, TUNE_XMAS_FLAPPE } = await import('./privateEvents');
+    const { calendarParts } = await import('./calendar');
+    const eve = Array.from({ length: 80 }, (_, d) => d).find((d) => { const p = calendarParts(d); return p.m === 12 && p.d === 24; })!;
+    const s = newGame('F08', 'xmas-1');
+    s.day = eve;
+    xmasDaily(s);
+    const ev = s.pending.find((p) => p.kind === 'pe_xmas_flappe')!;
+    expect(ev).toBeDefined();
+    const before = s.life;
+    applyAction(s, { type: 'resolve', uid: ev.uid, choiceId: 'ok' });
+    expect(before - s.life).toBe(TUNE_XMAS_FLAPPE.single);
+    // 2回は起きない
+    xmasDaily(s);
+    expect(s.pending.some((p) => p.kind === 'pe_xmas_flappe')).toBe(false);
+    const o = newGame('F03', 'xmas-2');
+    o.day = eve;
+    xmasDaily(o);
+    expect(o.pending.some((p) => p.kind === 'pe_xmas_flappe')).toBe(false);
+  });
+});
