@@ -1,6 +1,7 @@
 // さがす（基本の画面）：実際のアプリと同じ項目で絞り込み、条件に合う相手がスクロールで次々に出てくる。
 import { shownHobbies } from '../engine/profileDepth';
-import { useEffect, useRef, useState } from 'react';
+import { detailRows } from '../engine/profileDetails';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { Hensachi } from './preview';
 import { scrollToTop } from './scroll';
 import { candidateEstimate, relaxDeltas } from '../engine/matching';
@@ -54,6 +55,8 @@ export function NpcProfile({ npc, compact, reveal, large }: { npc: Npc; compact?
             <dt>お酒</dt><dd>{DRINKING_LABEL[npc.drinking]}</dd>
             <dt>休日</dt><dd>{HOLIDAY_LABEL[npc.holiday]}</dd>
             <dt>趣味</dt><dd>{shownHobbies(npc)}</dd>
+            {/* 基本情報（2026-11-23 プロフィールの細分化） */}
+            {detailRows(npc).map(([k, v]) => <Fragment key={k}><dt>{k}</dt><dd className={v === '未記入' ? 'muted' : undefined}>{v}</dd></Fragment>)}
             {/* 女性NPCの「相手への希望」は出さない（2026-11-08 指示） */}
             {npc.gender === 'M' && <><dt>相手への希望</dt><dd>{npcWishes(npc)}</dd></>}
           </dl>

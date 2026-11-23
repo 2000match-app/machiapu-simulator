@@ -9,7 +9,8 @@ import { attentiveness } from './appeal';
 import { character, withRng } from './state';
 import type { Contact, GameState, Npc } from './types';
 
-import { TOPICS, type NpcTalk, type PlayerTalk, type TopicId } from './data/talkSlots';
+import { ALT_TOPICS, FACT_OF_TOPIC, TOPICS, type NpcTalk, type PlayerTalk, type TopicId } from './data/talkSlots';
+import { detailsOf } from './profileDetails';
 import { NPC_TALK, PLAYER_TALK } from './data/talkPacks';
 import { splitSentences } from './textSplit';
 import { askableHobbies, askableTopics, profileQuestionLimit } from './profileDepth';
@@ -27,6 +28,20 @@ interface Facts {
   place: string;
   busy: boolean;
   appMonths: number;
+  // 2026-11-23 追加（16話題）
+  hometown: string;
+  sibling: string;
+  pet: string;
+  petOwned: boolean;
+  drink: string;
+  drinks: boolean;
+  music: string;
+  show: string;
+  sport: string;
+  doesSport: boolean;
+  dish: string;
+  club: string;
+  dateplace: string;
 }
 
 function hashOf(s: string): number {
@@ -38,7 +53,10 @@ const pickBy = <T>(key: string, xs: T[]): T => xs[hashOf(key) % xs.length];
 const areaName = (id: string) => AREAS.find((a) => a.id === id)?.name ?? '都内';
 
 function npcFacts(npc: Npc): Facts {
+  const d = detailsOf(npc);
   return {
+    hometown: d.hometown, sibling: d.sibling, pet: d.pet, petOwned: d.petOwned, drink: d.drink, drinks: d.drinks,
+    music: d.music, show: d.show, sport: d.sport, doesSport: d.doesSport, dish: d.dish, club: d.club, dateplace: d.dateplace,
     hobbies: askableHobbies(npc.hobbies), // 推し活は質問の材料にしない（2026-11-23）
     job: npc.job.replace(/（.*）/, ''),
     area: areaName(npc.areaId),
@@ -61,7 +79,22 @@ function playerFacts(state: GameState): Facts {
   const h1 = pickBy(`${ch.id}:h1`, HOBBIES);
   let h2 = pickBy(`${ch.id}:h2`, HOBBIES);
   if (h2 === h1) h2 = HOBBIES[(HOBBIES.indexOf(h1) + 7) % HOBBIES.length];
+  const drinks = ch.drinking !== 'none';
   return {
+    // 2026-11-23 追加の材料：回答パック（第2版）にあればそれ、なければ人物ごとに固定で選ぶ
+    hometown: pack?.hometown ?? 'このへん',
+    sibling: pack?.sibling ?? pickBy(`${ch.id}:sib`, ['一人っ子', ch.gender === 'M' ? '姉が1人いる長男' : '兄が1人いる長女', ch.gender === 'M' ? '兄が1人いる次男' : '姉が1人いる次女']),
+    pet: pack?.pet ?? pickBy(`${ch.id}:pet`, ['犬', '猫']),
+    petOwned: false,
+    drink: pack?.drink ?? (drinks ? pickBy(`${ch.id}:drink`, ['ビール', 'ハイボール', 'ワイン', 'レモンサワー']) : 'お茶'),
+    drinks,
+    music: pack?.music ?? pickBy(`${ch.id}:music`, ['J-POP', '邦ロック', '洋楽', 'K-POP']),
+    show: pack?.show ?? pickBy(`${ch.id}:show`, ['韓国ドラマ', '洋画', 'お笑い', 'アニメ']),
+    sport: pack?.sport ?? pickBy(`${ch.id}:sport`, ['ジム', 'ランニング', 'ヨガ']),
+    doesSport: true,
+    dish: pack?.dish ?? pickBy(`${ch.id}:dish`, ['カレー', 'パスタ', 'チャーハン', '鍋']),
+    club: pack?.club ?? pickBy(`${ch.id}:club`, ['バスケ部', 'テニス部', '吹奏楽部', '帰宅部']),
+    dateplace: pack?.dateplace ?? pickBy(`${ch.id}:dp`, ['水族館', '美術館', '温泉', '映画館']),
     // 回答パック（第4段階）があれば、その人物の設定に合わせて決めた趣味・好物・旅行先
     hobbies: pack ? [...pack.hobbies] : [h1, h2],
     job: ch.job.replace(/（.*）/, ''),
@@ -111,6 +144,39 @@ const QA: Record<TopicId, { q: (o: Facts) => string; a: [Ans, Ans] }[]> = {
     { q: () => 'このアプリって、いつごろから使ってるんですか？', a: [(me) => `始めて${me.appMonths}か月くらいです`, (me) => `${me.appMonths}か月くらい前からです。なかなか難しいですね笑`] },
     { q: () => 'アプリで実際に会ったことってあります？', a: [() => '何回かあります。緊張しますよね笑', () => 'まだないんです'] },
   ],
+  // 2026-11-23 追加の話題（トークパックがないときの汎用文）
+  family: [
+    { q: () => 'ご兄弟っているんですか？', a: [(me) => `${me.sibling}です！`, (me) => (me.sibling === '一人っ子' ? '一人っ子なんです笑' : `うちは${me.sibling}なんです`)] },
+    { q: () => 'ご家族とは仲いいですか？', a: [() => '仲いいほうだと思います！たまに実家に帰ってます', () => 'わりと仲いいです笑 連絡はよく取ってます'] },
+  ],
+  pet: [
+    { q: () => 'ペットって飼ってます？', a: [(me) => (me.petOwned ? `${me.pet}を飼ってます！` : `飼ってないんですけど、${me.pet}が好きです`), (me) => (me.petOwned ? `${me.pet}と暮らしてます笑` : `今は飼ってないです。${me.pet}はずっと好きなんですけど`)] },
+    { q: () => '犬派ですか？猫派ですか？', a: [(me) => `${me.pet}派です！`, (me) => `どっちも好きですけど、${me.pet}派かもです笑`] },
+  ],
+  drink: [
+    { q: () => 'お酒って飲まれます？', a: [(me) => (me.drinks ? `飲みます！${me.drink}が好きです` : 'お酒はあまり飲めないんです'), (me) => (me.drinks ? `たまに飲みます。${me.drink}が多いです` : '飲めないんですけど、飲みの場は好きです笑')] },
+    { q: () => '飲みに行くなら、どんなお店が好きですか？', a: [() => '落ち着いた雰囲気のお店が好きです', () => 'わいわいできる居酒屋が好きです笑'] },
+  ],
+  media: [
+    { q: () => '普段どんな音楽聴いてるんですか？', a: [(me) => `${me.music}が多いです！`, (me) => `最近は${me.music}ばっかりです笑`] },
+    { q: () => '最近見た映画とかドラマで、よかったのあります？', a: [(me) => `最近は${me.show}をよく見てます！`, () => '最近はあんまり見れてないんです…おすすめあったら知りたいです'] },
+  ],
+  sports: [
+    { q: () => '何か運動とかしてます？', a: [(me) => (me.doesSport ? `${me.sport}に通ってます！` : '最近は全然できてないです笑'), (me) => (me.doesSport ? `${me.sport}をちょっとだけ続けてます` : '運動不足なので何か始めたいです')] },
+    { q: () => 'スポーツ観戦とかはしますか？', a: [() => 'テレビでたまに見るくらいです！', () => '現地で見たことはあまりないです笑'] },
+  ],
+  cooking: [
+    { q: () => '料理ってします？', a: [() => 'たまにします！休みの日が多いです', () => '簡単なものだけですけど作ります笑'] },
+    { q: () => '得意料理ってなんですか？', a: [(me) => `${me.dish}ですかね！`, (me) => `得意ってほどじゃないですけど、${me.dish}はよく作ります`] },
+  ],
+  school: [
+    { q: () => '学生時代って、部活とかやってました？', a: [(me) => `${me.club}でした！`, (me) => `${me.club}でしたよ笑`] },
+    { q: () => '学生のころって、どんな感じだったんですか？', a: [() => 'わりと真面目なほうでした笑', () => '友達と遊んでばっかりでした笑'] },
+  ],
+  date: [
+    { q: () => '今行ってみたいところってあります？', a: [(me) => `${me.dateplace}に行ってみたいです！`, (me) => `最近は${me.dateplace}が気になってます`] },
+    { q: () => '休みの日に誰かと出かけるなら、まったり派ですか？アクティブ派ですか？', a: [() => 'まったり派です笑', () => 'どっちも好きですけど、まったり寄りかもです'] },
+  ],
 };
 
 /** 話を広げる質問（深掘り）と、その答えの対。質問と答えがずれないよう、同じ番号で選ぶ */
@@ -146,6 +212,38 @@ const DIGS: Record<TopicId, { q: (o: Facts) => string; a: (me: Facts) => string 
   app: [
     { q: () => '始めたきっかけって何だったんですか？', a: () => '友達に勧められたのがきっかけです' },
     { q: () => '実際やってみてどうですか？', a: () => 'いろんな人と話せて楽しいです' },
+  ],
+  family: [
+    { q: () => '兄弟とは仲いいんですか？', a: (me) => (me.sibling === '一人っ子' ? '一人っ子なので、そのぶん親とよく話します笑' : '仲いいです！たまにごはんに行きます') },
+    { q: () => '実家ってにぎやかな感じですか？', a: () => 'わりとにぎやかです笑 帰るとほっとします' },
+  ],
+  pet: [
+    { q: () => 'どんなところがかわいいんですか？', a: (me) => `${me.pet}は、のんびりしてるところがかわいいんです` },
+    { q: () => '動物カフェとか行ったりします？', a: () => 'たまに行きます！癒やされますよね' },
+  ],
+  drink: [
+    { q: (o) => `${o.drink}って、どういうのが好きなんですか？`, a: (me) => (me.drinks ? `${me.drink}なら、すっきりしたのが好きです` : 'ノンアルコールのドリンクをいろいろ試してます笑') },
+    { q: () => 'お酒飲むと変わるタイプですか？笑', a: () => 'ちょっと明るくなるくらいです笑' },
+  ],
+  media: [
+    { q: (o) => `${o.music}で、おすすめってあります？`, a: (me) => `${me.music}なら、最近ハマってるのがあるので今度教えます！` },
+    { q: () => 'ライブとか映画館にも行ったりするんですか？', a: () => 'たまに行きます！やっぱり迫力が違いますよね' },
+  ],
+  sports: [
+    { q: (o) => `${o.sport}って、どれくらいの頻度でしてるんですか？`, a: (me) => (me.doesSport ? `${me.sport}は週1くらいです` : '今は見る専門です笑') },
+    { q: () => '続けるコツとかあります？', a: () => '無理しないことですかね笑' },
+  ],
+  cooking: [
+    { q: (o) => `${o.dish}、こだわりとかあるんですか？`, a: (me) => `${me.dish}は、ちょっとだけ隠し味を入れてます笑` },
+    { q: () => '作るのは休みの日が多いですか？', a: () => '休みの日にまとめて作ることが多いです' },
+  ],
+  school: [
+    { q: (o) => `${o.club}って、きつかったですか？`, a: () => '練習はきつかったですけど、楽しかったです' },
+    { q: () => '学生時代の友達とは、今も会ったりします？', a: () => '今もたまに集まります！' },
+  ],
+  date: [
+    { q: (o) => `${o.dateplace}、いいですね！どんなところが好きなんですか？`, a: () => 'ゆっくり過ごせるところが好きです' },
+    { q: () => '最近行ってよかったお出かけ先ってあります？', a: (me) => `この前行った${me.dateplace}がよかったです！` },
   ],
 };
 
@@ -183,28 +281,48 @@ function ctxOf(state: GameState, c: Contact, npc: Npc): Ctx {
 function fill(text: string, vars: Record<string, string>): string {
   return text.replace(/\{([a-z_0-9]+)\}/g, (m, k: string) => vars[k] ?? m);
 }
-/** 相手（NPC）の文の差し込み */
+/** ある人物の材料を差し込みの名前にする（prefix：'' は本人、'their_' は話し相手として） */
+function factVars(f: Facts, prefix = ''): Record<string, string> {
+  const v: Record<string, string> = {
+    hobby: f.hobbies[0], hobby2: f.hobbies[1] ?? f.hobbies[0], food: f.food, area: f.area, place: f.place, job: f.job, months: String(f.appMonths),
+    hometown: f.hometown, sibling: f.sibling, pet: f.pet, drink: f.drink, music: f.music, show: f.show, sport: f.sport, dish: f.dish, club: f.club, dateplace: f.dateplace,
+  };
+  return Object.fromEntries(Object.entries(v).map(([k, x]) => [prefix + k, x]));
+}
+/** 相手（NPC）の文の差し込み。{their_…} はプレイヤーの材料（受け止めで相手の答えの中身に触れる） */
 function npcText(x: Ctx, s: string, over: Record<string, string> = {}): string {
-  const t = x.them;
-  return fill(s, { hobby: t.hobbies[0], hobby2: t.hobbies[1] ?? t.hobbies[0], food: t.food, area: t.area, place: t.place, job: t.job, months: String(t.appMonths), name: character(x.state).name, their_hobby: x.me.hobbies[0], ...over });
+  return fill(s, { ...factVars(x.them), ...factVars(x.me, 'their_'), name: character(x.state).name, ...over });
 }
 /** プレイヤーの文の差し込み（相手のことを聞く） */
 function myText(x: Ctx, s: string): string {
-  const t = x.them;
-  return fill(s, { their_hobby: t.hobbies[0], their_food: t.food, their_area: t.area, their_place: t.place, name: x.npc.name });
+  return fill(s, { ...factVars(x.them, 'their_'), name: x.npc.name });
+}
+/** 言い回しの中から1つ（ない・空なら undefined） */
+function pickV(arr: string[] | undefined, rng: Rng): string | undefined {
+  return arr && arr.length ? rng.pick(arr) : undefined;
+}
+/** 飼っていない・飲まない・運動していない相手は、別の答え（answer_alt）を使う */
+function usesAlt(t: TopicId, f: Facts): boolean {
+  if (!ALT_TOPICS.includes(t)) return false;
+  if (t === 'family') return f.sibling === '一人っ子';
+  return !(t === 'pet' ? f.petOwned : t === 'drink' ? f.drinks : f.doesSport);
 }
 const firstSentence = (s: string) => splitSentences(s, 9)[0] ?? s;
 
 // 相手の文
+// 2026-11-23：どの文も言い回しを複数持つ（第2版のトークパック）。パックにない話題は汎用文
 function npcAsk(x: Ctx, t: TopicId, rng: Rng): string {
   const i = rng.int(0, 1);
   x.c.flags.askIdx = i;
   x.c.flags.ansJ = -1;
-  return x.np ? npcText(x, x.np.ask[t][i]) : QA[t][i % QA[t].length].q(x.me);
+  const v = pickV(x.np?.ask[t]?.[i], rng);
+  return v ? npcText(x, v) : QA[t][i % QA[t].length].q(x.me);
 }
 function npcAnswer(x: Ctx, t: TopicId, rng: Rng): string {
   const i = Number(x.c.flags.askIdx ?? 0) % 2;
-  if (x.np) return npcText(x, x.np.answer[t][i]);
+  const alt = usesAlt(t, x.them);
+  const v = pickV((alt ? x.np?.answer_alt?.[t] : x.np?.answer[t])?.[i], rng);
+  if (v) return npcText(x, v);
   const prev = Number(x.c.flags.ansJ ?? -1);
   const j = prev === 0 ? 1 : prev === 1 ? 0 : rng.int(0, 1);
   x.c.flags.ansJ = j;
@@ -212,23 +330,50 @@ function npcAnswer(x: Ctx, t: TopicId, rng: Rng): string {
 }
 function npcDetail(x: Ctx, t: TopicId, rng: Rng): string {
   const i = Number(x.c.flags.digIdx ?? rng.int(0, 1)) % 2;
-  return x.np ? npcText(x, x.np.detail[t][i]) : DIGS[t][i % DIGS[t].length].a(x.them);
+  const alt = usesAlt(t, x.them);
+  const v = pickV((alt ? x.np?.detail_alt?.[t] : x.np?.detail[t])?.[i], rng);
+  return v ? npcText(x, v) : DIGS[t][i % DIGS[t].length].a(x.them);
 }
+/**
+ * 受け止めの一言。半分は、こちらの答えの中身に触れる（「焼肉いいですね！」。2026-11-23 会話の自然さ）。
+ * 飼っていない・飲まない話題は中身に触れない
+ */
 function npcReact(x: Ctx, t: TopicId, rng: Rng): string {
-  return x.np ? firstSentence(rng.pick(x.np.react[t])) : rng.pick(REACT);
+  const fact = FACT_OF_TOPIC[t];
+  // 音楽・映画の話題は、音楽の質問（ask[0]）のときだけ中身に触れる
+  const factOk = fact && !usesAlt(t, x.me) && !(t === 'media' && Number(x.c.flags.askIdx ?? 0) % 2 === 1);
+  const rf = factOk ? pickV(x.np?.react_fact?.[t], rng) : undefined;
+  if (rf && rng.chance(0.55)) return npcText(x, rf);
+  const v = pickV(x.np?.react[t], rng);
+  return v ? firstSentence(npcText(x, v)) : rng.pick(REACT);
+}
+/** 話題を変える前置き（「そういえば、」など）。付けないときは空文字 */
+function npcBridge(x: Ctx, rng: Rng): string {
+  if (!rng.chance(0.35)) return '';
+  return pickV(x.np?.bridge, rng) ?? rng.pick(['そういえば、', 'ちなみに、', '話変わるんですけど、']);
+}
+/** 前置きと質問をつなぐ（前置きが「、」で終わるなら続けて書く） */
+function joinBridge(bridge: string, ask: string): string {
+  if (!bridge) return ask;
+  return /、$/.test(bridge) ? `${bridge}${ask}` : `${bridge} ${ask}`;
 }
 
 // プレイヤーの文（選択肢に出すので、状態を変えずに文だけ作る）
-function myAsk(x: Ctx, t: TopicId, i: number): string {
-  return x.pp ? myText(x, x.pp.ask[t][i]) : QA[t][i % QA[t].length].q(x.them);
+function myAsk(x: Ctx, t: TopicId, i: number, rng?: Rng): string {
+  const vs = x.pp?.ask[t]?.[i];
+  if (vs && vs.length) return myText(x, rng ? rng.pick(vs) : vs[0]);
+  return QA[t][i % QA[t].length].q(x.them);
 }
-function myDig(x: Ctx, t: TopicId, i: number): string {
-  return x.pp ? myText(x, x.pp.dig[t][i]) : DIGS[t][i % DIGS[t].length].q(x.them);
+function myDig(x: Ctx, t: TopicId, i: number, rng?: Rng): string {
+  const vs = x.pp?.dig[t]?.[i];
+  if (vs && vs.length) return myText(x, rng ? rng.pick(vs) : vs[0]);
+  return DIGS[t][i % DIGS[t].length].q(x.them);
 }
-function myAnswer(x: Ctx, t: TopicId, i: number, j: number): string {
-  // 趣味の質問は、相手が聞いた趣味（1つ目）の答えにそろえる
-  if (x.pp) return x.pp.answer[t][i % 2][t === 'hobby' ? 0 : j % 2];
-  return bang(QA[t][i % QA[t].length].a[j % 2](x.me));
+/** 自分の答えの言い回し（パックにあればすべて。なければ汎用文2つ） */
+function myAnswers(x: Ctx, t: TopicId, i: number): string[] {
+  const vs = x.pp?.answer[t]?.[i % 2];
+  if (vs && vs.length) return t === 'hobby' && vs.length > 2 ? vs : vs;
+  return [0, 1].map((j) => bang(QA[t][i % QA[t].length].a[j](x.me)));
 }
 function myAskBack(x: Ctx, rng: Rng): string {
   return x.pp ? myText(x, rng.pick(x.pp.ask_back)) : `${san(x.npc.name)}は？`;
@@ -245,7 +390,14 @@ function setConv(c: Contact, t: TopicId, act: 'ask' | 'tell'): void {
  * 相手のふつうの会話のメッセージ（chat_normal）。直前の自分の行動に反応する。
  * 戻り値の文を npcSay に渡す（1通1文に分けて送られる）。
  */
-export function npcConvMessage(state: GameState, c: Contact, npc: Npc): string {
+/** 返信の部品。prio が高いものほど残す（3＝答え・質問、2＝遅れたお詫び、1＝受け止め、0＝好意の一言） */
+interface Piece { text: string; prio: number }
+
+/**
+ * 相手のふつうの会話のメッセージ（chat_normal）。直前の自分の行動に反応する。
+ * max：1回の返信の吹き出しの数の上限。部品の大事さの順に残す（2026-11-23：お詫びで答えが消えないように）
+ */
+export function npcConvMessage(state: GameState, c: Contact, npc: Npc, max = 3): string {
   return withRng(state, (rng) => {
     const x = ctxOf(state, c, npc);
     const myName = san(character(state).name);
@@ -253,46 +405,64 @@ export function npcConvMessage(state: GameState, c: Contact, npc: Npc): string {
     const act = c.flags.myAct as string | undefined;
     c.flags.myAct = '';
     const warm = attentiveness(state, npc); // 格上のこちらには親身（聞き返しや気づかいが増える）
-    let parts: string[];
+    const P = (text: string, prio: number): Piece => ({ text, prio });
+    let parts: Piece[];
     if (act === 'answer' || act === 'answer_casual' || act === 'selftalk') {
-      // 質問に答えた → 相手は受け止めて、次の話題を聞く
+      // 質問に答えた → 相手は受け止めて、次の話題を聞く（ときどき「そういえば、」と前置き）
       const nt = nextTopic(c, rng);
-      parts = [npcReact(x, t, rng), npcAsk(x, nt, rng)];
+      parts = [P(npcReact(x, t, rng), 1), P(joinBridge(npcBridge(x, rng), npcAsk(x, nt, rng)), 3)];
       setConv(c, nt, 'ask');
     } else if (act === 'answer_ask') {
       // こちらが答えて聞き返した → 相手も同じ話題で答え、半分は次の話題を聞く
-      parts = [npcReact(x, t, rng), npcAnswer(x, t, rng)];
+      parts = [P(npcReact(x, t, rng), 1), P(npcAnswer(x, t, rng), 3)];
       if (rng.chance(0.5)) {
         const nt = nextTopic(c, rng);
-        parts.push(npcAsk(x, nt, rng));
+        parts.push(P(joinBridge(npcBridge(x, rng), npcAsk(x, nt, rng)), 3));
         setConv(c, nt, 'ask');
       } else setConv(c, t, 'tell');
     } else if (act === 'ask') {
       // こちらが質問した → 相手が答え（深掘りなら詳しく）、6割は同じことを聞き返す
-      parts = [c.flags.myQ === 'dig' ? npcDetail(x, t, rng) : npcAnswer(x, t, rng)];
-      if (rng.chance(0.6 + 0.35 * warm)) { parts.push(`${myName}は？`); setConv(c, t, 'ask'); c.flags.askBack = true; } else setConv(c, t, 'tell');
+      parts = [P(c.flags.myQ === 'dig' ? npcDetail(x, t, rng) : npcAnswer(x, t, rng), 3)];
+      if (rng.chance(0.6 + 0.35 * warm)) { parts.push(P(`${myName}は？`, 3)); setConv(c, t, 'ask'); c.flags.askBack = true; } else setConv(c, t, 'tell');
     } else if (act === 'change') {
-      // こちらが相手のプロフィールから話題を出した → 相手の趣味の話
-      parts = [x.np ? npcText(x, rng.pick(x.np.profile_change)) : rng.pick(['覚えててくれたんですね！', 'そうなんです！']), npcAnswer(x, 'hobby', rng)];
+      // こちらが相手のプロフィールから話題を出した → 相手の趣味の話。「見てくれたんですね」は最初の1回だけ
+      parts = [];
+      if (!c.flags.profileThanked) {
+        c.flags.profileThanked = true;
+        parts.push(P(x.np ? npcText(x, rng.pick(x.np.profile_change)) : rng.pick(['覚えててくれたんですね！', 'そうなんです！']), 1));
+      }
+      parts.push(P(npcAnswer(x, 'hobby', rng), 3));
       setConv(c, 'hobby', 'tell');
     } else if ((act === 'aizuchi' && c.flags.convAct === 'ask') || act === 'dodge') {
       // 質問に相槌だけ・はぐらかした → かみ合わず、相手は別の話題へ（少し冷める）
       c.interest -= 3;
       const nt = nextTopic(c, rng);
-      parts = [x.np ? rng.pick(x.np.aizuchi_back) : rng.pick(['あ、はい笑', 'そうですよね笑', '笑']), npcAsk(x, nt, rng)];
+      parts = [P(x.np ? rng.pick(x.np.aizuchi_back) : rng.pick(['あ、はい笑', 'そうですよね笑', '笑']), 2), P(npcAsk(x, nt, rng), 3)];
       setConv(c, nt, 'ask');
     } else {
       // 会話の始まり・相槌のあと → 相手から質問する
       const nt = c.flags.convTopic ? nextTopic(c, rng) : 'holiday';
-      parts = [npcAsk(x, nt, rng)];
+      parts = [P(npcAsk(x, nt, rng), 3)];
       setConv(c, nt, 'ask');
     }
     c.flags.myQ = '';
     // 親身な相手は、気づかいや好意のひとことを添える
     if (warm > 0 && rng.chance(0.6 * warm)) {
-      parts.unshift(x.np ? npcText(x, rng.pick(x.np.warm)) : rng.pick([`${myName}と話してると楽しいです☺️`, `${myName}のこと、もっと知りたいです！`, 'お仕事おつかれさまです！', `${myName}って話しやすいですね笑`]));
+      parts.unshift(P(x.np ? npcText(x, rng.pick(x.np.warm)) : rng.pick([`${myName}と話してると楽しいです☺️`, `${myName}のこと、もっと知りたいです！`, 'お仕事おつかれさまです！', `${myName}って話しやすいですね笑`]), 0));
     }
-    return parts.map(bang).join(' ');
+    // 返信が2日以上あいたら、まず一言あやまる（2026-11-23 会話の自然さ）。お詫びは1文にする
+    const lastMe = [...c.messages].reverse().find((m) => m.from === 'me');
+    if (lastMe && state.day - lastMe.day >= 2 && rng.chance(0.6)) {
+      parts.unshift(P(firstSentence(pickV(x.np?.late_sorry, rng) ?? rng.pick(['返信遅くなってすみません！', 'お返事遅くなりました🙇', 'バタバタしてて遅くなっちゃいました、すみません！'])), 2));
+    }
+    // 吹き出しの数が上限を超えたら、大事でない部品から落とす（同じ大事さなら前のものから）
+    const count = (ps: Piece[]) => ps.reduce((n, q) => n + splitSentences(bang(q.text), 99).length, 0);
+    while (parts.length > 1 && count(parts) > max) {
+      const low = Math.min(...parts.map((q) => q.prio));
+      if (low >= 3) break;
+      parts.splice(parts.findIndex((q) => q.prio === low), 1);
+    }
+    return splitSentences(parts.map((q) => bang(q.text)).join(' '), max).join(' ');
   });
 }
 
@@ -321,11 +491,14 @@ export function npcCurtMessage(state: GameState, c: Contact, npc: Npc): string {
     c.flags.myQ = '';
     c.flags.convAct = 'tell';
     if (act === 'ask' || act === 'answer_ask' || act === 'change' || act === 'switch') {
-      if (x.np) return npcText(x, x.np.curt_short[act === 'change' ? 'hobby' : t]);
+      const cs = pickV(x.np?.curt_short[act === 'change' ? 'hobby' : t], rng);
+      if (cs) return npcText(x, cs);
       const them = x.them;
       const short: Record<TopicId, string> = {
         hobby: `${them.hobbies[0]}とかですね`, work: 'ふつうですね', holiday: '家にいることが多いです', food: `${them.food}とかです`,
         area: `${them.area}です`, travel: '最近は行ってないです', weekend: 'まだ決めてないです', app: '最近です',
+        family: `${them.sibling}です`, pet: them.petOwned ? `${them.pet}がいます` : '飼ってないです', drink: them.drinks ? 'たまに飲みます' : '飲まないです',
+        media: `${them.music}とかです`, sports: them.doesSport ? `${them.sport}です` : 'してないです', cooking: 'たまにします', school: `${them.club}でした`, date: `${them.dateplace}とかですかね`,
       };
       return short[t];
     }
@@ -411,7 +584,10 @@ export interface TalkMenu {
   questions: TalkQuestion[];
 }
 
-const GROUP: Record<TopicId, string> = { hobby: '趣味', work: '仕事', holiday: '休日', food: '食べ物', area: '住まい', travel: '旅行', weekend: '最近・週末', app: 'アプリ' };
+const GROUP: Record<TopicId, string> = {
+  hobby: '趣味', work: '仕事', holiday: '休日', food: '食べ物', area: '住まい', travel: '旅行', weekend: '最近・週末', app: 'アプリ',
+  family: '家族', pet: 'ペット・動物', drink: 'お酒', media: '音楽・映画', sports: '運動', cooking: '料理', school: '学生時代', date: '行きたい場所',
+};
 
 /** はい・いいえで答える質問か（「何・どこ・いつ・どんな…」を含まない質問） */
 export function isYesNoQuestion(text: string): boolean {
@@ -422,6 +598,14 @@ function isQuestionText(text: string): boolean {
 }
 /** 会話の流れの外から来た質問（挨拶・乗り気の追い質問など）の話題を、文面から推し量る */
 function guessTopic(text: string): { t: TopicId; i: number } {
+  if (/兄弟|姉妹|ご家族|実家/.test(text)) return { t: 'family', i: /実家|仲/.test(text) ? 1 : 0 };
+  if (/ペット|犬派|猫派|動物/.test(text)) return { t: 'pet', i: /派/.test(text) ? 1 : 0 };
+  if (/お酒|飲み|飲ま/.test(text)) return { t: 'drink', i: /お店/.test(text) ? 1 : 0 };
+  if (/音楽|映画|ドラマ/.test(text)) return { t: 'media', i: /映画|ドラマ/.test(text) ? 1 : 0 };
+  if (/運動|スポーツ|ジム/.test(text)) return { t: 'sports', i: /観戦/.test(text) ? 1 : 0 };
+  if (/料理|自炊|得意料理/.test(text)) return { t: 'cooking', i: /得意/.test(text) ? 1 : 0 };
+  if (/部活|学生/.test(text)) return { t: 'school', i: /部活/.test(text) ? 0 : 1 };
+  if (/行ってみたい|まったり|アクティブ/.test(text)) return { t: 'date', i: /まったり|アクティブ/.test(text) ? 1 : 0 };
   if (/ハマ/.test(text)) return { t: 'weekend', i: 1 };
   if (/週末|土日/.test(text)) return { t: 'weekend', i: 0 };
   if (/休み|休日|お休/.test(text)) return { t: 'holiday', i: /家派|外派|インドア|アウトドア/.test(text) ? 1 : 0 };
@@ -453,15 +637,18 @@ export function talkMenu(state: GameState, c: Contact, npc: Npc): TalkMenu {
   }
   const yesNo = isYesNoQuestion(lastThem);
   const asked = new Set(String(c.flags.myAsked ?? '').split(',').filter(Boolean));
-  // 答え（詳しく＝長い方、適当＝短い方の1文目）
-  const variants = [myAnswer(x, t, i, 0), myAnswer(x, t, i, 1)].sort((a, b) => b.length - a.length);
-  const detailed = mode === 'question' && i === 0 && x.pp ? x.pp.self_talk[t] : variants[0];
+  // 答え（詳しく＝長い方、適当＝短い方の1文目）。言い回しが複数あれば、毎回その中から2つ選ぶ（2026-11-23）
+  const all = myAnswers(x, t, i);
+  const two = all.length > 2 ? rng.shuffle([...all]).slice(0, 2) : all;
+  const variants = [...two].sort((a, b) => b.length - a.length);
+  const selfTalk = mode === 'question' && i === 0 ? pickV(x.pp?.self_talk[t], rng) : undefined;
+  const detailed = selfTalk ?? variants[0];
   // はい・いいえの質問に適当に答えるなら「そうですね」
   const casual = yesNo && inferred ? rng.pick(['そうですね！', 'そうですね笑']) : firstSentence(variants[variants.length - 1]);
   // プロフィールを見て聞ける質問
   const questions: TalkQuestion[] = [];
   if (mode === 'talk' && c.flags.convUsed) {
-    for (const k of [0, 1]) if (!asked.has(`d:${t}:${k}`)) questions.push({ key: `d:${t}:${k}`, group: `いまの話（${GROUP[t]}）`, text: myDig(x, t, k) });
+    for (const k of [0, 1]) if (!asked.has(`d:${t}:${k}`)) questions.push({ key: `d:${t}:${k}`, group: `いまの話（${GROUP[t]}）`, text: myDig(x, t, k, rng) });
   }
   // プロフィールが薄い相手には、聞ける話題が少ない（2026-11-23）
   const askable = askableTopics(npc);
@@ -472,7 +659,9 @@ export function talkMenu(state: GameState, c: Contact, npc: Npc): TalkMenu {
     const ks = [0, 1].filter((k) => !asked.has(`a:${topic}:${k}`));
     if (ks.length === 0) continue;
     const k = topic === 'hobby' ? ks[0] : rng.pick(ks);
-    fromProfile.push({ key: `a:${topic}:${k}`, group: GROUP[topic], text: myAsk(x, topic, k) });
+    // 会話の途中で話題を変えるときは、ときどき「そういえば、」と前置きする（2026-11-23）
+    const bridge = mode === 'talk' && c.flags.convUsed && rng.chance(0.4) ? (pickV(x.pp?.bridge, rng) ?? rng.pick(['そういえば、', 'ちなみに、', '話変わるんですけど、'])) : '';
+    fromProfile.push({ key: `a:${topic}:${k}`, group: GROUP[topic], text: joinBridge(bridge, myAsk(x, topic, k, rng)) });
   }
   // プロフィールを見て聞ける質問の数（2026-11-23 指示）：よろしくだけ2つ・5行以内3つ・充実5つ。趣味の質問はなるべく残す
   const limit = profileQuestionLimit(npc);

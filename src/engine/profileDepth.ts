@@ -6,6 +6,7 @@
 // 充実していないプロフィールは、年収が低い人・偏差値の低い大学や専門・短大卒に多め（高卒はふつう）。
 // 女性の2割は趣味に「推し活」を書く。推し活については、こちらから質問できない。
 import type { Rng } from './rng';
+import { PROFILE_BIOS } from './data/profileBios';
 import type { Npc, Purpose } from './types';
 import type { TopicId } from './data/talkSlots';
 
@@ -73,8 +74,14 @@ export function applyProfileDepth(rng: Rng, n: Npc, normalText: string): void {
     n.profileText = n.gender === 'F' ? `趣味は旅行・カフェ巡りです${oshi ? '。推し活もしてます' : ''}。` : `趣味は${h[0]}です。よろしくお願いします。`;
     return;
   }
+  // 生成した自己紹介文（2026-11-23。性別・充実度・雰囲気ごとに何十通り）があればそれを使う。お酒を飲まない人には、お酒に触れた文を使わない
+  const bio = pickBio(rng, n, depth, h, job);
   if (depth === 'normal') {
-    n.profileText = normalText + (oshi ? ' 推し活もしています！' : '');
+    n.profileText = (bio ?? normalText) + (oshi ? ' 推し活もしています！' : '');
+    return;
+  }
+  if (bio) {
+    n.profileText = bio + (oshi ? '\n推し活も生きがいです笑' : '');
     return;
   }
   const lines = [
@@ -86,6 +93,17 @@ export function applyProfileDepth(rng: Rng, n: Npc, normalText: string): void {
     closing(rng, n.purpose),
   ];
   n.profileText = lines.join('\n');
+}
+
+function toneOf(purpose: Purpose): 'serious' | 'light' | 'common' {
+  return purpose === 'sincere' || purpose === 'married' ? 'serious' : purpose === 'body' || purpose === 'ambiguous' || purpose === 'bijin' ? 'light' : 'common';
+}
+function pickBio(rng: Rng, n: Npc, depth: 'normal' | 'rich', hobbies: string[], job: string): string | undefined {
+  const pool = (PROFILE_BIOS[n.gender]?.[depth]?.[toneOf(n.purpose)] ?? []).filter((b) => n.drinking !== 'none' || !/お酒|飲み|ビール|ワイン/.test(b));
+  if (pool.length === 0) return undefined;
+  const food = rng.pick(['焼肉', 'ラーメン', 'パスタ', 'お寿司', 'カレー', '韓国料理', 'イタリアン']);
+  const v: Record<string, string> = { job, hobby: hobbies[0] ?? '散歩', hobby2: hobbies[1] ?? hobbies[0] ?? '読書', food };
+  return rng.pick(pool).replace(/\{(job|hobby2?|food)\}/g, (_m, k: string) => v[k]);
 }
 
 /** プロフィールから聞ける話題（2026-11-23）。bare は仕事と休日だけ、sparse は趣味・旅行・仕事・休日だけ */

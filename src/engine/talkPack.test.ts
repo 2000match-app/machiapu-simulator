@@ -84,7 +84,9 @@ describe('会話の選択肢（2026-11-11 作り直し）', () => {
       applyAction(s, { type: 'subscribe' });
       const c = devAddContact(s, { purpose: 'sincere', stage: 'talking', topic: 'chat_normal' });
       c.flags.convTopic = 'hobby'; c.flags.convAct = 'ask'; c.flags.askIdx = 0; c.flags.convUsed = 'hobby';
-      expect(talkMenu(s, c, s.npcs[c.npcId]).casual).toBe(splitSentences(pack.answer.hobby[0][0], 9)[0]);
+      // 2026-11-23：言い回しが複数になったので、どれかの言い回しの1文目
+      const firsts = (pack.answer.hobby?.[0] ?? []).map((x) => splitSentences(x, 9)[0]);
+      expect(firsts).toContain(talkMenu(s, c, s.npcs[c.npcId]).casual);
     }
   }, 30_000); // 20人分の新しいゲームを作るので、全体実行の負荷で5秒を超えることがある
 });

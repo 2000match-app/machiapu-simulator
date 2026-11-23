@@ -1478,9 +1478,9 @@ describe('プロフィールの充実度（2026-11-23）', () => {
     expect(rich.length).toBeGreaterThan(0);
     for (const n of rich) {
       expect(n.profileText.split('\n').length).toBeGreaterThanOrEqual(5);
-      expect(n.profileText).toMatch(/仕事/);
-      expect(n.profileText).toMatch(/休日/);
-      expect(n.profileText).toMatch(/好きなタイプ/);
+      expect(/仕事|働/.test(n.profileText) || n.profileText.includes(n.job.replace(/（.*）/, ''))).toBe(true);
+      expect(n.profileText).toMatch(/休日|休み|オフ|週末/);
+      expect(n.profileText).toMatch(/タイプ|惹かれ|素敵だな|好きな人/);
     }
     const bare = Object.values(s.npcs).filter((n) => n.profileDepth === 'bare');
     for (const n of bare) expect(n.profileText).toMatch(/^よろしくお願いします/);

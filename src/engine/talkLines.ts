@@ -23,7 +23,8 @@ export function npcChatByLevel(state: GameState, c: Contact, npc: Npc, level: Le
     return [npcOneWord(state, c, npc) ?? withRng(state, (r) => sayLines(state, npc, CHAT.chat_cool, r))];
   }
   if (level === 2) return splitSentences(npcCurtMessage(state, c, npc), 1);
-  let bubbles = splitSentences(npcConvMessage(state, c, npc), 6);
+  // 乗り気以上は自分の話を足すので、もとの返信は2通までに収めておく（大事な部品から残す）
+  let bubbles = splitSentences(npcConvMessage(state, c, npc, level >= 4 ? 2 : level === 3 ? 2 : 3), 6);
   // 受け身・質問傾向が低い人は聞き返さない（好意があっても）
   if (p.question === 'low' || p.type === 'passive') {
     const kept = bubbles.filter((b) => !isQuestion(b));
@@ -38,7 +39,9 @@ export function npcChatByLevel(state: GameState, c: Contact, npc: Npc, level: Le
     const h = npc.hobbies[0] ?? '散歩';
     const extra = npcEagerLine(state, c, npc, 'disclose') ?? withRng(state, (r) => r.pick([`最近は${h}にハマってて、休みの日はだいたいそれです笑`, `${h}の話になると、つい長くなっちゃいます笑`, `この前も${h}で一日終わりました笑`, `${h}のことなら何時間でも話せます笑`]));
     const qi = bubbles.findIndex(isQuestion);
-    if (extra) bubbles = qi >= 0 ? [...bubbles.slice(0, qi), extra, ...bubbles.slice(qi)] : [...bubbles, extra];
+    // 自己開示が2文のこともあるので、1通1文に分けてから入れる（3通の上限を正しく数える。2026-11-23）
+    const ex = extra ? splitSentences(extra, 9) : [];
+    if (ex.length) bubbles = qi >= 0 ? [...bubbles.slice(0, qi), ...ex, ...bubbles.slice(qi)] : [...bubbles, ...ex];
   }
   if (level === 5) {
     // 話を合わせる（共通の趣味があればそれに、なければ大きめのリアクション）
@@ -59,9 +62,12 @@ export function npcChatByLevel(state: GameState, c: Contact, npc: Npc, level: Le
 /** 最大 n 通に収める。質問があれば最後の質問は残す */
 function capKeepQuestion(bubbles: string[], n: number): string[] {
   if (bubbles.length <= n) return bubbles;
-  const q = [...bubbles].reverse().find(isQuestion);
-  if (!q) return bubbles.slice(0, n);
-  return [...bubbles.filter((b) => b !== q).slice(0, n - 1), q];
+  const qi = bubbles.map(isQuestion).lastIndexOf(true);
+  if (qi < 0) return bubbles.slice(0, n);
+  // 「それとも〜？」のように前の文に続く質問は、前の文と一緒に残す（2026-11-23）
+  const keep = qi > 0 && /^(それとも|あと|じゃあ|ちなみに)/.test(bubbles[qi]) ? [qi - 1, qi] : [qi];
+  const rest = bubbles.filter((_, i) => !keep.includes(i)).slice(0, Math.max(0, n - keep.length));
+  return [...rest, ...keep.map((i) => bubbles[i])];
 }
 
 /** 最初の返信（挨拶）。温度が低いほど挨拶だけ、高いほど2〜3通 */
