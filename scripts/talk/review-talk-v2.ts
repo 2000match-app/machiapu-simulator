@@ -6,13 +6,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { callInteractions, extractText, loadOpenAiKey, RequestBudget, type Attempt } from '../gemini/client';
+import { callInteractions, extractText, RequestBudget, type Attempt } from '../gemini/client';
+import { KEY_MEANING, OPENAI_MODEL, openaiJson, render } from './reviewShared';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 const DIR = path.join(ROOT, 'トークパック', 'v2');
 // 点検する側：--reviewer openai（ChatGPT。既定）か gemini（ChatGPTのキーが使えないとき。生成とは別の呼び出しで、点検役として見る）
 const REVIEWER = (process.argv.includes('--reviewer') ? process.argv[process.argv.indexOf('--reviewer') + 1] : 'openai') as 'openai' | 'gemini';
-const MODEL = REVIEWER === 'gemini' ? (process.env.GEMINI_REVIEW_TALK_MODEL || 'gemini-4-argon') : (process.env.OPENAI_TALK_MODEL || process.env.OPENAI_SPEC_MODEL || 'gpt-6.1-sol');
+const MODEL = REVIEWER === 'gemini' ? (process.env.GEMINI_REVIEW_TALK_MODEL || 'gemini-4-argon') : OPENAI_MODEL;
 const geminiBudget = new RequestBudget(200);
 const REVIEW_SCHEMA = { type: 'object', properties: { bad: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, reason: { type: 'string' } }, required: ['id', 'reason'], additionalProperties: false } } }, required: ['bad'], additionalProperties: false };
 
@@ -28,15 +29,7 @@ const kind = arg('kind', 'npc') as 'npc' | 'player';
 const force = process.argv.includes('--force');
 const only = arg('ids').split(',').filter(Boolean);
 
-/** 差し込みに入れて見せる値（2通り。どちらでも自然かを見る） */
-const SAMPLE: Record<string, [string, string]> = {
-  hobby: ['カフェ巡り', '筋トレ'], hobby2: ['映画', '料理'], food: ['焼肉', 'パスタ'], area: ['世田谷区', '川口市'], place: ['京都', '台湾'], job: ['看護師', 'エンジニア'], months: ['3', '6'],
-  hometown: ['北海道', '埼玉県'], sibling: ['兄が1人いる長男', '姉が1人いる次女'], pet: ['猫', '犬'], drink: ['ハイボール', 'ワイン'], music: ['K-POP', '邦ロック'], show: ['韓国ドラマ', '洋画'], sport: ['ヨガ', 'ゴルフ'],
-  dish: ['カレー', '肉じゃが'], club: ['吹奏楽部', 'サッカー部'], dateplace: ['水族館', '鎌倉'], name: ['ゆうき', 'さき'],
-};
-function render(s: string, k: 0 | 1): string {
-  return s.replace(/\{(their_)?([a-z0-9]+)\}/g, (m, _t: string | undefined, key: string) => SAMPLE[key]?.[k] ?? m);
-}
+// 差し込みの例の値（SAMPLE）・パスの見方（KEY_MEANING）は reviewShared.ts（書き直しの fix-flagged-v2.ts と共通）
 
 /** パックの中の文を、場所（パス）つきで並べる */
 function collect(v: unknown, at: string[], out: { id: string; path: string[]; text: string }[]): void {
@@ -46,32 +39,7 @@ function collect(v: unknown, at: string[], out: { id: string; path: string[]; te
 }
 const SKIP = new Set(['id', 'kind', 'model', 'createdAt', 'schema_version', 'reviewed', 'hobbies', 'food', 'place', 'hometown', 'sibling', 'pet', 'drink', 'music', 'show', 'sport', 'dish', 'club', 'dateplace']);
 
-const KEY_MEANING = `パスの見方（話題 t、質問の番号 0・1）：
-- ask.t.i.* … 相手に聞く質問 ／ answer.t.i.* … その質問に答える文 ／ detail.t.i.* … 深掘りの質問への答え ／ answer_alt・detail_alt … 一人っ子（family）・ペットを飼っていない・お酒を飲まない・運動していない人の答え（family の answer・detail は兄弟がいる人）
-- media.0 は音楽の質問、media.1 は映画・ドラマの質問。{music} は音楽のジャンル、{show} は映画・ドラマのジャンル
-- react.t.* … 相手の答えへの受け止め（中身に触れない）／ react_fact.t.* … 相手の答えの中身に触れる受け止め ／ curt_short … そっけない短い答え
-- bridge … 話題を変える前置き（後ろに質問が続く）／ late_sorry … 返信が遅れたお詫び ／ invite_accept … 会う誘いへの承諾 ／ invite_busy … 予定が合わないお断り
-- self_talk … つい長く語った答え ／ dodge … はぐらかす答え ／ dig … 深掘りの質問 ／ intro … 最初のメッセージの自己紹介 ／ ask_back … 聞き返し`;
-
-async function openai(input: string): Promise<string> {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 600_000);
-  try {
-    const schema = { type: 'object', properties: { bad: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, reason: { type: 'string' } }, required: ['id', 'reason'], additionalProperties: false } } }, required: ['bad'], additionalProperties: false };
-    const r = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${loadOpenAiKey()}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: MODEL, input, text: { format: { type: 'json_schema', name: 'talk_review', schema, strict: true } } }),
-      signal: ctrl.signal,
-    });
-    const j = (await r.json()) as Record<string, unknown>;
-    if (!r.ok) throw new Error(`OpenAI ${r.status}: ${JSON.stringify((j as { error?: unknown }).error ?? j).slice(0, 300)}`);
-    const out = (j.output as { type: string; content?: { type: string; text?: string }[] }[] | undefined) ?? [];
-    return out.flatMap((o) => o.content ?? []).filter((c) => c.type === 'output_text').map((c) => c.text ?? '').join('\n');
-  } finally {
-    clearTimeout(timer);
-  }
-}
+const openai = (input: string) => openaiJson(input, 'talk_review', REVIEW_SCHEMA);
 
 function prompt(who: string, items: { id: string; path: string[]; text: string }[]): string {
   return `あなたは日本のマッチングアプリ（Pairs・タップル・with など）のトークに詳しい編集者です。恋愛シミュレーションゲームのセリフを点検してください。
@@ -88,7 +56,7 @@ ${who}
 ${KEY_MEANING}
 
 # 文（id｜パス｜A｜B）
-${items.map((x) => `${x.id}｜${x.path.join('.')}｜${render(x.text, 0)}｜${render(x.text, 1)}`).join('\n')}
+${items.map((x) => `${x.id}｜${x.path.join('.')}｜${render(x.text, 0, x.path)}｜${render(x.text, 1, x.path)}`).join('\n')}
 
 指摘する文だけを bad に入れてください（なければ空の配列）。`;
 }
@@ -112,7 +80,8 @@ function compact(v: unknown): unknown {
 async function reviewOne(file: string, log: Record<string, unknown>[]): Promise<void> {
   const pack = JSON.parse(fs.readFileSync(file, 'utf8')) as Record<string, unknown>;
   const id = String(pack.id ?? path.basename(file, '.json'));
-  if (pack.reviewed && !force) { console.log(`skip ${id}（点検済み）`); return; }
+  // 同じ点検役で点検済みなら飛ばす（Gemini で点検したパックは、ChatGPT では点検し直す。2026-11-23）
+  if ((pack.reviewed as { by?: string } | undefined)?.by === MODEL && !force) { console.log(`skip ${id}（${MODEL}で点検済み）`); return; }
   const items: { id: string; path: string[]; text: string }[] = [];
   for (const [k, v] of Object.entries(pack)) if (!SKIP.has(k)) collect(v, [k], items);
   const who = kind === 'npc' ? `この文は、人格テンプレ ${id} の相手（NPC）がプレイヤーに送るセリフです。` : `この文は、プレイヤーの人物 ${id} が相手に送るメッセージです。`;
