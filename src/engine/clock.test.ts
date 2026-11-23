@@ -56,7 +56,7 @@ describe('時間の進み方', () => {
     applyAction(s, { type: 'openApp' });
     expect(s.screen).toBe('app');
   });
-  it('23:50から進めると、24時で日付が変わり睡眠→7:00に起きる（日付・曜日も進む）', () => {
+  it('23:50から進めると、24時で日付が変わり睡眠→出勤日は7:30まで寝て、そのまま通勤・仕事（日付・曜日も進む。2026-11-23）', () => {
     const s = newGame('M09', 'clock-2');
     s.clock = 23 * 60 + 50;
     const day0 = s.day;
@@ -66,12 +66,14 @@ describe('時間の進み方', () => {
     expect(lifeNow(s).state).toBe('SLEEPING');
     expect(canOpenApp(s)).toBe(false);
     skipBlock(s);
-    expect(clockOf(s)).toBe(7 * 60);
-    expect(lifeNow(s).state).toBe('FREE');
+    // 火曜（出勤日）：朝にアプリを開ける時間はない
+    expect(clockOf(s)).toBe(7 * 60 + 30);
+    expect(lifeNow(s).state).toBe('WORKING');
   });
-  it('出社勤務の人は平日9:00〜18:00は仕事中で開けない。スキップすると18:00（残業の日は退勤まで）', () => {
+  it('出社勤務の人は平日7:30〜18:00（通勤を含む）は仕事中で開けない。スキップすると18:00（残業の日は退勤まで）', () => {
     const s = newGame('M09', 'clock-3');
-    goTo(s, 1, 9 * 60);
+    goTo(s, 1, 0);
+    s.clock = 9 * 60;
     expect(lifeNow(s).state).toBe('WORKING');
     expect(canOpenApp(s)).toBe(false);
     applyAction(s, { type: 'closeApp' });
@@ -86,7 +88,7 @@ describe('時間の進み方', () => {
     applyAction(s, { type: 'closeApp' });
     const { skips } = runLock(s, 20);
     expect(skips[0]).toBe('睡眠中');
-    if (s.day % 7 < 5) expect(skips).toContain('仕事中');
+    if (s.day % 7 < 5) expect(skips.some((x) => x.includes('仕事中'))).toBe(true);
     expect(new Set(skips.slice(0, 2)).size).toBe(skips.slice(0, 2).length);
   });
   it('アプリを開いている間は、操作の分だけ時刻が進む（いいね30分。検索は進まない。2026-11-15）', () => {
@@ -191,15 +193,17 @@ describe('通知とメッセージの届く時刻', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('アプリの操作でゲーム内の時間が進み、勤務の時刻になるとアプリが閉じる（2026-11-14）', () => {
+  it('出勤日の朝は、起きてから出勤までアプリを開ける時間がない（2026-11-23 指示）', () => {
     const s = newGame('M09', 'app-time');
-    goTo(s, 1, 8 * 60 + 50);
+    goTo(s, 1, 0);
+    s.clock = 7 * 60 + 10;
+    expect(canOpenApp(s)).toBe(false);
+    applyAction(s, { type: 'closeApp' });
     applyAction(s, { type: 'openApp' });
-    expect(s.screen).toBe('app');
-    for (let i = 0; i < 10 && s.screen === 'app'; i++) applyAction(s, { type: 'viewProfile', npcId: 'x' });
-    expect(clockOf(s)).toBe(9 * 60);
     expect(s.screen).toBe('lock');
-    expect(String(s.flags.lockReason)).toMatch(/9:00/);
+    skipBlock(s);
+    expect(clockOf(s)).toBeGreaterThanOrEqual(7 * 60 + 30);
+    expect(canOpenApp(s)).toBe(false); // 続けて通勤・仕事
   });
   it('デートの場面はデートの時刻まで出ず、場面が終わるとデートの終わりの時刻まで進む', () => {
     const s = newGame('M09', 'date-clock');

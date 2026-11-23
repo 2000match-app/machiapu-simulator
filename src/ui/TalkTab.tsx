@@ -142,6 +142,16 @@ function ChatView({ state, act, contact: c, onBack }: Pick<TabProps, 'state' | '
   useEffect(() => { setDraft(null); setAskFrom(null); setConfirmBlock(false); setConfirmFace(false); }, [c.messages.length, c.npcId]);
   useEffect(() => { setShowProfile(false); }, [c.npcId]);
   const bottom = useRef<HTMLDivElement>(null);
+  // トークの見出し（名前・プロフィール）は、上のステータス欄の真下に固定する（2026-11-23 指示：一番上まで戻らないとプロフィールが出なかった）
+  useEffect(() => {
+    const bar = document.querySelector<HTMLElement>('.status-bar');
+    if (!bar) return;
+    const set = () => document.documentElement.style.setProperty('--sb-h', `${bar.offsetHeight}px`);
+    set();
+    const ro = new ResizeObserver(set);
+    ro.observe(bar);
+    return () => ro.disconnect();
+  }, []);
   useEffect(() => {
     // 新しいブラウザでは scrollIntoView が Promise を返すため、戻り値を useEffect から返さない
     void bottom.current?.scrollIntoView({ block: 'end' });
@@ -174,7 +184,7 @@ function ChatView({ state, act, contact: c, onBack }: Pick<TabProps, 'state' | '
         </button>
         <span className="ch-head-side">
           <span className={`st st-${st.tone}`}>{st.label}</span>
-          <button className="link small ch-profile" onClick={() => setShowProfile(true)}>プロフィール</button>
+          <button className="ch-profile" onClick={() => setShowProfile(true)}><span aria-hidden="true">👤</span>プロフィール</button>
         </span>
       </div>
       <div className={`channel-bar ${channel}`}>{CHANNEL_HEAD[channel]}{channel === 'external' && spentOnThem > 0 ? `・ここまでのポイント ${Number(c.flags.sakuraPaid ?? 0).toLocaleString()}円` : ''}</div>

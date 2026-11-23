@@ -12,6 +12,7 @@ import type { Contact, GameState, Npc } from './types';
 import { TOPICS, type NpcTalk, type PlayerTalk, type TopicId } from './data/talkSlots';
 import { NPC_TALK, PLAYER_TALK } from './data/talkPacks';
 import { splitSentences } from './textSplit';
+import { askableHobbies, askableTopics, profileQuestionLimit } from './profileDepth';
 export type { TopicId };
 
 const FOODS = ['焼肉', 'ラーメン', 'お寿司', 'イタリアン', 'カレー', '韓国料理', '中華', 'パスタ', '和食', 'ハンバーガー'];
@@ -38,7 +39,7 @@ const areaName = (id: string) => AREAS.find((a) => a.id === id)?.name ?? '都内
 
 function npcFacts(npc: Npc): Facts {
   return {
-    hobbies: npc.hobbies.length ? npc.hobbies : ['散歩'],
+    hobbies: askableHobbies(npc.hobbies), // 推し活は質問の材料にしない（2026-11-23）
     job: npc.job.replace(/（.*）/, ''),
     area: areaName(npc.areaId),
     food: pickBy(`${npc.id}:food`, FOODS),
@@ -462,13 +463,24 @@ export function talkMenu(state: GameState, c: Contact, npc: Npc): TalkMenu {
   if (mode === 'talk' && c.flags.convUsed) {
     for (const k of [0, 1]) if (!asked.has(`d:${t}:${k}`)) questions.push({ key: `d:${t}:${k}`, group: `いまの話（${GROUP[t]}）`, text: myDig(x, t, k) });
   }
+  // プロフィールが薄い相手には、聞ける話題が少ない（2026-11-23）
+  const askable = askableTopics(npc);
+  const fromProfile: TalkQuestion[] = [];
   for (const topic of TOPICS) {
+    if (askable && !askable.includes(topic)) continue;
     if (mode === 'question' && topic === t) continue; // いま聞かれている話題は「聞き返す」で
     const ks = [0, 1].filter((k) => !asked.has(`a:${topic}:${k}`));
     if (ks.length === 0) continue;
     const k = topic === 'hobby' ? ks[0] : rng.pick(ks);
-    questions.push({ key: `a:${topic}:${k}`, group: GROUP[topic], text: myAsk(x, topic, k) });
+    fromProfile.push({ key: `a:${topic}:${k}`, group: GROUP[topic], text: myAsk(x, topic, k) });
   }
+  // プロフィールを見て聞ける質問の数（2026-11-23 指示）：よろしくだけ2つ・5行以内3つ・充実5つ。趣味の質問はなるべく残す
+  const limit = profileQuestionLimit(npc);
+  const hobbyQ = fromProfile.find((q) => q.key.startsWith('a:hobby:'));
+  const rest = fromProfile.filter((q) => q !== hobbyQ);
+  for (let j = rest.length - 1; j > 0; j--) { const r = rng.int(0, j); [rest[j], rest[r]] = [rest[r], rest[j]]; }
+  const chosen = new Set([...(hobbyQ ? [hobbyQ] : []), ...rest].slice(0, limit));
+  questions.push(...fromProfile.filter((q) => chosen.has(q)));
   return {
     mode, topic: t, detailed, casual, questions, inferred,
     // 相槌は相手のメッセージに合わせる（2026-11-11 指示）：はい・いいえの質問なら「そうですね」、話や自己紹介なら「そうなんですね」

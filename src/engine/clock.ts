@@ -95,6 +95,8 @@ export function scheduleOf(state: GameState): Block[] {
     if (day <= Number(state.player.effects?.busyUntil ?? -1)) end = Math.max(end, 21 * 60 + 30);
     workEnd = end;
     const remote = ls.work.kind === 'remote' || workFromHome(state, day);
+    // 出勤する日は、起きてから出勤までの朝にアプリを開ける時間はない（2026-11-23 指示）。睡眠を出勤の時刻まで延ばす
+    if (!remote && ls.work.start > blocks[0].end) blocks[0].end = ls.work.start;
     pushWork(blocks, { start: ls.work.start, end, kind: remote ? 'remote' : 'work', label: remote ? '在宅勤務中' : end > ls.work.end ? '残業中' : ls.work.label, icon: remote ? '🏠' : '💼' }, ls.work.label);
   }
   // 寝落ち（健人・大輔）：帰りが遅く、そのまま寝てしまう
@@ -188,9 +190,64 @@ export function lifeNow(state: GameState): { state: 'FREE' | 'WORKING' | 'SLEEPI
   }
   const st = b.kind === 'sleep' ? 'SLEEPING' : b.kind === 'work' ? 'WORKING' : b.kind === 'remote' ? 'REMOTE' : b.kind === 'date' ? 'DATE' : 'EVENT';
   // 寝る時刻が24時より前の人は、翌朝まで
-  const wake = lifestyleOf(state.characterId).wake;
+  const ls = lifestyleOf(state.characterId);
+  // 翌日が出勤日なら、出勤の時刻まで寝ている（在宅・シフトの休みは見ない目安）
+  const tomorrowWork = ls.work.kind !== 'part' && ls.work.kind !== 'none' && ls.work.kind !== 'remote' && ls.work.days.includes((state.day + 1) % 7);
+  const wake = tomorrowWork ? Math.max(ls.wake, ls.work.start) : ls.wake;
   const untilLabel = b.kind === 'sleep' && b.end >= DAY_MIN ? `翌朝${timeLabel(wake)}` : b.end >= DAY_MIN ? '24:00' : timeLabel(b.end);
   return { state: st, label: b.label, icon: b.icon, until: b.end, untilLabel };
+}
+
+/** ロック画面で続けて飛ばす時間帯の1つ（睡眠→通勤・仕事 など） */
+export interface ChainStep { icon: string; label: string; untilLabel: string; kind: BlockKind }
+
+/**
+ * いまから続く、アプリを開けない時間帯の並び（2026-11-23 指示：睡眠から通勤・仕事への表示をつなげる）。
+ * 夜の睡眠で翌日が出勤日なら、翌朝の通勤・仕事まで見込みでつなげる。openLabel はアプリを開けるようになる時刻
+ */
+export function lockChain(state: GameState): { steps: ChainStep[]; openLabel: string; afterWork: boolean } {
+  const blocks = scheduleOf(state);
+  const steps: ChainStep[] = [];
+  let m = clockOf(state);
+  let last: Block | undefined;
+  for (let i = 0; i < 6; i++) {
+    const b = blockAt(state, m, blocks);
+    if (!b || !(LOCKED.includes(b.kind) || b.kind === 'date') || b.kind === 'date') break;
+    last = b;
+    steps.push({ icon: b.icon, label: b.kind === 'sleep' ? '睡眠' : b.label.replace(/中$/, ''), untilLabel: b.end >= DAY_MIN ? '24:00' : timeLabel(b.end), kind: b.kind });
+    if (b.end >= DAY_MIN) break;
+    m = b.end;
+  }
+  if (!last) return { steps, openLabel: '', afterWork: false };
+  let openLabel = last.end >= DAY_MIN ? '24:00' : timeLabel(last.end);
+  let afterWork = last.kind === 'work';
+  // 夜の睡眠：翌朝まで。翌日が出勤日なら、そのまま通勤・仕事
+  if (last.kind === 'sleep' && last.end >= DAY_MIN) {
+    const ls = lifestyleOf(state.characterId);
+    const tomorrow = (state.day + 1) % 7;
+    const works = ls.work.kind !== 'part' && ls.work.kind !== 'none' && ls.work.kind !== 'remote' && ls.work.days.includes(tomorrow) && ls.work.start > ls.wake;
+    const wake = works ? ls.work.start : ls.wake;
+    steps[steps.length - 1].untilLabel = `翌朝${timeLabel(wake)}`;
+    openLabel = `翌朝${timeLabel(wake)}`;
+    // シフトの休み・在宅の日は前もって分からないので、決まった出勤（会社員）だけつなげる
+    if (works && ls.work.kind === 'office') {
+      steps.push({ icon: '💼', label: ls.work.label.replace(/中$/, ''), untilLabel: `${timeLabel(ls.work.end)}ごろ`, kind: 'work' });
+      openLabel = `明日の${timeLabel(ls.work.end)}ごろ`;
+      afterWork = true;
+    }
+  }
+  return { steps, openLabel, afterWork };
+}
+
+/** 続けて開けない時間帯（睡眠→通勤・仕事など）を、まとめて終わりまで進める（2026-11-23 指示：ポップアップを1つに） */
+export function skipChain(state: GameState): void {
+  const n = Math.max(1, lockChain(state).steps.length);
+  for (let i = 0; i < n && state.status === 'playing'; i++) {
+    if (lockMode(state) !== 'block') break;
+    const b = blockAt(state);
+    if (!b || b.kind === 'date') break;
+    skipBlock(state);
+  }
 }
 
 /** 次に何かが起きる時刻（予定の始まり・場面が見える時刻・日付が変わる時刻） */

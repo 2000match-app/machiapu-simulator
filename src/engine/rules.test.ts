@@ -1452,3 +1452,101 @@ describe('2026-11-21：ライフは整数・結衣のクリスマス', () => {
     expect(o.pending.some((p) => p.kind === 'pe_xmas_flappe')).toBe(false);
   });
 });
+
+describe('プロフィールの充実度（2026-11-23）', () => {
+  it('「よろしく」だけの相手には仕事と休日しか聞けず、趣味だけの相手も聞ける話題が少ない。推し活は聞けない', async () => {
+    const { talkMenu } = await import('./conversation');
+    const s = newGame('F03', 'pd-talk');
+    const c = devAddContact(s, { purpose: 'sincere', stage: 'talking', topic: 'chat_normal', exchanges: 3 });
+    const npc = s.npcs[c.npcId];
+    const groups = () => new Set(talkMenu(s, c, npc).questions.map((q) => q.group));
+    npc.profileDepth = 'normal';
+    const full = groups().size;
+    npc.profileDepth = 'bare';
+    expect([...groups()].every((g) => g === '仕事' || g === '休日')).toBe(true);
+    npc.profileDepth = 'sparse';
+    expect([...groups()].every((g) => ['趣味', '旅行', '仕事', '休日'].includes(g))).toBe(true);
+    void full;
+    npc.profileDepth = 'normal';
+    npc.hobbies = ['推し活', 'カフェ巡り'];
+    expect(talkMenu(s, c, npc).questions.some((q) => q.text.includes('推し活'))).toBe(false);
+  });
+  it('充実したプロフィールは5行以上で、仕事・休日（趣味）・好きなタイプに触れる', () => {
+    const s = newGame('M07', 'pd-rich');
+    for (let i = 0; i < 8; i++) applyAction(s, { type: 'searchMore', count: 24 });
+    const rich = Object.values(s.npcs).filter((n) => n.profileDepth === 'rich');
+    expect(rich.length).toBeGreaterThan(0);
+    for (const n of rich) {
+      expect(n.profileText.split('\n').length).toBeGreaterThanOrEqual(5);
+      expect(n.profileText).toMatch(/仕事/);
+      expect(n.profileText).toMatch(/休日/);
+      expect(n.profileText).toMatch(/好きなタイプ/);
+    }
+    const bare = Object.values(s.npcs).filter((n) => n.profileDepth === 'bare');
+    for (const n of bare) expect(n.profileText).toMatch(/^よろしくお願いします/);
+  });
+});
+
+describe('プロフィールを見て聞ける質問の数（2026-11-23）', () => {
+  it('よろしくだけ2つ・5行以内3つ・充実5つ', async () => {
+    const { talkMenu } = await import('./conversation');
+    const s = newGame('F03', 'pd-count');
+    const c = devAddContact(s, { purpose: 'sincere', stage: 'talking', topic: 'chat_normal', exchanges: 3 });
+    const npc = s.npcs[c.npcId];
+    const count = () => talkMenu(s, c, npc).questions.filter((q) => q.key.startsWith('a:')).length;
+    for (const [d, n] of [['bare', 2], ['sparse', 3], ['normal', 3], ['rich', 5]] as const) {
+      npc.profileDepth = d;
+      expect(count(), d).toBe(n);
+    }
+  });
+});
+
+describe('勤務の時間帯と朝（2026-11-23）', () => {
+  it('会社員の出勤日は、0時から18時までアプリを開ける時間がない（通勤を含む7:30〜18:00）', async () => {
+    const { blockAt, scheduleOf } = await import('./clock');
+    const { workFromHome } = await import('./dates');
+    for (const id of ['M01', 'M07', 'F01', 'F03']) {
+      const s = newGame(id, `work-${id}`);
+      s.flags.noPrivateEvents = true;
+      let checked = 0;
+      for (let d = 0; d < 14 && checked < 3; d++) {
+        s.day = d;
+        if (d % 7 >= 5 || workFromHome(s, d)) continue;
+        const blocks = scheduleOf(s);
+        const work = blocks.find((b) => b.kind === 'work');
+        if (!work) continue;
+        expect(work.start).toBe(7 * 60 + 30);
+        for (let m = 0; m < 18 * 60; m += 15) expect(blockAt(s, m, blocks), `${id} ${d}日 ${m}分`).toBeDefined();
+        checked++;
+      }
+      expect(checked).toBeGreaterThan(0);
+    }
+  });
+});
+
+describe('ロック画面の続けて飛ばす表示（2026-11-23）', () => {
+  it('出勤日の0時は「睡眠→通勤・仕事」がつながり、仕事が終わり次第開けると分かる', async () => {
+    const { lockChain } = await import('./clock');
+    const s = newGame('M09', 'chain-1');
+    s.flags.noPrivateEvents = true;
+    s.day = 1; s.clock = 0;
+    const ch = lockChain(s);
+    expect(ch.steps.map((x) => x.kind)).toEqual(['sleep', 'work']);
+    expect(ch.steps[0].untilLabel).toBe('7:30');
+    expect(ch.afterWork).toBe(true);
+    expect(ch.openLabel).toMatch(/18:00|2[0-2]:/);
+  });
+});
+
+describe('睡眠と勤務をまとめて飛ばす（2026-11-23）', () => {
+  it('出勤日の0時から1回で、睡眠と通勤・仕事を終わりまで進める', async () => {
+    const { clockOf } = await import('./clock');
+    const s = newGame('M09', 'skipchain');
+    s.flags.noPrivateEvents = true;
+    s.day = 1; s.clock = 0;
+    applyAction(s, { type: 'closeApp' });
+    applyAction(s, { type: 'skipChain' });
+    expect(s.day).toBe(1);
+    expect(clockOf(s)).toBeGreaterThanOrEqual(18 * 60);
+  });
+});

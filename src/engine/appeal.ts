@@ -65,5 +65,7 @@ export function curtChance(state: GameState, c: Contact, npc: Npc): number {
   else if (c.interest >= 70) p -= TUNE_CURT.highInterestCut;
   if (!isNormalPurpose(npc.purpose)) p *= TUNE_CURT.deceptiveFactor;
   p -= 0.4 * attentiveness(state, npc); // 格上のこちらには親身
+  // 「よろしくお願いします」だけのプロフィールの相手は、格上でないと返事が薄い（2026-11-23）
+  if (npc.profileDepth === 'bare') p += 0.3 * (1 - attentiveness(state, npc));
   return clamp(p, 0.03, 0.9);
 }

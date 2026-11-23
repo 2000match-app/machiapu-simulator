@@ -174,8 +174,8 @@ function LifestyleInfo({ state }: { state: GameState }) {
   const days = w.days.length === 7 ? '毎日（シフトで休みあり）' : w.days.map((d) => WEEK[d]).join('・') + (w.rotatingOff ? `（週${w.rotatingOff}日はシフトで休み）` : '');
   const rows: [string, string][] = [
     ['仕事', `${ls.occupation}`],
-    ['勤務', w.kind === 'part' ? 'パート・アルバイト（決まった勤務の時間帯はなし）' : w.kind === 'none' ? 'なし' : `${days} ${timeLabel(w.start)}〜${timeLabel(w.end)}${w.kind === 'remote' ? '（在宅）' : ''}`],
-    ['睡眠', `${timeLabel(ls.sleep)}〜${timeLabel(ls.wake)}`],
+    ['勤務', w.kind === 'part' ? 'パート・アルバイト（決まった勤務の時間帯はなし）' : w.kind === 'none' ? 'なし' : `${days} ${timeLabel(w.start)}〜${timeLabel(w.end)}${w.kind === 'remote' ? '（在宅）' : '（通勤を含む）'}`],
+    ['睡眠', `${timeLabel(ls.sleep)}〜${timeLabel(ls.wake)}${w.kind === 'office' || w.kind === 'shift' ? '（出勤する日は、朝はアプリを開けない）' : ''}`],
   ];
   if (ls.overtime) rows.push(['残業', `会えない平日の夜は${timeLabel(ls.overtime.until)}ごろまで`]);
   const wfh = character(state).homeWorkPerWeek;

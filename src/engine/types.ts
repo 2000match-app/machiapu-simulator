@@ -187,6 +187,8 @@ export interface Npc extends ProfileBasics {
   fakeTitle?: string;
   /** プロフィールに年収を書いていない（女性NPCの1割。2026-11-09） */
   incomeHidden?: '未記入' | '未記載' | '秘密';
+  /** プロフィールの充実度（2026-11-23）：bare＝「よろしくお願いします」だけ、sparse＝趣味だけ、rich＝5行以上 */
+  profileDepth?: 'bare' | 'sparse' | 'normal' | 'rich';
   /** 夜職フォルダの写真の相手（2026-11-09）：bar＝メシ目＋ぼったくりバーへ勧誘、meshi＝高めの店を提案し交際にはならない */
   nightWork?: 'bar' | 'meshi';
   distanceMin: number;

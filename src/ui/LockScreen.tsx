@@ -7,20 +7,29 @@
 //   ロックを解除すると、いま出ている通知は消える（2026-11-14）
 import { useEffect, useRef, useState } from 'react';
 import type { Action } from '../engine/actions';
-import { GAME_MIN_PER_REAL_SEC, canOpenApp, clockOf, focusUnlocked, lifeNow, lockMode, noticeSection, skipMode, timeLabel, visibleNotices, visiblePending } from '../engine/clock';
+import { GAME_MIN_PER_REAL_SEC, canOpenApp, clockOf, focusUnlocked, lifeNow, lockChain, lockMode, noticeSection, skipMode, timeLabel, visibleNotices, visiblePending, type ChainStep } from '../engine/clock';
 import type { GameState, Notice } from '../engine/types';
 import { dateLabel, weekdayLabel } from './format';
 import type { Tab } from './GameShell';
 
-type Popup = { icon: string; title: string; sub: string };
+type Popup = { icon: string; title: string; sub: string; steps: ChainStep[]; open: string; openAt: string };
 
 function popupOf(state: GameState): Popup {
   const now = lifeNow(state);
   const until = now.untilLabel ?? '';
-  if (now.state === 'SLEEPING') return { icon: '🌙', title: '睡眠中...', sub: `${until}まで睡眠しています` };
-  if (now.state === 'WORKING') return { icon: now.icon, title: `${now.label}...`, sub: `${until}まで仕事をしています` };
-  if (now.label.includes('飲み会')) return { icon: now.icon, title: `${now.label}...`, sub: `${until}まで飲み会に参加しています` };
-  return { icon: now.icon, title: `${now.label}...`, sub: `${until}まで${now.label.replace(/中$/, '')}の予定です` };
+  // 続けて飛ばす時間帯（睡眠→通勤・仕事など）と、アプリを開けるようになる時刻（2026-11-23 指示）
+  const chain = lockChain(state);
+  const open = chain.openLabel ? (chain.afterWork ? '仕事が終わり次第、マチアプを開けます' : 'このあと、マチアプを開けます') : '';
+  const base = { steps: chain.steps, open, openAt: chain.openLabel ? `${chain.openLabel}から` : '' };
+  // 睡眠と勤務などが続くときは、1つのポップアップにまとめる（2026-11-23 指示）
+  if (chain.steps.length > 1) {
+    const lastStep = chain.steps[chain.steps.length - 1];
+    return { ...base, icon: chain.steps[0].icon, title: `${chain.steps.map((x) => x.label).join(' → ')}...`, sub: `${lastStep.untilLabel}まで、アプリを開けません` };
+  }
+  if (now.state === 'SLEEPING') return { ...base, icon: '🌙', title: '睡眠中...', sub: `${until}まで睡眠しています` };
+  if (now.state === 'WORKING') return { ...base, icon: now.icon, title: `${now.label}...`, sub: `${until}まで仕事をしています` };
+  if (now.label.includes('飲み会')) return { ...base, icon: now.icon, title: `${now.label}...`, sub: `${until}まで飲み会に参加しています` };
+  return { ...base, icon: now.icon, title: `${now.label}...`, sub: `${until}まで${now.label.replace(/中$/, '')}の予定です` };
 }
 
 function targetOf(n: Notice): { tab: Tab; npcId?: string } {
@@ -41,6 +50,7 @@ export function LockScreen({ state, act, onUnlock }: { state: GameState; act: (a
   stateRef.current = state;
   const [popup, setPopup] = useState<Popup | null>(null);
   const popupOn = useRef(false);
+  const popupShown = useRef(false);
   // 同じ表示（睡眠・勤務など）は2回目から短く（初回2秒、以降0.5秒。2026-11-14）
   const seenPopups = useRef(new Set<string>());
   const [showAll, setShowAll] = useState(false);
@@ -69,18 +79,20 @@ export function LockScreen({ state, act, onUnlock }: { state: GameState; act: (a
       if (mode === 'block') {
         popupOn.current = true;
         const pop = popupOf(s);
-        const ms = seenPopups.current.has(pop.title) ? 500 : 2000;
+        // 続きの時間帯（睡眠のあとの通勤・仕事）は、表示を出したまま短めに切り替える
+        const ms = popupShown.current ? 900 : seenPopups.current.has(pop.title) ? 700 : 2000;
         seenPopups.current.add(pop.title);
+        popupShown.current = true;
         setPopup(pop);
         timer = window.setTimeout(() => {
-          act({ type: 'skipBlock' });
+          act({ type: 'skipChain' });
           popupOn.current = false;
-          setPopup(null);
           last = performance.now();
           carry = 0;
         }, ms);
         return;
       }
+      if (popupShown.current) { popupShown.current = false; setPopup(null); }
       if (mode !== 'free') { carry = 0; return; }
       carry += (dt / 1000) * GAME_MIN_PER_REAL_SEC;
       const whole = Math.floor(carry);
@@ -236,6 +248,16 @@ export function LockScreen({ state, act, onUnlock }: { state: GameState; act: (a
             <div className="skip-icon" aria-hidden="true">{popup.icon}</div>
             <b>{popup.title}</b>
             <span>{popup.sub}</span>
+            {popup.steps.length > 0 && (
+              <ol className="skip-steps" aria-label="このあとの予定">
+                {popup.steps.map((st, i) => (
+                  <li key={`${st.label}-${i}`}>
+                    <i aria-hidden="true">{st.icon}</i><span>{st.label}</span><small>〜{st.untilLabel}</small>
+                  </li>
+                ))}
+              </ol>
+            )}
+            {popup.open && <p className="skip-open">📱 {popup.open}<small>{popup.openAt}</small></p>}
           </div>
         </div>
       )}

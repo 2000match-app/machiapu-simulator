@@ -253,7 +253,7 @@ dl.spec dd { margin: 0; }
 .np-spec { display: grid; grid-template-columns: 6em 1fr; gap: 2px 8px; font-size: 0.82rem; margin: 6px 0; }
 .np-spec dt { color: var(--muted); }
 .np-spec dd { margin: 0; }
-.np-text { font-size: 0.85rem; background: var(--surface); border-radius: 8px; padding: 6px 8px; margin: 0; }
+.np-text { font-size: 0.85rem; background: var(--surface); border-radius: 8px; padding: 6px 8px; margin: 0; white-space: pre-line; }
 .paid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
 
 /* トーク */
@@ -287,11 +287,13 @@ dl.spec dd { margin: 0; }
 .st-rel { background: #ffe1e8; color: #b23a55; font-weight: 700; }
 .st-end { background: #eee; color: #999; }
 .ended { margin-top: 12px; }
-.chat-head { display: flex; align-items: center; gap: 8px; background: var(--bg); padding: 8px 0; }
+.chat-head { display: flex; align-items: center; gap: 8px; background: var(--bg); padding: 8px 0; position: sticky; top: var(--sb-h, 0px); z-index: 4; border-bottom: 1px solid var(--line); }
 .ch-who { display: flex; gap: 8px; align-items: center; border: none; background: none; cursor: pointer; text-align: left; flex: 1; min-width: 0; }
 .ch-who small { display: block; color: var(--muted); font-size: 0.72rem; }
 .ch-head-side { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
-.ch-profile { font-size: 0.75rem; padding: 0; }
+.ch-profile { display: inline-flex; align-items: center; gap: 4px; font-size: 0.8rem; font-weight: 700; color: #fff; background: var(--accent); border: none; border-radius: 999px; padding: 6px 12px; cursor: pointer; box-shadow: 0 2px 6px rgba(232, 96, 122, 0.35); white-space: nowrap; }
+.ch-profile:hover { filter: brightness(1.06); }
+.ch-profile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .messages { display: flex; flex-direction: column; gap: 6px; padding: 8px 0 12px; }
 .msg { display: flex; flex-direction: column; max-width: 82%; }
 .msg.me { align-self: flex-end; align-items: flex-end; }
@@ -664,6 +666,16 @@ button.dp-day:focus-visible { outline: 2px solid var(--accent); outline-offset: 
 .lock-sec-title { margin: 6px 4px 0; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; opacity: 0.9; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.25); }
 .lock-other { margin-top: 8px; }
 .lock-card.static { cursor: default; background: rgba(255, 255, 255, 0.62); }
+/* マチアプ以外の通知は小さく（2026-11-23 指示） */
+.lock-other { gap: 5px; }
+.lock-other .lock-card { gap: 8px; padding: 6px 10px; border-radius: 12px; background: rgba(255, 255, 255, 0.5); }
+.lock-other .lc-icon { font-size: 0.95rem; width: 24px; height: 24px; border-radius: 6px; }
+.lock-other .lc-head { font-size: 0.66rem; padding-right: 0; }
+.lock-other .lc-from { font-size: 0.74rem; }
+.lock-other .lc-body { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lock-other .lc-from { display: inline; font-size: 0.74rem; margin-right: 6px; }
+.lock-other .lc-text { display: inline; font-size: 0.74rem; line-height: 1.3; }
+.lock-other .lock-sec-title { font-size: 0.7rem; opacity: 0.75; }
 .lock-life-card { cursor: default; background: rgba(255, 250, 240, 0.95); border-left: 4px solid #e8a33d; animation: skip-in 0.25s ease-out; }
 .lock-life-card .lc-text { white-space: pre-line; }
 .lock-empty { text-align: center; opacity: 0.8; font-size: 0.86rem; margin-top: 12px; }
@@ -679,6 +691,14 @@ button.dp-day:focus-visible { outline: 2px solid var(--accent); outline-offset: 
 .skip-icon { font-size: 2.6rem; animation: skip-pulse 1s ease-in-out infinite; }
 .skip-card b { font-size: 1.1rem; }
 .skip-card span { font-size: 0.88rem; color: #5b5468; }
+.skip-steps { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; width: 100%; }
+.skip-steps li { display: grid; grid-template-columns: 1.6em 1fr auto; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 10px; color: #8a8396; font-size: 0.85rem; text-align: left; transition: background 0.3s, color 0.3s; }
+.skip-steps li + li::before { content: '↓'; grid-column: 1 / -1; justify-self: start; margin: -4px 0 2px 4px; font-size: 0.7rem; color: #b5aec0; }
+.skip-steps li.now { background: #efeaf7; color: #1f1a2b; font-weight: 700; }
+.skip-steps li span { color: inherit; font-size: inherit; }
+.skip-steps li small { font-size: 0.75rem; }
+.skip-open { margin: 10px 0 0; padding: 8px 12px; border-radius: 12px; background: #fdeef1; color: #b23a55; font-weight: 700; font-size: 0.85rem; }
+.skip-open small { display: block; font-size: 0.75rem; font-weight: 600; opacity: 0.85; margin-top: 2px; }
 @keyframes skip-in { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes skip-pulse { 50% { transform: scale(1.08); } }
 @media (prefers-reduced-motion: reduce) { .skip-card, .skip-icon { animation: none; } }

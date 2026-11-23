@@ -26,7 +26,7 @@ function CardFace({ npc, reveal }: { npc: Npc; reveal?: string[] }) {
         <div className="sw-tags">
           {reveal?.map((t) => <span key={t} className="reveal">{t}</span>)}
           {!npc.profilePhotoVisible && <span>{npcPhotoLabel(npc)}</span>}
-          {npc.hobbies.slice(0, 2).map((h) => <span key={h}>{h}</span>)}
+          {npc.profileDepth !== 'bare' && npc.hobbies.slice(0, 2).map((h) => <span key={h}>{h}</span>)}
           {npc.marital !== 'never' && <span>{MARITAL_LABEL[npc.marital]}</span>}
         </div>
       </div>

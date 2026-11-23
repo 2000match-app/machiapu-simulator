@@ -42,7 +42,8 @@ export interface Lifestyle {
 const h = (hh: number, mm = 0) => hh * 60 + mm;
 const WEEKDAYS = [0, 1, 2, 3, 4];
 
-const office = (start = h(9), end = h(18), label = '仕事中'): WorkPattern => ({ kind: 'office', start, end, days: WEEKDAYS, label });
+// 勤務の時間帯は通勤を含む（2026-11-23 指示：7:30〜18:00＋残業。朝にアプリを開ける時間はない）
+const office = (start = h(7, 30), end = h(18), label = '通勤・仕事中'): WorkPattern => ({ kind: 'office', start, end, days: WEEKDAYS, label });
 
 /** 人物ごとの設定（既存の職業・休日・忙しさ・在宅の日と矛盾しないように） */
 export const LIFESTYLES: Record<string, Lifestyle> = {
@@ -61,7 +62,7 @@ export const LIFESTYLES: Record<string, Lifestyle> = {
   },
   // 圭：弁護士。期日前は遅くまで
   M02: {
-    occupation: '弁護士', work: office(h(9, 30), h(19)), wake: h(7), sleep: 1440,
+    occupation: '弁護士', work: office(h(8), h(19)), wake: h(7), sleep: 1440,
     overtime: { until: h(22), notices: ['明日の期日の書面、今夜中に確認お願いします', '依頼者から追加の相談が来ています'] },
     notices: ['準備書面のドラフト、共有フォルダに入れました', '来週の打ち合わせ、時間変更です'], noticeFrom: '事務所', noticeChance: 0.3,
   },
@@ -72,12 +73,12 @@ export const LIFESTYLES: Record<string, Lifestyle> = {
   },
   // 蓮：不動産営業（賃貸仲介）。火曜・水曜が定休、土日は出勤（2026-11-21 美容師から変更）
   M04: {
-    occupation: '不動産営業', work: { kind: 'shift', start: h(10), end: h(19, 30), days: [0, 3, 4, 5, 6], label: '店舗で勤務中' }, wake: h(8), sleep: 1440,
+    occupation: '不動産営業', work: { kind: 'shift', start: h(9), end: h(19, 30), days: [0, 3, 4, 5, 6], label: '通勤・店舗で勤務中' }, wake: h(8), sleep: 1440,
     notices: ['明日10時、内見の予約入りました', '今月の契約件数、店長から連絡あり', '反響のお客様、折り返しお願いします'], noticeFrom: '店長', noticeChance: 0.3,
   },
   // 悠斗：弁護士。期日前は遅くまで
   M05: {
-    occupation: '弁護士', work: office(h(9, 30), h(19)), wake: h(7), sleep: 1440,
+    occupation: '弁護士', work: office(h(8), h(19)), wake: h(7), sleep: 1440,
     overtime: { until: h(22), notices: ['明日の期日の準備、今夜中にお願いします', 'クライアントから急ぎの相談です'] },
     notices: ['契約書のレビュー、明日までにお願いします', '来週の出廷、時間が決まりました'], noticeFrom: '事務所', noticeChance: 0.3,
   },
@@ -105,7 +106,7 @@ export const LIFESTYLES: Record<string, Lifestyle> = {
   },
   // 誠：非正規の清掃職。朝からのシフト
   M10: {
-    occupation: '清掃', work: { kind: 'shift', start: h(8), end: h(16), days: [0, 1, 2, 3, 4, 5, 6], rotatingOff: 2, label: '清掃のシフト中' }, wake: h(6, 30), sleep: h(23),
+    occupation: '清掃', work: { kind: 'shift', start: h(7), end: h(16), days: [0, 1, 2, 3, 4, 5, 6], rotatingOff: 2, label: '通勤・清掃のシフト中' }, wake: h(6, 30), sleep: h(23),
     notices: ['明日、別のビルに入ってもらえる？', '来週のシフト表出ました'], noticeFrom: '現場', noticeChance: 0.25,
   },
   // 和樹：会社員。定時が多く、たまに飲み会
@@ -121,7 +122,7 @@ export const LIFESTYLES: Record<string, Lifestyle> = {
   },
   // 莉奈：販売職。土日も出勤、平日に週2日休み
   F02: {
-    occupation: '販売職', work: { kind: 'shift', start: h(10), end: h(19), days: [0, 1, 2, 3, 4, 5, 6], rotatingOff: 2, label: 'お店に出勤中' }, wake: h(8), sleep: 1440,
+    occupation: '販売職', work: { kind: 'shift', start: h(9), end: h(19), days: [0, 1, 2, 3, 4, 5, 6], rotatingOff: 2, label: '通勤・お店に出勤中' }, wake: h(8), sleep: 1440,
     notices: ['明日シフト入れそう？', '新作の入荷、明日の朝です', 'セールの準備、早めに来られる？'], noticeFrom: 'お店', noticeChance: 0.3,
   },
   // 美咲：会社員。週2日在宅、土日どちらかは予定
@@ -143,7 +144,7 @@ export const LIFESTYLES: Record<string, Lifestyle> = {
   // 葵：病院の看護師。日勤のシフト（土日も出る・週2日の不定休）＋月4回ほどの夜勤（dates.ts の nightShift）
   // 2026-11-13 公務員から医療事務、2026-11-18 看護師（クリニック）、2026-11-19 病院勤めに
   F06: {
-    occupation: '看護師', work: { kind: 'shift', start: h(8, 30), end: h(17, 30), days: [0, 1, 2, 3, 4, 5, 6], rotatingOff: 2, label: '病棟で勤務中' }, wake: h(6, 45), sleep: 1440,
+    occupation: '看護師', work: { kind: 'shift', start: h(7, 30), end: h(17, 30), days: [0, 1, 2, 3, 4, 5, 6], rotatingOff: 2, label: '通勤・病棟で勤務中' }, wake: h(6, 45), sleep: 1440,
     eventNotices: {
       夜勤: { text: '明日の夜勤、よろしくお願いします。申し送り多めです', at: h(18), from: '病棟の師長', daysBefore: 1 },
     },
@@ -151,7 +152,7 @@ export const LIFESTYLES: Record<string, Lifestyle> = {
   },
   // 千尋：派遣事務
   F07: {
-    occupation: '派遣事務', work: office(h(9), h(17, 30)), wake: h(7), sleep: 1440,
+    occupation: '派遣事務', work: office(h(7, 30), h(17, 30)), wake: h(7), sleep: 1440,
     notices: ['契約更新の面談、来週です', '明日の入力作業、多めです'], noticeFrom: '派遣会社', noticeChance: 0.2,
   },
   // 結衣：事務職
@@ -161,7 +162,7 @@ export const LIFESTYLES: Record<string, Lifestyle> = {
   },
   // 遥：医療事務。シフト勤務（土日も出ることがある）
   F09: {
-    occupation: '医療事務', work: { kind: 'shift', start: h(8, 30), end: h(17, 30), days: [0, 1, 2, 3, 4, 5], rotatingOff: 1, label: '病院で勤務中' }, wake: h(7), sleep: 1440,
+    occupation: '医療事務', work: { kind: 'shift', start: h(7, 30), end: h(17, 30), days: [0, 1, 2, 3, 4, 5], rotatingOff: 1, label: '通勤・病院で勤務中' }, wake: h(7), sleep: 1440,
     notices: ['明日のシフト、遅番に変更できる？', 'レセプトの締め、今週です'], noticeFrom: '病院', noticeChance: 0.3,
   },
   // 奈緒：パート勤務。固定の勤務ロックなし

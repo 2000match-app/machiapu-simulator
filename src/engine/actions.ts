@@ -1,5 +1,5 @@
 // プレイヤー操作の入口。同じシード・同じ操作列なら同じ結果になる（乱数状態は state.rng）。
-import { START_CLOCK, advanceFree, fastForward, focusUnlocked, afterDateScene, canOpenApp, isLifeNotice, nextFreeMinute, pushLifeNotice, skipBlock, useAppTime, visibleNotices, visiblePending } from './clock';
+import { START_CLOCK, advanceFree, fastForward, focusUnlocked, afterDateScene, canOpenApp, isLifeNotice, nextFreeMinute, pushLifeNotice, skipBlock, skipChain, useAppTime, visibleNotices, visiblePending } from './clock';
 import { advanceDays, advanceWeek, canRest, checkEnd, closeDay, continueAdvance, continueRest, isResting, startRest } from './advance';
 import { deliverOpenerNow, followUp, isPoliteReply, playerReply, publishPhoto, resolvePhotoSuggest, sendFirstMessage } from './chat';
 import { endContact } from './contact';
@@ -55,6 +55,7 @@ export type Action =
   /** ロック画面：自由時間に時刻を進める／睡眠・勤務・予定を終わりまで進める */
   | { type: 'advanceFree'; minutes: number }
   | { type: 'skipBlock' }
+  | { type: 'skipChain' }
   /** ロック画面：次の大事な通知まで早送り（2026-11-14） */
   | { type: 'fastForward' }
   /** トークに集中するモード（2026-11-15） */
@@ -143,6 +144,10 @@ export function applyAction(state: GameState, action: Action): void {
       break;
     case 'skipBlock':
       skipBlock(state);
+      autoLifeEvents(state);
+      break;
+    case 'skipChain':
+      skipChain(state);
       autoLifeEvents(state);
       break;
     case 'fastForward':
