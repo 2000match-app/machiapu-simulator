@@ -12,8 +12,8 @@ import { revealFacePhoto } from './photos';
 const run = (id: string) => DEV_SCENARIOS.find((s) => s.id === id)!.run();
 
 describe('顔かくしの素材', () => {
-  it('33枚すべての画像が public/npc にある', () => {
-    expect(FACE_PHOTOS).toHaveLength(33);
+  it('35枚（顔かくし33枚＋葵・悠斗の2枚）すべての画像が public/npc にある', () => {
+    expect(FACE_PHOTOS).toHaveLength(35);
     for (const p of FACE_PHOTOS) expect(fs.existsSync(path.join(__dirname, '../../public/npc', p.file)), p.file).toBe(true);
   });
 

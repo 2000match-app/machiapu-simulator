@@ -56,18 +56,22 @@ export const FACE_PHOTOS: FacePhoto[] = [
   f(31, 'F', 28, 'hf_20261110_091838_e22b80bc-2a4d-41da-8661-3e588048e075.png'),
   f(32, 'F', 24, 'hf_20261110_091839_5d61e53c-17ce-48db-ac53-35cd1828693b.png'),
   f(33, 'F', 23, 'hf_20261110_091839_988c3f72-f49e-463b-ad07-a54ec0c071e3.png'),
+  // 2026-11-25 ユーザー提供（顔かくしの素材とは別）。葵・悠斗の本当の顔専用で、NPCには使わない
+  f(34, 'F', 24, 'ChatGPT 画像 2026年11月25日 20_48_46.png'),
+  f(35, 'M', 33, 'ChatGPT 画像 2026年11月25日 20_49_03.png'),
 ];
 
 /**
  * 顔写真なしで始めるプレイヤーキャラの本当の顔（年齢と性別の近いものを仮に割り当て）。
  * 選べるのは悠斗（M05）と葵（F06）。ほかの4人は選択画面にないが、選べるようにした時のために決めておく。
  */
+// 悠斗と葵は 2026-11-25 にユーザー提供の画像（ChatGPT で作成）に差し替え：h35.jpg・h34.jpg（顔かくしの素材とは別。NPCには使わない）
 export const PLAYER_FACE: Record<string, string> = {
-  M05: 'h30.jpg', // 悠斗 33歳
+  M05: 'h35.jpg', // 悠斗 33歳
   M06: 'h01.jpg', // 和也 38歳
   M08: 'h05.jpg', // 直人 30歳
   F04: 'h21.jpg', // 沙織 34歳
-  F06: 'h33.jpg', // 葵 24歳
+  F06: 'h34.jpg', // 葵 24歳
   F07: 'h24.jpg', // 千尋 29歳
 };
 
@@ -75,4 +79,9 @@ export const PLAYER_FACE: Record<string, string> = {
 export const FACE_EXCLUDED = ['h04', 'h17', 'h18', 'h23', 'h26', 'h27', 'h28'];
 
 /** NPCの本当の顔に使う画像（プレイヤーキャラに割り当てた顔と、対象外の画像は除く） */
-export const NPC_FACE_POOL: FacePhoto[] = FACE_PHOTOS.filter((p) => !Object.values(PLAYER_FACE).includes(p.file) && !FACE_EXCLUDED.includes(p.id));
+/** 以前プレイヤーキャラに割り当てていた顔（前のセーブではプレイヤーの顔として出ているので、NPCには使わない） */
+const FORMER_PLAYER_FACES = ['h30.jpg', 'h33.jpg'];
+
+export const NPC_FACE_POOL: FacePhoto[] = FACE_PHOTOS.filter(
+  (p) => !Object.values(PLAYER_FACE).includes(p.file) && !FORMER_PLAYER_FACES.includes(p.file) && !FACE_EXCLUDED.includes(p.id),
+);

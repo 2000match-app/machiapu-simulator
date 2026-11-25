@@ -13,7 +13,7 @@
   },
   "F03": {
     "file": "F03.jpg",
-    "version": 4,
+    "version": 5,
     "approval": "approved",
     "source": "user_provided"
   },
@@ -25,7 +25,7 @@
   },
   "M04": {
     "file": "M04.jpg",
-    "version": 3,
+    "version": 4,
     "approval": "approved",
     "source": "user_provided"
   },
@@ -37,7 +37,7 @@
   },
   "M07": {
     "file": "M07.jpg",
-    "version": 2,
+    "version": 3,
     "approval": "approved",
     "source": "user_provided"
   },
@@ -55,7 +55,7 @@
   },
   "F10": {
     "file": "F10.jpg",
-    "version": 3,
+    "version": 4,
     "approval": "approved",
     "source": "user_provided"
   },

@@ -119,7 +119,7 @@ input, select, textarea { font-size: 16px; }
 /* 写真素材（public/npc/）：枠いっぱいに切り抜いて表示。スワイプの邪魔をしないよう指の操作は親に任せる */
 .scenery img, .npc-avatar img, .sw-photo img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; -webkit-user-drag: none; }
 .scenery:has(img) { overflow: hidden; }
-.npc-avatar { border-radius: 50%; overflow: hidden; flex: none; background: #eef0f4; border: 1px solid var(--line); }
+.npc-avatar { position: relative; border-radius: 50%; overflow: hidden; flex: none; background: #eef0f4; border: 1px solid var(--line); }
 .npc-avatar.sm { width: 40px; height: 40px; }
 .npc-avatar.md { width: 56px; height: 56px; }
 .npc-avatar.lg { width: 72px; height: 72px; }

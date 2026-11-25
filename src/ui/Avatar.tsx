@@ -3,9 +3,10 @@
 // ・相手NPC：提供素材の写真を割り当てた相手はその写真、それ以外は共通アイコン。ゲーム中は容姿の評価値を出さない（選択画面だけ）。
 // ・顔写真を公開していないプロフィール：風景・趣味の仮画像（顔が見える画像を流用しない）。
 // 「画像ファイルがない」ことと「プロフィールで顔を公開していない」ことは別の状態として扱う。
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import type { GameState, Npc } from '../engine/types';
+import { PHOTO_FOCUS } from '../engine/data/photoFocus';
 
 const SCENERY = [
   { bg: 'linear-gradient(160deg,#9fd3e6 0%,#d8eef5 55%,#7fb07a 56%,#5b8f58 100%)', icon: '⛰️', label: '山の写真' },
@@ -115,8 +116,33 @@ export function PhotoZoom({ src, alt, onClose }: { src: string; alt: string; onC
   );
 }
 
+/**
+ * 四角・丸のアイコンでの写真の切り抜き（2026-11-25：全身写真は顔が上の端にあり見切れるので、頭を中心に寄せて拡大する）。
+ * 写真は縦4:5。頭の位置は photoFocus.ts（Gemini で調べた値）。ない写真は従来どおり（CSS の object-position）。
+ */
+function focusStyle(file: string, size: string): CSSProperties | undefined {
+  if (size !== 'sm' && size !== 'md' && size !== 'lg' && size !== 'xl') return undefined;
+  const f = PHOTO_FOCUS[file];
+  if (!f) return undefined;
+  const [cx, cy, z] = f;
+  const w = z * 100; // 画像の幅（枠の幅に対する%）
+  const h = z * 125; // 画像の高さ（枠の高さに対する%。枠は正方形）
+  const left = Math.min(0, Math.max(100 - w, 50 - cx * w));
+  const top = Math.min(0, Math.max(100 - h, 42 - cy * h)); // 頭が少し上寄りに来るように
+  return { position: 'absolute', width: `${w}%`, height: `${h}%`, left: `${left}%`, top: `${top}%`, maxWidth: 'none', objectFit: 'fill' };
+}
+
 export function NpcAvatar({ npc, size = 'md' }: { npc: Npc; size?: 'sm' | 'md' | 'lg' | 'big' | 'xl' | 'hero' }) {
   const [zoom, setZoom] = useState(false);
+  const [broken, setBroken] = useState(false);
+  // 削除した写真（プリクラ風の素材など）を使っている前のセーブでは、顔写真なしの表示にする
+  if (npc.photo && broken) {
+    return (
+      <div className={`npc-avatar ${size}`}>
+        <Scenery seed={npc.id} compact />
+      </div>
+    );
+  }
   if (npc.photo) {
     const alt = npc.profilePhotoVisible ? `${npc.name}のプロフィール写真` : '風景・料理の写真（顔写真なし）';
     // 小さいアイコンは押すと大きく表示（大きい写真はスワイプなどに使うので対象外）
@@ -128,7 +154,7 @@ export function NpcAvatar({ npc, size = 'md' }: { npc: Npc; size?: 'sm' | 'md' |
         aria-label={zoomable ? `${npc.name}の写真を大きく表示` : undefined}
         onClick={zoomable ? (e) => { e.stopPropagation(); e.preventDefault(); setZoom(true); } : undefined}
       >
-        <img src={npcPhotoUrl(npc.photo)} alt={alt} draggable={false} />
+        <img src={npcPhotoUrl(npc.photo)} alt={alt} draggable={false} style={focusStyle(npc.photo, size)} onError={() => setBroken(true)} />
         {zoom && <PhotoZoom src={npcPhotoUrl(npc.photo)} alt={alt} onClose={() => setZoom(false)} />}
       </div>
     );

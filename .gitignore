@@ -12,3 +12,6 @@ tsconfig.tsbuildinfo
 .claude/
 dist-hensachi
 _site
+# 写真の修正前の元画像・見比べ用の画像（ローカルだけに置く。2026-11-25）
+production/npc-purikura-original
+production/*-before-after.jpg
