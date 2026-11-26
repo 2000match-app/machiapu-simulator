@@ -1,9 +1,7 @@
-// プロフィール見直し：条件の確認、14日経過後の写真公開、期限の見直し、履歴。ライフは回復しない（休息はなし）。
+// プロフィール見直し：条件の確認、14日経過後の写真公開、期限の見直し、支出の履歴。ライフは回復しない（休息はなし）。
+// 生活リズム・セーブ・ライフの増減の欄は 2026-11-26 の指示で外した（タイトルへはヘッダーのリンクから）。
 import { useState } from 'react';
 import { focusUnlocked } from '../engine/clock';
-import type { GameState } from '../engine/types';
-import { lifestyleOf } from '../engine/data/lifestyles';
-import { timeLabel } from '../engine/clock';
 import { canPublishPhoto } from '../engine/chat';
 import { isMember, memberFee } from '../engine/life';
 import { DRINKING_LABEL, HOLIDAY_LABEL, MARITAL_LABEL, SMOKING_LABEL, educationInGame } from '../engine/data/characters';
@@ -17,11 +15,10 @@ import { PLAYER_FACE } from '../engine/data/faceReveal';
 import { HistoryPanel } from './HistoryPanel';
 import { man, prefsSummary } from './format';
 
-export function MyPageTab({ state, act, onQuit, onRestart }: TabProps & { onQuit: () => void; onRestart: () => void }) {
+export function MyPageTab({ state, act }: TabProps) {
   const ch = character(state);
   const face = PLAYER_FACE[ch.id];
   const [confirmPublish, setConfirmPublish] = useState(false);
-  const [confirmRestart, setConfirmRestart] = useState(false);
   const remainingDeadline = state.player.deadlineMonths - state.day / DAYS_PER_MONTH;
   const p = state.player.prefs;
   const appYears = Math.floor(state.player.appHistoryDays / DAYS_PER_MONTH / 12);
@@ -119,12 +116,6 @@ export function MyPageTab({ state, act, onQuit, onRestart }: TabProps & { onQuit
       </section>
 
       <section className="card">
-        <h2>生活リズム</h2>
-        <LifestyleInfo state={state} />
-        <p className="small muted">アプリを閉じるとロック画面になり、時間が進みます（自由時間は約13秒で1日）。睡眠・仕事・予定の間はアプリを開けません。</p>
-      </section>
-
-      <section className="card">
         <h2>通知</h2>
         <p className="small muted">オフにした通知はロック画面に出ません（届いたいいね・メッセージはアプリで見られます）。</p>
         <label className="toggle-row">
@@ -142,19 +133,6 @@ export function MyPageTab({ state, act, onQuit, onRestart }: TabProps & { onQuit
         {state.partnerId && <p className="small muted">交際中は、いいねの通知を出さず、恋人からの連絡まで早送りします。</p>}
       </section>
 
-      <section className="card">
-        <h2>セーブ</h2>
-        <p className="small muted">操作のたびに自動保存しています（このブラウザ内）。シード：{state.seed}</p>
-        <div className="row">
-          <button className="btn ghost" onClick={onQuit}>タイトルへ戻る</button>
-          {!confirmRestart ? (
-            <button className="btn ghost danger" onClick={() => setConfirmRestart(true)}>セーブを消して最初から</button>
-          ) : (
-            <button className="btn danger" onClick={onRestart}>本当に消す</button>
-          )}
-        </div>
-      </section>
-
       <section className="card thanks" aria-label="Special thanks">
         <h2>Special thanks</h2>
         <ul className="thanks-list">
@@ -162,27 +140,5 @@ export function MyPageTab({ state, act, onQuit, onRestart }: TabProps & { onQuit
         </ul>
       </section>
     </div>
-  );
-}
-
-const WEEK = ['月', '火', '水', '木', '金', '土', '日'];
-
-/** 人物の生活リズム（2026-11-13）：アプリを開けない時間帯の目安 */
-function LifestyleInfo({ state }: { state: GameState }) {
-  const ls = lifestyleOf(state.characterId);
-  const w = ls.work;
-  const days = w.days.length === 7 ? '毎日（シフトで休みあり）' : w.days.map((d) => WEEK[d]).join('・') + (w.rotatingOff ? `（週${w.rotatingOff}日はシフトで休み）` : '');
-  const rows: [string, string][] = [
-    ['仕事', `${ls.occupation}`],
-    ['勤務', w.kind === 'part' ? 'パート・アルバイト（決まった勤務の時間帯はなし）' : w.kind === 'none' ? 'なし' : `${days} ${timeLabel(w.start)}〜${timeLabel(w.end)}${w.kind === 'remote' ? '（在宅）' : '（通勤を含む）'}`],
-    ['睡眠', `${timeLabel(ls.sleep)}〜${timeLabel(ls.wake)}${w.kind === 'office' || w.kind === 'shift' ? '（出勤する日は、朝はアプリを開けない）' : ''}`],
-  ];
-  if (ls.overtime) rows.push(['残業', `会えない平日の夜は${timeLabel(ls.overtime.until)}ごろまで`]);
-  const wfh = character(state).homeWorkPerWeek;
-  if (wfh) rows.push(['在宅勤務', `週${wfh}日（その日は勤務中もアプリを開ける）`]);
-  return (
-    <dl className="spec small">
-      {rows.map(([k, v]) => (<div key={k} className="row"><dt>{k}</dt><dd>{v}</dd></div>))}
-    </dl>
   );
 }

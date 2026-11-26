@@ -260,7 +260,7 @@ export function GameShell({ state, act, onQuit, onRestart, nav }: { state: GameS
           {shownTab === 'likes' && <LikesTab {...props} />}
           {shownTab === 'talk' && <TalkTab {...props} openNpc={openNpc} setOpenNpc={setOpenNpc} />}
           {tab === 'date' && <DateTab {...props} />}
-          {tab === 'me' && <MyPageTab {...props} onQuit={onQuit} onRestart={onRestart} />}
+          {tab === 'me' && <MyPageTab {...props} />}
         </main>
         <nav className="tabbar" aria-label="メニュー">
           {([
