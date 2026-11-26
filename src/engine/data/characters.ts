@@ -431,7 +431,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     // 2026-11-14：跡見学園女子大学卒に（11/13 は日本女子大学、以前は専門卒）。学歴の段階は 大東亜帝国 相当として扱う（画面には大学群を出さない）
     id: 'F08', gender: 'F', name: '結衣', age: 28, job: '事務職',
     education: { kind: 'university', group: '大東亜帝国', school: '跡見学園女子大学' },
-    incomeYen: 260 * man, incomeLabel: '400万円以下', heightCm: 155, looks: 3.5, photoInitiallyVisible: true, // 容姿3.5・写真は p0749（2026-11-18 指示）
+    incomeYen: 260 * man, incomeLabel: '400万円以下', heightCm: 155, looks: 3.5, photoInitiallyVisible: true, // 容姿3.5・写真は p0749（2026-11-18 指示）→ 2026-11-26 ユーザー提供の画像に差し替え
     datingExperience: 'あり', children: 0,
     areaId: 'itabashi', smoking: 'none', drinking: 'sometimes', marital: 'never', holiday: 'weekend',
     baseDistanceMin: 60, lookPreference: 4,
