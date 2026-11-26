@@ -137,6 +137,7 @@ export function MyPageTab({ state, act }: TabProps) {
         <h2>Special thanks</h2>
         <ul className="thanks-list">
           <li>陰キャ文学 <span className="muted">@cheeeee9</span></li>
+          <li>製造くん <span className="muted">@0315JTC</span></li>
         </ul>
       </section>
     </div>

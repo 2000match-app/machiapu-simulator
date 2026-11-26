@@ -282,7 +282,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     monthlyBudgetYen: 3 * man, appHistoryMonths: 12, relationshipDeadlineMonths: 18,
     initialPreference: prefFor(27, 'chuo', { ageMin: 25, ageMax: 33, minIncomeYen: 800 * man }),
     tagline: '美人バリキャリ。容姿もよく、かつキャリアも高い', // 2026-11-21 指示
-    lifeNote: '東京都中央区在住（2026-11-14 指示。以前は世田谷区）。アプリ歴1年。交際開始の希望まで18か月。',
+    lifeNote: '東京都中央区在住。アプリ歴1年。交際開始の希望まで18か月。', // 住まいは 2026-11-14 指示で中央区に（以前は世田谷区）
     freeSlotsPerMonth: 8, weekendLimited: false,
     homeWorkPerWeek: 2, weekendPlans: ['ピラティス', '友達とお出かけ'],
     prologue: ['大手企業で働いて5年目。仕事も見た目も、自分なりに磨いてきた。', 'だからこそ、相手にも妥協したくない。同年代で、年収800万円以上で、見た目も素敵な人。', 'アプリを開けば、いいねは毎日のように届く。……なのに、どうして「この人」という相手に出会えないのだろう。'],
@@ -440,7 +440,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     // 高望み：年収700万円以上・身長172cm以上・大卒以上・同年代〜少し上
     initialPreference: prefFor(28, 'itabashi', { ageMin: 27, ageMax: 35, minIncomeYen: 600 * man, heightMin: 172, universityOnly: true }),
     tagline: 'フラッペ女子。低キャリアの実家暮らし。容姿は平均以上', // 2026-11-21 指示
-    lifeNote: '東京都板橋区の実家暮らし（2026-11-14 指示）。跡見学園女子大学を出て事務職。手取りは美容と旅行で使い切っている。いいねは多く届くが、自分の希望に合う相手は少ない。',
+    lifeNote: '東京都板橋区の実家暮らし。跡見学園女子大学を出て事務職。手取りは美容と旅行で使い切っている。いいねは多く届くが、自分の希望に合う相手は少ない。', // 板橋区の実家暮らしは 2026-11-14 指示
     freeSlotsPerMonth: 8, weekendLimited: false,
     prologue: ['跡見学園女子大学を出て、都内の会社で事務をしている。手取りは18万円。実家暮らしだけど、美容院とネイルと旅行で毎月きれいに消えていく。', '友達がインスタに載せるホテルのアフタヌーンティーが、遠い世界に見える。', '見た目には少し自信がある。お金に余裕のある人と出会えたら、この生活も変わるかもしれない。'],
     rates: { receivedPer30: [120, 350], sendSuccess: 0.4, postDateRejection: 0.3 },
