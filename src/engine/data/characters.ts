@@ -217,7 +217,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     constraints: {},
     monthlyBudgetYen: 1 * man, appHistoryMonths: 12, relationshipDeadlineMonths: 12,
     initialPreference: prefFor(35, 'tokorozawa'),
-    tagline: 'マイルド弱者。……',
+    tagline: '。。。', // 2026-11-26 指示
     lifeNote: '埼玉県所沢市で一人暮らし。中小企業の会社員。交際経験はなく、女性と二人で出かけたこともほとんどない。',
     freeSlotsPerMonth: 8, weekendLimited: false,
     prologue: ['35歳。中小企業で、真面目に働いてきた。女性と2人で出かけたことは、ほとんどない。', '実家の母に「いい人はいないの？」と聞かれるたび、話をそらしてきた。', '今年こそ変わりたい。勇気を出して、マッチングアプリに登録した。'],
@@ -480,7 +480,7 @@ export const CHARACTERS: PlayableCharacter[] = [
     constraints: {},
     monthlyBudgetYen: 0.8 * man, appHistoryMonths: 96, relationshipDeadlineMonths: 6,
     initialPreference: prefFor(42, 'hachioji', { ageMin: 30, ageMax: 39 }),
-    tagline: 'マイルド弱者。……',
+    tagline: '。。。', // 2026-11-26 指示
     lifeNote: '東京都八王子市在住。パート勤務。アプリ歴8年。交際開始の希望まで6か月。',
     freeSlotsPerMonth: 8, weekendLimited: false,
     prologue: ['42歳。パートで働きながら、アプリを続けて8年になる。何人とも会ったけれど、誰とも続かなかった。', 'それでも理想は下げられない。30代で、見た目のいい人。友人には「そろそろ現実を見なよ」と言われる。', 'あと半年。これで最後にしようと決めている。'],
