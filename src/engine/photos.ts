@@ -6,6 +6,7 @@ import { NPC_FACE_POOL } from './data/faceReveal';
 import { FEMALE_PHOTOS, MALE_PHOTOS, type PhotoEducation, type PhotoTemplate } from './data/npcPhotos';
 import { FEMALE_NAMES, MALE_NAMES, MALE_JOBS, UNIVERSITIES } from './data/npcPool';
 import { applyProfileDepth } from './profileDepth';
+import { cringeBio, rollCringe } from './cringe';
 import { generateDetails } from './profileDetails';
 import { JOB_MIN_AGE, MAKER_AREA_WEIGHTS, isMakerJob, medicalEducation, normCdf, passesPlayerPrefs, profileText } from './npc';
 import { getCharacter } from './data/characters';
@@ -114,6 +115,12 @@ function withTemplate(state: GameState, npc: Npc, t: PhotoTemplate): Npc {
   }
   // プロフィールの充実度（2026-11-23 指示）：よろしくだけ・趣味だけ・ふつう・充実（5行以上）。推し活も
   applyProfileDepth(rng, n, profileText(rng, n.purpose, n.hobbies, n.job) + (t.livesWithParents ? ' 今は実家暮らしです。' : ''));
+  // ウケ狙いの痛い人（容姿2〜4の2%。2026-11-27 指示）：「‼️」だらけの自己紹介。質問できる数はふつうのプロフィールと同じ
+  if (rollCringe(state.seed, n)) {
+    n.cringe = true;
+    n.profileDepth = 'normal';
+    n.profileText = cringeBio(state.seed, n);
+  }
   // 基本情報（出身地・兄弟・ペット・結婚の意思など）と話の材料（2026-11-23）。別の乱数列で、ほかの設定をずらさない
   n.details = generateDetails(Rng.fromSeed(state.seed, 'details', npc.id), n, !!t.livesWithParents);
   const prestige = MALE_JOBS.find((j) => j.name === n.job)?.prestige

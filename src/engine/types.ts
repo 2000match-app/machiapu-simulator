@@ -197,6 +197,8 @@ export interface Npc extends ProfileBasics {
   hasChildren: boolean;
   hobbies: string[];
   profileText: string;
+  /** ウケ狙いの痛いプロフィール・メッセージを送ってくる人（容姿2〜4の2%。2026-11-27 指示）。「こんばんワニ‼️」など */
+  cringe?: boolean;
   /** 人気の分位 0..1（1が最上位） */
   popularity: number;
   prefs: {

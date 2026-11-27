@@ -6,6 +6,7 @@ import { TUNE_FUNNEL, TUNE_MALE_EMPTY, TUNE_REPLY } from './data/rules';
 import { pushMsg } from './contact';
 import { character, withRng } from './state';
 import { delayByLevel, type Level } from './talkTemp';
+import { cringeGag, cringeGreeting, cringify } from './cringe';
 import type { Contact, GameState, Npc } from './types';
 
 export function vars(state: GameState, npc: Npc): Record<string, string> {
@@ -31,7 +32,17 @@ export function npcSay(state: GameState, c: Contact, topicKey: string, opts: { a
   });
   // 直前の自分のメッセージは既読になる
   for (const m of c.messages) if (m.from === 'me') m.read = true;
-  pushMsg(c, state.day, 'them', text);
+  if (npc?.cringe) {
+    // ウケ狙いの痛い人（2026-11-27）：最初はダジャレの挨拶、「！」は「‼️」、ときどき自分でボケる。別の乱数列で、会話の流れはずらさない
+    const r = Rng.fromSeed(state.seed, 'cringe-say', c.npcId, c.messages.length);
+    const first = !c.messages.some((m) => m.from === 'them');
+    const gag = opts.awaitMe !== false ? cringeGag(c, npc, r) : undefined;
+    if (first) pushMsg(c, state.day, 'them', cringeGreeting(state.clock ?? 20 * 60, r));
+    pushMsg(c, state.day, 'them', cringify(text, r));
+    for (const g of gag ?? []) pushMsg(c, state.day, 'them', g);
+  } else {
+    pushMsg(c, state.day, 'them', text);
+  }
   state.week.repliesReceived = (state.week.repliesReceived ?? 0) + 1;
   if (opts.awaitMe !== false) {
     c.awaitingMe = true;
