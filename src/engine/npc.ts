@@ -242,13 +242,20 @@ export const HENSACHI_TUNE = {
   // 男性
   // 169cm以下の倍率 0.7→0.84（2026-11-21 指示：大輔（東大・年収900万・169cm）が45と低すぎた。54くらいに）
   maleRichIncomeMan: 600, maleRichLooksWeight: 3.5, maleShortCm: 169, maleShortMult: 0.84,
+  /**
+   * 身長の標準値の上限・下限（2026-11-28 指示）：上は178cmあたりで頭打ち（186cmの容姿3・年収400万が69は高すぎ、60くらいに）、
+   * 下は165.5cmあたりで止める（169cm以下の倍率と二重に下がりすぎないように）
+   */
+  maleHeightZMax: 1.3, maleHeightZMin: -1.0,
+  /** 低身長の倍率を、容姿が4・5のときはゆるめる（顔が良ければ身長は気にされにくい。2026-11-28） */
+  maleShortMultLooks: { 4: 0.88, 5: 0.92 } as Record<number, number>,
   /** 容姿2以下は、ほかがどれだけ良くても偏差値50まで（2026-11-16） */
   maleLowLooksCap: 50,
   /**
-   * 男性の年齢の倍率（上から当てはまるもの。2026-11-28 指示：若いほど高く、35歳から下がる）。
-   * 26歳以下1.1・27〜30歳1.05・31〜34歳1.0・35〜39歳0.92・40歳以上0.82。男性NPC全体の平均がほぼ変わらない強さにした
+   * 男性の年齢の倍率（上から当てはまるもの。2026-11-28 指示：若いほど高く、35歳から下がり、40代は大きく下がる）。
+   * 26歳以下1.1・27〜30歳1.05・31〜34歳1.0・35〜39歳0.92・40〜44歳0.7・45歳以上0.55
    */
-  maleAge: [[40, 0.82], [35, 0.92], [31, 1], [27, 1.05], [0, 1.1]] as [number, number][],
+  maleAge: [[45, 0.55], [40, 0.7], [35, 0.92], [31, 1], [27, 1.05], [0, 1.1]] as [number, number][],
   // 女性
   femaleLooksWeight: 1.22,
   /** 容姿2以下はさらに下げる（容姿2と3の間に崖。2026-11-16）。1.2→2.05（2026-11-21 指示：葵が52と高すぎた。47くらいに） */
@@ -274,7 +281,7 @@ export const FACELESS_LOOKS = 2;
 /**
  * 偏差値（容姿・身長・学歴・年収・年齢）。NPCにもプレイヤーにも同じ式を使う。値は HENSACHI_TUNE（2026-11-28 にコメントを今の値に合わせた）：
  * - 男性：容姿・身長・学歴・年収の標準値の和。年収600万円以上で容姿3を上回るときは容姿の重み3.5倍（容姿5・年収600万＞容姿3・年収1000万）。
- *   身長169cm以下は0.84倍、年齢の倍率（maleAge）、容姿2以下は50まで
+ *   身長は165.5〜178cm相当で頭打ち、169cm以下は0.84倍（容姿4は0.88倍・容姿5は0.92倍）、年齢の倍率（maleAge）、容姿2以下は50まで
  * - 女性：容姿の重み1.22倍（容姿2以下はさらに下げる）、高卒・専門卒の下げは弱め、年収は600万円以上ほぼ同じ・400〜600万円一定・400万円未満で下がる、
  *   全体を +10.5、身長の倍率（femaleHeight）、年齢の倍率（femaleAge）、大学がMARCH以上なら1.1〜1.2倍
  * 範囲は20〜80
@@ -300,11 +307,11 @@ export function hensachiOf(npc: Pick<Npc, 'gender' | 'heightCm' | 'education' | 
     // 容姿の重みを大きくするのは、年収600万円以上で容姿3を上回るときだけ（2026-11-16：蓮（容姿5・年収400万）が高く出すぎた）
     const w = looksValue > 3 && incMan >= t.maleRichIncomeMan ? t.maleRichLooksWeight : 1;
     const looks = ((looksValue - 3) / 1.1) * w;
-    const height = (npc.heightCm - 171) / 5.5;
+    const height = Math.max(t.maleHeightZMin, Math.min(t.maleHeightZMax, (npc.heightCm - 171) / 5.5));
     const edu = (eduScore - 1.1) / 0.9;
     const income = (Math.log(incMan) - Math.log(450)) / 0.45;
     h = 50 + 10 * ((looks + height + edu + income) / 2); // 4つの独立した標準値の和のばらつきは2
-    if (npc.heightCm <= t.maleShortCm) h *= t.maleShortMult;
+    if (npc.heightCm <= t.maleShortCm) h *= t.maleShortMultLooks[Math.floor(looksValue)] ?? t.maleShortMult;
     const ageHit = npc.age !== undefined ? t.maleAge.find(([a]) => npc.age! >= a) : undefined;
     if (ageHit) h *= ageHit[1];
     if (looksValue <= 2) h = Math.min(h, t.maleLowLooksCap);
