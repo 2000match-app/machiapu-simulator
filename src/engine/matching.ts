@@ -1,5 +1,6 @@
 // 検索・いいね送信・受信いいね（仕様v0.3 §6）。
 // 受信いいね・送信成立・相互マッチ・会話成立は別指標として数え、同じ相手を送受信で二重計上しない。
+import { TUNE_FOOTPRINT, addVisitorsDaily, footprintAfterLike, footprintFromLiker, visitedBeforeLike } from './footprints';
 import { calibrationFor, estimateCandidates, passesNpcPrefs, passesPlayerPrefs, popularTop10, rawSendMultiplier } from './npc';
 import { recoverOnce } from './life';
 import { playerPopularity } from './appeal';
@@ -120,7 +121,9 @@ export function sendLike(state: GameState, npcId: string): boolean {
   const c = ensureContact(state, npcId, false);
   c.stage = 'like_sent';
   c.sentLikeDay = state.day;
-  const p = sendProbability(state, npc);
+  // あしあとを付けてくれた相手は少しマッチしやすい（2026-11-28）
+  const p = Math.min(0.95, sendProbability(state, npc) * (visitedBeforeLike(state, npcId) ? TUNE_FOOTPRINT.likeBackBoost : 1));
+  footprintAfterLike(state, npcId);
   const willMatch = withRng(state, (rng) => rng.chance(p));
   c.likeWillMatch = willMatch;
   c.likeResolveDay = willMatch
@@ -185,11 +188,24 @@ export function becomeMatched(state: GameState, c: Contact): void {
   }
 }
 
+/**
+ * 新規会員の傾斜（2026-11-28 指示：初週に多く届き、だんだん減っていく）。
+ * 登録日 2.2倍 → 1週目の平均 約1.8倍・2週目 約1.3倍・4週目 約0.9倍 → 0.8倍に落ち着く。
+ * 3か月の平均はほぼ1倍で、全体の件数は以前とあまり変わらない
+ */
+export const TUNE_NEWCOMER = { peak: 2.2, floor: 0.8, days: 10 };
+export function newcomerFactor(day: number): number {
+  return TUNE_NEWCOMER.floor + (TUNE_NEWCOMER.peak - TUNE_NEWCOMER.floor) * Math.exp(-day / TUNE_NEWCOMER.days);
+}
+
 /** 毎日：受信いいねの到着（休息中は止まる） */
 export function receiveLikesDaily(state: GameState): void {
   if (state.restingUntil !== undefined && state.day <= state.restingUntil) return;
   const boost = state.boostUntil !== undefined && state.day <= state.boostUntil ? TUNE_BOOST.receivedMultiplier : 1;
-  const n = withRng(state, (rng) => rng.poisson((state.received.monthLambda / 30) * boost));
+  // 新規会員のうちは多く届き、だんだん減っていく（2026-11-28 指示）
+  const perDay = (state.received.monthLambda / 30) * boost * newcomerFactor(state.day);
+  addVisitorsDaily(state, perDay);
+  const n = withRng(state, (rng) => rng.poisson(perDay));
   if (n > 0) {
     state.received.total += n;
     state.received.unseen += n;
@@ -227,6 +243,7 @@ export function loadReceived(state: GameState, count: number, onlyMatchingPrefs 
     if (!npc) { misses++; continue; }
     misses = 0;
     state.stats.receivedReviewed += 1;
+    footprintFromLiker(state, npc.id);
     state.received.queue.push(npc.id);
     out.push(npc.id);
   }

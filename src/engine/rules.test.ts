@@ -593,7 +593,8 @@ describe('トークの選択肢と親密度（2026-11-03）', () => {
       while (s.pending.length > 0) {
         const ev = s.pending[0];
         if (ev.kind === 'e22') reminders++;
-        applyAction(s, { type: 'resolve', uid: ev.uid, choiceId: ev.kind === 'e22' ? 'postpone' : ev.choices[0].id });
+        // 会う選択を続けると3回のデートでクリアして止まるので、週の過ごし方は電話にする（衝突の落ち着き方だけを見る）
+        applyAction(s, { type: 'resolve', uid: ev.uid, choiceId: ev.kind === 'e22' ? 'postpone' : ev.kind === 'rel_week' ? 'call' : ev.choices[0].id });
       }
       closeDay(s);
     }

@@ -527,6 +527,8 @@ export function resolveRelationshipEvent(state: GameState, ev: PendingEvent, cho
       } else if (phase === 1) {
         if (choiceId === 'share' && works) {
           rel.health += Math.round(6 * fit);
+          // 未解消の衝突も、ここで具体的に決めたら解消（2026-11-28 修正：解消済みの印だけ付いて未解消のまま残り、衝突の場面が二度と出ずに止まっていた）
+          rel.unresolvedClash = false;
           c.flags.clashResolved = true;
           c.flags.burdenResolved = true;
           addFeed(state, '負担と会う頻度を具体的に決めた。少し肩の力が抜けた。', 'good', c.npcId);

@@ -2,7 +2,8 @@
 // もらったいいねは実際のアプリと同じく絞り込みはなく、スクロールすると続きが出てくる。
 // 未確認のまま置いておいてもライフは減らない（受信件数と実際に対応した人数は別に記録）。
 // 送ったいいねは「さがす」から消えた相手をここで確認できる（結果は確定日まで「反応待ち」）。
-import { useEffect, useState } from 'react';
+// あしあと（2026-11-28）：自分のプロフィールを見た相手。いいねを送った相手は高い確率でここに来る。ここからいいねできる。
+import { useEffect, useState, type ReactNode } from 'react';
 import { areaLabel } from '../engine/data/areas';
 import type { Contact, GameState, Npc } from '../engine/types';
 import type { TabProps } from './GameShell';
@@ -11,8 +12,9 @@ import { NpcAvatar, npcRevealTags } from './Avatar';
 import { Sentinel, Sheet } from './common';
 import { SwipeDeck } from './SwipeDeck';
 import { incomeOf } from './format';
+import { agoLabel, newFootprintCount, visibleFootprints } from '../engine/footprints';
 
-type Box = 'received' | 'sent';
+type Box = 'received' | 'sent' | 'footprints';
 
 function sentStatus(c: Contact): { label: string; tone: string } {
   if (c.stage === 'like_sent') return { label: '反応待ち', tone: 'wait' };
@@ -72,6 +74,67 @@ function SentList({ state, go, act }: Pick<TabProps, 'state' | 'go' | 'act'>) {
             : <p className="muted small">{sentStatus(open.c).label}（{open.c.sentLikeDay! + 1}日目にいいね）</p>}
         >
           <NpcProfile npc={open.npc} />
+        </Sheet>
+      )}
+    </>
+  );
+}
+
+/** あしあと：自分のプロフィールを見た相手（新しい順） */
+function FootprintList({ state, act, go }: TabProps) {
+  const [limit, setLimit] = useState(20);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [seenAt] = useState(state.footprintsSeenAt ?? -1);
+  const visitors = state.footprintVisitors ?? 0;
+  // 開いたら既読にする。見ただけの人のプロフィールは、開いたときに少しずつ作る
+  useEffect(() => { act({ type: 'seeFootprints' }); }, [act]);
+  useEffect(() => {
+    if (visitors > 0 && visibleFootprints(state).length < limit) act({ type: 'loadFootprints', count: 10 });
+  }, [visitors, limit, act, state]);
+  const list = visibleFootprints(state);
+  const openNpc = openId ? state.npcs[openId] : undefined;
+  const status = (npcId: string): ReactNode => {
+    const c = state.contacts[npcId];
+    if (c) {
+      const st = sentStatus(c);
+      return st.tone === 'match'
+        ? <button className="btn small primary" onClick={() => go('talk', npcId)}>トークへ</button>
+        : <span className={`sent-status ${st.tone}`}>{c.sentLikeDay !== undefined ? st.label : 'マッチ（終了）'}</span>;
+    }
+    if (state.received.queue.includes(npcId)) {
+      return <button className="btn small like" onClick={() => act({ type: 'acceptReceived', npcId })}>♡ いいね返し</button>;
+    }
+    return <button className="btn small like" onClick={() => act({ type: 'like', npcId })}>♡ いいね</button>;
+  };
+  return (
+    <>
+      <div className="likes-head">
+        <span>あしあと <b>{list.length.toLocaleString()}</b>件</span>
+        <span className="muted small">あなたのプロフィールを見た人</span>
+      </div>
+      {list.length === 0 && visitors === 0 && <p className="card muted">まだあしあとはありません。いいねを送ると、相手が見に来ることがあります。</p>}
+      <ul className="grid">
+        {list.slice(0, limit).map((f) => {
+          const npc = state.npcs[f.npcId];
+          const isNew = f.day * 1440 + f.minute > seenAt;
+          return (
+            <li key={f.npcId} className="grid-card">
+              <button className="gc-open" onClick={() => { setOpenId(npc.id); act({ type: 'viewProfile', npcId: npc.id }); }} aria-label={`${npc.name}のプロフィールを見る`}>
+                <NpcAvatar npc={npc} size="xl" />
+                <span className="gc-name">{npc.name}・{npc.age}歳{isNew && <i className="fp-new">NEW</i>}</span>
+                <span className="gc-sub">{areaLabel(npc.areaId)}</span>
+                <span className="gc-sub gc-income">年収{incomeOf(npc)}</span>
+                <span className="gc-sub">{agoLabel(state, f)}</span>
+              </button>
+              {status(npc.id)}
+            </li>
+          );
+        })}
+      </ul>
+      <Sentinel enabled={limit < list.length + visitors} deps={limit} onVisible={() => setLimit(limit + 20)} />
+      {openNpc && (
+        <Sheet title={`${openNpc.name}さんのプロフィール`} onClose={() => setOpenId(null)} footer={status(openNpc.id)}>
+          <NpcProfile npc={openNpc} reveal={npcRevealTags(state, openNpc)} large />
         </Sheet>
       )}
     </>
@@ -168,6 +231,7 @@ export function LikesTab(props: TabProps) {
   const { state } = props;
   const [box, setBox] = useState<Box>('received');
   const sentCount = Object.values(state.contacts).filter((c) => c.sentLikeDay !== undefined).length;
+  const fpNew = newFootprintCount(state);
   return (
     <div className="likes">
       <div className="seg talk-switch" role="tablist" aria-label="いいねの種類">
@@ -177,8 +241,11 @@ export function LikesTab(props: TabProps) {
         <button role="tab" aria-selected={box === 'sent'} className={box === 'sent' ? 'on' : ''} onClick={() => setBox('sent')}>
           送ったいいね（{sentCount}）
         </button>
+        <button role="tab" aria-selected={box === 'footprints'} className={box === 'footprints' ? 'on' : ''} onClick={() => setBox('footprints')}>
+          あしあと{fpNew > 0 && box !== 'footprints' && <i className="dot">{fpNew > 99 ? '99+' : fpNew}</i>}
+        </button>
       </div>
-      {box === 'received' ? <ReceivedList {...props} /> : <SentList state={state} go={props.go} act={props.act} />}
+      {box === 'received' ? <ReceivedList {...props} /> : box === 'sent' ? <SentList state={state} go={props.go} act={props.act} /> : <FootprintList {...props} />}
     </div>
   );
 }

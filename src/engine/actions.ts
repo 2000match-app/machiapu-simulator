@@ -1,4 +1,5 @@
 // プレイヤー操作の入口。同じシード・同じ操作列なら同じ結果になる（乱数状態は state.rng）。
+import { loadVisitors, markFootprintsSeen } from './footprints';
 import { START_CLOCK, advanceFree, fastForward, focusUnlocked, afterDateScene, canOpenApp, isLifeNotice, nextFreeMinute, pushLifeNotice, skipBlock, skipChain, useAppTime, visibleNotices, visiblePending } from './clock';
 import { advanceDays, advanceWeek, canRest, checkEnd, closeDay, continueAdvance, continueRest, isResting, startRest } from './advance';
 import { deliverOpenerNow, followUp, isPoliteReply, playerReply, publishPhoto, resolvePhotoSuggest, sendFirstMessage } from './chat';
@@ -64,7 +65,9 @@ export type Action =
   | { type: 'readNotices'; ids?: string[] }
   | { type: 'setNotify'; key: 'likes' | 'talk'; on: boolean }
   /** プロフィールを開いた（読む時間としてゲーム内2分。2026-11-14） */
-  | { type: 'viewProfile'; npcId: string };
+  | { type: 'viewProfile'; npcId: string }
+  | { type: 'loadFootprints'; count: number }
+  | { type: 'seeFootprints' };
 
 export function newGame(characterId: string, seed: string): GameState {
   const s = createState(characterId, seed);
@@ -261,6 +264,12 @@ export function applyAction(state: GameState, action: Action): void {
       resolve(state, action.uid, action.choiceId);
       break;
     case 'viewProfile':
+      break;
+    case 'loadFootprints':
+      loadVisitors(state, action.count);
+      break;
+    case 'seeFootprints':
+      markFootprintsSeen(state);
       break;
   }
   // アプリの操作でゲーム内の時間を使う（2026-11-14 指示）。読む・考える間は止まっている

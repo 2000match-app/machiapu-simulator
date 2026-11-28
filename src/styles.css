@@ -716,3 +716,6 @@ button.dp-day:focus-visible { outline: 2px solid var(--accent); outline-offset: 
 .confirm-face { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 6px 0; background: var(--surface); }
 .confirm-face p { margin: 0 0 8px; }
 .confirm-face-img { display: block; width: 160px; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 10px; margin: 0 auto 8px; }
+
+/* あしあと（2026-11-28） */
+.fp-new { font-style: normal; font-size: 0.62rem; font-weight: 700; color: #fff; background: var(--accent, #e0607e); border-radius: 6px; padding: 0 5px; margin-left: 6px; vertical-align: middle; }

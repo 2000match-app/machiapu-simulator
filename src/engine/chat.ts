@@ -258,6 +258,7 @@ export function playerReply(state: GameState, npcId: string, optionId: string): 
   const deceptive = !isNormalPurpose(npc.purpose);
   let nextKind = 'chat';
   let text = '';
+  let sent = false; // 選んだ手の中で送信まで済ませた
   let exchangeLine = false;
 
   if (optionId.startsWith('invite_')) {
@@ -367,12 +368,18 @@ export function playerReply(state: GameState, npcId: string, optionId: string): 
       case 'later': text = '詳しくは会ったときに話しますね。'; break;
       case 'force': text = '大丈夫です、合わせます！'; c.flags.overCommitted = true; break;
       case 'explain': text = '写真は載せていなくて…会ってからのほうが嬉しいです。'; nextKind = 'photo_answer'; break;
-      case 'publish':
-        publishPhoto(state, true);
-        if (c.stage === 'ended') return; // 公開写真を見て離脱した
+      case 'publish': {
+        // 先に「載せました」と送ってから、相手が写真を見て判断する（2026-11-28：離脱されても、送った顔はトークに残す）
         text = 'プロフィールに顔写真を載せました。見てもらえたら嬉しいです。';
         nextKind = 'photo_answer';
+        const at = c.messages.length;
+        for (const line of splitSentences(text)) pushMsg(c, state.day, 'me', line);
+        if (PLAYER_FACE[state.characterId] && c.messages[at]) c.messages[at].image = PLAYER_FACE[state.characterId];
+        sent = true;
+        publishPhoto(state, true);
+        if (c.stage === 'ended') return; // 公開写真を見て離脱した
         break;
+      }
       case 'happy': text = '嬉しいです…！'; c.flags.expectationUp = true; c.interest += 3; break;
       case 'temper': text = '会ってみないと分からないですよ笑'; break;
       case 'pace': text = 'ゆっくり仲良くなりたいので、自分のペースで進めたいです。'; c.interest += npc.purpose === 'body' ? -20 : 5; break;
@@ -424,10 +431,8 @@ export function playerReply(state: GameState, npcId: string, optionId: string): 
   // 選んだ手で、相手の温度が動く（会う前。トーク仕様案 v0.2 §3.4、2026-11-11）
   stepLevel(state, c, npc, qualityOf(state, c, npc, optionId));
   // 1通1文・最大3通に分けて送る（2026-11-11）
-  const firstIdx = c.messages.length;
-  for (const line of splitSentences(text)) pushMsg(c, state.day, 'me', line);
-  // 顔写真を載せたと伝えるときは、載せた顔をトークにも出す（2026-11-10 顔かくしの素材）
-  if (optionId === 'publish' && PLAYER_FACE[state.characterId] && c.messages[firstIdx]) c.messages[firstIdx].image = PLAYER_FACE[state.characterId];
+  // 顔写真を載せたと伝えるとき（publish）は、上で送って顔をトークに出している（2026-11-10 顔かくしの素材）
+  if (!sent) for (const line of splitSentences(text)) pushMsg(c, state.day, 'me', line);
   if (exchangeLine) {
     // ここから先のやり取りはLINE（トークの「LINE・外部サイト」に移る。男性も有料会員は不要）
     c.lineExchanged = true;

@@ -516,6 +516,12 @@ export interface GameState {
   usedPhotos?: string[];
   contacts: Record<string, Contact>;
   received: ReceivedState;
+  /** あしあと（自分のプロフィールを見た相手。2026-11-28）。時刻が来たものだけ一覧に出す */
+  footprints?: { npcId: string; day: Day; minute: number; visitor?: boolean }[];
+  /** 見ただけの人で、まだプロフィールを作っていない人数 */
+  footprintVisitors?: number;
+  /** あしあとを最後に開いた時刻（day×1440＋分） */
+  footprintsSeenAt?: number;
   /** dryKey：写真の合う相手が見つからなかった時の条件（同じ条件・同じ残り素材では探し直さない） */
   search: { results: string[]; generatedDay: Day; exhaustedSeen: number; dryKey?: string };
   likesLeft: number;
