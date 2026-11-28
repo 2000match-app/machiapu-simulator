@@ -244,6 +244,11 @@ export const HENSACHI_TUNE = {
   maleRichIncomeMan: 600, maleRichLooksWeight: 3.5, maleShortCm: 169, maleShortMult: 0.84,
   /** 容姿2以下は、ほかがどれだけ良くても偏差値50まで（2026-11-16） */
   maleLowLooksCap: 50,
+  /**
+   * 男性の年齢の倍率（上から当てはまるもの。2026-11-28 指示：若いほど高く、35歳から下がる）。
+   * 26歳以下1.1・27〜30歳1.05・31〜34歳1.0・35〜39歳0.92・40歳以上0.82。男性NPC全体の平均がほぼ変わらない強さにした
+   */
+  maleAge: [[40, 0.82], [35, 0.92], [31, 1], [27, 1.05], [0, 1.1]] as [number, number][],
   // 女性
   femaleLooksWeight: 1.22,
   /** 容姿2以下はさらに下げる（容姿2と3の間に崖。2026-11-16）。1.2→2.05（2026-11-21 指示：葵が52と高すぎた。47くらいに） */
@@ -267,12 +272,11 @@ export const HENSACHI_TUNE = {
 /** 顔写真を出していない人の容姿（偏差値の計算用。2026-11-16 指示：容姿2相当） */
 export const FACELESS_LOOKS = 2;
 /**
- * 偏差値（容姿・身長・学歴・年収）。NPCにもプレイヤーにも同じ式を使う。2026-11-16 の指示による補正：
- * - 男性：年収600万円以上で容姿3を上回るときは容姿の重み3.5倍（容姿5・年収600万＞容姿3・年収1000万）。
- *   身長169cm以下は0.7倍。容姿2以下は50まで
- * - 女性：容姿の重み1.22倍、身長は倍率（165〜170cm 1.2・160〜165cm 1.1・155cm以下0.9・150cm以下0.8）、高卒・専門卒の下げは弱め、
- *   年収は600万円以上ほぼ同じ・400〜600万円一定・400万円未満で下がる、全体を +11.2、
- *   28歳以上0.9倍・33歳以上0.85倍・36歳以上0.6倍、大学がMARCH以上なら1.1倍
+ * 偏差値（容姿・身長・学歴・年収・年齢）。NPCにもプレイヤーにも同じ式を使う。値は HENSACHI_TUNE（2026-11-28 にコメントを今の値に合わせた）：
+ * - 男性：容姿・身長・学歴・年収の標準値の和。年収600万円以上で容姿3を上回るときは容姿の重み3.5倍（容姿5・年収600万＞容姿3・年収1000万）。
+ *   身長169cm以下は0.84倍、年齢の倍率（maleAge）、容姿2以下は50まで
+ * - 女性：容姿の重み1.22倍（容姿2以下はさらに下げる）、高卒・専門卒の下げは弱め、年収は600万円以上ほぼ同じ・400〜600万円一定・400万円未満で下がる、
+ *   全体を +10.5、身長の倍率（femaleHeight）、年齢の倍率（femaleAge）、大学がMARCH以上なら1.1〜1.2倍
  * 範囲は20〜80
  */
 export function hensachiOf(npc: Pick<Npc, 'gender' | 'heightCm' | 'education' | 'incomeYen'> & {
@@ -301,6 +305,8 @@ export function hensachiOf(npc: Pick<Npc, 'gender' | 'heightCm' | 'education' | 
     const income = (Math.log(incMan) - Math.log(450)) / 0.45;
     h = 50 + 10 * ((looks + height + edu + income) / 2); // 4つの独立した標準値の和のばらつきは2
     if (npc.heightCm <= t.maleShortCm) h *= t.maleShortMult;
+    const ageHit = npc.age !== undefined ? t.maleAge.find(([a]) => npc.age! >= a) : undefined;
+    if (ageHit) h *= ageHit[1];
     if (looksValue <= 2) h = Math.min(h, t.maleLowLooksCap);
   } else {
     const looks = ((looksValue - 3) / 1.1) * t.femaleLooksWeight - (looksValue <= 2 ? t.femaleLowLooksPenalty : 0);

@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { applyAction } from './actions';
 import { advanceDays, devNewGame, nextCandidate } from './devScenarios';
-import { visibleFootprints } from './footprints';
+import { likedVisitChance, visibleFootprints } from './footprints';
 import { newcomerFactor } from './matching';
 
 describe('受信いいねの新規会員の傾斜', () => {
@@ -42,6 +42,20 @@ describe('あしあと', () => {
     advanceDays(s, 3);
     const seen = new Set(visibleFootprints(s).map((f) => f.npcId));
     expect(liked.filter((id) => seen.has(id)).length).toBeGreaterThanOrEqual(13);
+  });
+
+  it('いいねを送った相手が見に来る確率は、自分の魅力度が高いほど高い', () => {
+    const pair = (hi: string, lo: string) => {
+      const a = devNewGame(hi, 'fp-chance');
+      const b = devNewGame(lo, 'fp-chance');
+      const npc = a.npcs[nextCandidate(a)];
+      return [likedVisitChance(a, npc), likedVisitChance(b, npc)];
+    };
+    const [kento, taro] = pair('M01', 'M09');
+    expect(kento).toBeGreaterThan(taro + 0.3);
+    const [mai, nao] = pair('F01', 'F10');
+    expect(mai).toBeGreaterThan(nao + 0.3);
+    expect(nao).toBeGreaterThanOrEqual(0.2);
   });
 
   it('見ただけの人は一覧を開くとプロフィールが作られ、こちらからいいねできる', () => {

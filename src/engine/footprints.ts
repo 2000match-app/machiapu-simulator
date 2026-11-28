@@ -1,18 +1,21 @@
 // あしあと（2026-11-28 指示）：自分のプロフィールを見た相手の一覧。
-// ・こちらがいいねを送った相手は、高い確率で0〜2日のうちに見に来る（いいねを確かめるため）
+// ・こちらがいいねを送った相手は、0〜2日のうちに見に来る（いいねを確かめるため）。自分の魅力度が相手より高いほど見に来る
 // ・いいねをくれた相手も、その前にプロフィールを見ている
 // ・見ただけでいいねはしない人も来る（受信いいねの0.6倍くらい）。プロフィールは一覧を開いたときに作る（写真素材を使いすぎない）
 // ・あしあとの相手には、こちらからいいねを送れる。見に来た相手は少しマッチしやすい
 // 抽選は別の乱数列で、ほかの抽選・会話の流れはずらさない。
 import { Rng } from './rng';
-import { passesNpcPrefs } from './npc';
+import { hensachiOf, passesNpcPrefs } from './npc';
 import { freePhotoCount } from './photos';
 import { character, createNpc, storeNpc } from './state';
-import type { GameState } from './types';
+import type { GameState, Npc } from './types';
 
 export const TUNE_FOOTPRINT = {
-  /** いいねを送った相手が見に来る確率 */
-  fromLiked: 0.85,
+  /**
+   * いいねを送った相手が見に来る確率（2026-11-28 指示：魅力度で変える）。
+   * 自分と相手の偏差値の差で決める：同じくらいなら base、自分が上なら高く、下なら低く（1あたり perPoint）
+   */
+  fromLiked: { base: 0.6, perPoint: 0.025, min: 0.2, max: 0.95 },
   /** いいねをくれた相手のあしあとが残る確率 */
   fromLiker: 0.8,
   /** 見ただけの人（受信いいねの何倍か） */
@@ -52,10 +55,19 @@ function add(state: GameState, f: Footprint): void {
   }
 }
 
+/** いいねを送った相手が見に来る確率：自分の偏差値が相手より高いほど見に来る */
+export function likedVisitChance(state: GameState, npc: Npc): number {
+  const ch = character(state);
+  const mine = hensachiOf({ gender: ch.gender, looks: ch.looks, heightCm: ch.heightCm, education: ch.education, incomeYen: ch.incomeYen, age: state.player.age, faceHidden: !state.player.photoVisible });
+  const t = TUNE_FOOTPRINT.fromLiked;
+  return Math.max(t.min, Math.min(t.max, t.base + (mine - hensachiOf(npc)) * t.perPoint));
+}
+
 /** いいねを送ったとき：相手が見に来る時刻を決めておく（その時刻になると一覧に出る） */
 export function footprintAfterLike(state: GameState, npcId: string): void {
   const r = Rng.fromSeed(state.seed, 'fp-like', npcId);
-  if (!r.chance(TUNE_FOOTPRINT.fromLiked)) return;
+  const npc = state.npcs[npcId];
+  if (!npc || !r.chance(likedVisitChance(state, npc))) return;
   let t = nowOf(state) + r.int(20, 60 * 48);
   // 夜中（2〜7時）は見に来ない：朝に回す
   const m = t % 1440;
